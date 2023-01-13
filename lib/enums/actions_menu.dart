@@ -1,0 +1,3 @@
+//we must create an enumeration first and put all the choices ex: logout, messages, ...
+
+enum MenuAction { logout }

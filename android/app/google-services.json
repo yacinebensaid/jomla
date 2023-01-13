@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "842671585755",
+    "project_id": "jomla-platform",
+    "storage_bucket": "jomla-platform.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:842671585755:android:e579354648a54530208ffe",
+        "android_client_info": {
+          "package_name": "com.example.jomla"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "842671585755-ob379v84vtafeobb59bo9mpds37hat0a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBB4oyLTxP3v2DQDAI9UXe4HNbRzdrwwHA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "842671585755-ob379v84vtafeobb59bo9mpds37hat0a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
