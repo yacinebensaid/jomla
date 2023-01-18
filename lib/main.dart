@@ -4,8 +4,8 @@ import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/view/auth/emailverify_view.dart';
 import 'package:jomla/view/auth/login_view.dart';
 import 'package:jomla/view/auth/register_view.dart';
-import 'package:jomla/view/auth/user_data_view.dart';
 import 'package:jomla/view/home/homepage_view.dart';
+import 'package:jomla/view/home/staticpage_view.dart';
 
 void main() {
   //flutter must initialize the user creation part before clicking on register
@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
             // redirecting the user based on his account status
             if (user != null) {
               if (user.isEmailVerified) {
-                return const UserDataView();
+                return const StaticPage();
               } else {
                 return const VerifyEmailView();
               }

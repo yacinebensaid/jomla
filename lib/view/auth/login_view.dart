@@ -5,7 +5,6 @@ import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_exceptions.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import '../../utilities/show_error_dialog.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 //login page is the exact same page as signup page just with some small changes
 
