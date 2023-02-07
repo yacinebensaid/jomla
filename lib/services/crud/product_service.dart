@@ -2,26 +2,29 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ProductService {
   static addProduct({
-    required String refrence,
+    required String mainCategory,
+    required String reference,
     required String productName,
-    required String category,
-    required String totalQuantity,
+    required List category,
+    required String availableQuantity,
     required String minimumQuantity,
-    required String sizes,
+    required List sizes,
     required String price,
-    required String newPrice,
-    required String colors,
-    required String photos,
+    required List colors,
+    required List photos,
     required String description,
   }) =>
-      FirebaseFirestore.instance.collection('UserData').doc(refrence).set({
+      FirebaseFirestore.instance
+          .collection('ProductData')
+          .doc(mainCategory)
+          .set({
+        'reference': reference,
         'product name': productName,
         'category': category,
-        'total quantity': totalQuantity,
+        'available quantity': availableQuantity,
         'minimum quantity': minimumQuantity,
         'sizes': sizes,
         'price': price,
-        'new price': newPrice,
         'colors': colors,
         'photos': photos,
         'description': description,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/view/home/explore.dart';
-import 'package:jomla/view/home/adding_product_view.dart';
+import 'package:jomla/view/explore/explore.dart';
+import 'package:jomla/view/add_product/adding_newproduct_view.dart';
 import 'package:jomla/view/home/homepage_view.dart';
 
 class StaticPage extends StatefulWidget {
@@ -14,7 +14,7 @@ class _StaticPageState extends State<StaticPage> {
   int _selectedIndex = 0;
   final List<Widget> _children = [
     const HomeView(),
-    const AddingProductView(),
+    AddProductPage(),
     const ExploreView(),
   ];
   PageController pageController = PageController();
@@ -47,7 +47,7 @@ class _StaticPageState extends State<StaticPage> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+          selectedItemColor: const Color.fromARGB(255, 0, 0, 0),
           unselectedItemColor: Colors.grey,
           onTap: onTapped,
         ));

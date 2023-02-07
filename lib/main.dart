@@ -4,8 +4,11 @@ import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/view/auth/emailverify_view.dart';
 import 'package:jomla/view/auth/login_view.dart';
 import 'package:jomla/view/auth/register_view.dart';
+import 'package:jomla/view/banner_links/sale/sale.dart';
+import 'package:jomla/view/banner_links/tips/tips.dart';
+import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
 import 'package:jomla/view/home/homepage_view.dart';
-import 'package:jomla/view/home/staticpage_view.dart';
+import 'package:jomla/view/bottombar/staticpage_view.dart';
 
 void main() {
   //flutter must initialize the user creation part before clicking on register
@@ -23,6 +26,9 @@ void main() {
         registerRout: (context) => const RegistationPage(),
         verifyemailRout: (context) => const VerifyEmailView(),
         homepageRout: (context) => const HomeView(),
+        saleRout: (context) => const SalePage(),
+        usingJomlaRout: (context) => const UsingJomlaPage(),
+        tipsRout: (context) => const TipsPage(),
       },
     ),
   );
