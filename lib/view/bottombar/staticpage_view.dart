@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jomla/view/explore/explore.dart';
-import 'package:jomla/view/add_product/adding_newproduct_view.dart';
+import 'package:jomla/view/add_product/components/adding_newproduct_view.dart';
 import 'package:jomla/view/home/homepage_view.dart';
 
 class StaticPage extends StatefulWidget {

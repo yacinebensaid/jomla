@@ -27,7 +27,9 @@ class Categories extends StatelessWidget {
               padding: const EdgeInsets.all(5.0),
               child: InkWell(
                 onTap: (() => Navigator.of(context).pushNamedAndRemoveUntil(
-                    indexPages[index]!, (route) => false)),
+                    ////will be passing the name of category not the rout
+                    indexPages[index]!,
+                    (route) => false)),
                 child: Chip(
                   label: Text(
                     categories[index],
