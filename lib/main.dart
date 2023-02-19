@@ -9,6 +9,7 @@ import 'package:jomla/view/banner_links/tips/tips.dart';
 import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
 import 'package:jomla/view/home/homepage_view.dart';
 import 'package:jomla/view/bottombar/staticpage_view.dart';
+import 'package:jomla/view/product_datails/details_view.dart';
 
 void main() {
   //flutter must initialize the user creation part before clicking on register
@@ -29,6 +30,7 @@ void main() {
         saleRout: (context) => const SalePage(),
         usingJomlaRout: (context) => const UsingJomlaPage(),
         tipsRout: (context) => const TipsPage(),
+        detailsRout: (context) => DetailsScreen(),
       },
     ),
   );

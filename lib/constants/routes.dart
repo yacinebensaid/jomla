@@ -8,3 +8,4 @@ const usingJomlaRout = '/usingJomla/';
 const tipsRout = '/tips/';
 ////
 const categoriesRout = '/categories/';
+const detailsRout = '/details/';

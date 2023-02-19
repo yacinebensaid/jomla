@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-import '../../view/var_lib.dart';
 import 'crud_exceptions.dart';
 
 class ProductService {
@@ -14,14 +12,13 @@ class ProductService {
     required List sizes,
     required String price,
     required List colors,
+    required String offers,
     required String mainPhoto,
     required List photos,
     required String description,
   }) async {
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('ProductData')
-        .doc(mainCategory)
-        .collection(subCategory)
         .doc(reference)
         .get();
 
@@ -31,17 +28,19 @@ class ProductService {
       try {
         FirebaseFirestore.instance
             .collection('ProductData')
-            .doc(mainCategory)
-            .collection(subCategory)
             .doc(reference)
             .set({
-          'product name': productName,
-          'available quantity': availableQuantity,
-          'minimum quantity': minimumQuantity,
+          'main_category': mainCategory,
+          'sub_category': subCategory,
+          'reference': reference,
+          'product_name': productName,
+          'available_quantity': availableQuantity,
+          'minimum_quantity': minimumQuantity,
           'sizes': sizes,
           'price': price,
+          'offers': offers,
           'colors': colors,
-          'main photo': mainPhoto,
+          'main_photo': mainPhoto,
           'photos': photos,
           'description': description,
         });
@@ -52,26 +51,75 @@ class ProductService {
     }
   }
 
-  static void getAllProducts() {
-    Map subCategories = get_subCategoriesOption();
+  static Future<List> searchProductByRef(String reference) async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('ProductData')
+        .where('reference', isEqualTo: reference)
+        .get();
+    return snapshot.docs;
+  }
 
-    FirebaseFirestore.instance.collection('ProductData').get().then((value) => {
-          value.docs.forEach((result) {
-            final maincat = FirebaseFirestore.instance
-                .collection('ProductData')
-                .doc(result.id);
-            for (String subcat in subCategories[result.id]) {
-              maincat
-                  .collection(subcat)
-                  .get()
-                  .then((newvalue) => newvalue.docs.forEach((element) {
-                        print(result.id);
-                        print(subcat);
-                        print(element.id);
-                        print(element.data());
-                      }));
-            }
-          })
-        });
+  static Future<Object> searchProductByName(String name) async {
+    List products = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('ProductData')
+        .where('product_name', isEqualTo: name)
+        .get();
+    snapshot.docs.forEach((element) {
+      products.add(element.data());
+    });
+    if (products.isEmpty) {
+      return 'product does not exist';
+    } else {
+      return products;
+    }
+  }
+
+  static Future<Object> searchProductByMainCat(String mainCat) async {
+    List products = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('ProductData')
+        .where('main_category', isEqualTo: mainCat)
+        .get();
+    snapshot.docs.forEach((element) {
+      products.add(element.data());
+    });
+    if (products.isEmpty) {
+      return 'product does not exist';
+    } else {
+      return products;
+    }
+  }
+
+  static Future<Object> searchProductBySubCat(String subCat) async {
+    List products = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('ProductData')
+        .where('sub_category', isEqualTo: subCat)
+        .get();
+    snapshot.docs.forEach((element) {
+      products.add(element.data());
+    });
+    if (products.isEmpty) {
+      return 'product does not exist';
+    } else {
+      return products;
+    }
+  }
+
+  static Future<List> searchProductByChoice(String choice, String value) async {
+    List products = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('ProductData')
+        .where(choice, isEqualTo: value)
+        .get();
+    snapshot.docs.forEach((element) {
+      products.add(element.data());
+    });
+    if (products.isEmpty) {
+      return ['product does not exist'];
+    } else {
+      return products;
+    }
   }
 }

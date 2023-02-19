@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -32,6 +33,7 @@ class _AddProductPageState extends State<AddProductPage> {
   late String _mainCategory = '';
   final List<String> _availableColors = [];
   final List<String> _availableSizes = [];
+  String _selectedOffers = '';
 
   List<bool> _colorsChecked = [];
   List<bool> _sizesChecked = [];
@@ -118,12 +120,10 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
-  List<String> _selectedOffers = [];
-
   void _showOffers() async {
     final List<String> offers = _offerOption; ///////////////////
 
-    final List<String>? results = await showDialog(
+    final String? results = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return MultiSelectOffers(items: offers);
@@ -169,6 +169,7 @@ class _AddProductPageState extends State<AddProductPage> {
                               availableQuantity: _availableQuantity,
                               minimumQuantity: _minQuantity,
                               sizes: _availableSizes,
+                              offers: _selectedOffers,
                               price: _productPrice,
                               colors: _availableColors,
                               mainPhoto: _productMainImage,
@@ -448,34 +449,36 @@ class _AddProductPageState extends State<AddProductPage> {
                       // use this button to open the multi-select dialog
                       ElevatedButton(
                         onPressed: _showOffers,
-                        child: const Text('Select Offers'),
+                        child: const Text('Select The sub categories'),
                       ),
                       // display selected items
-                      Wrap(
-                        children: _selectedOffers
-                            .map((e) => InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedOffers.remove(e);
-                                    });
-                                  },
-                                  child: Chip(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0, vertical: 8.0),
-                                    label: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Text(e),
-                                        const Icon(Icons.clear),
-                                      ],
-                                    ),
+                      Wrap(children: [
+                        _selectedOffers != ''
+                            ? InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedOffers = '';
+                                  });
+                                },
+                                child: Chip(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0, vertical: 8.0),
+                                  label: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: <Widget>[
+                                      Text(_selectedOffers),
+                                      const Icon(Icons.clear),
+                                    ],
                                   ),
-                                ))
-                            .toList(),
-                      )
+                                ),
+                              )
+                            : Container()
+                      ])
                     ],
                   ),
                 ),
+                ///////////////////////////////
+
                 Card(
                   child: Column(
                     children: [
@@ -616,13 +619,6 @@ class _AddProductPageState extends State<AddProductPage> {
                       },
                     ),
                   ),
-                ),
-                //////////////////////////////////////////////////////
-                ElevatedButton(
-                  onPressed: () async {
-                    ProductService.getAllProducts();
-                  },
-                  child: const Text('get products'),
                 ),
               ]),
             ),

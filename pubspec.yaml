@@ -43,6 +43,8 @@ dependencies:
   firebase_database: ^10.0.9
   image_picker : ^0.8.6
   carousel_slider: ^4.2.1
+  flutter_svg: ^1.1.6
+  firebase_storage: ^11.0.13
 
 dev_dependencies:
   flutter_test:
@@ -70,6 +72,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/categories_imgs/
+    - assets/icons/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

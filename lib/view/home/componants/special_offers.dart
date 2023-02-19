@@ -74,9 +74,14 @@ class SpecialOfferCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: Stack(
               children: [
-                Image.asset(
-                  image,
-                  fit: BoxFit.cover,
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    image: DecorationImage(
+                      image: AssetImage(image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
                 Container(
                   decoration: BoxDecoration(
@@ -88,6 +93,7 @@ class SpecialOfferCard extends StatelessWidget {
                         const Color(0xFF343434).withOpacity(0.15),
                       ],
                     ),
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
                 Padding(

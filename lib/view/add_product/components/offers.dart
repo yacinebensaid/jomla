@@ -9,16 +9,12 @@ class MultiSelectOffers extends StatefulWidget {
 }
 
 class _MultiSelectCategiryState extends State<MultiSelectOffers> {
-  final List<String> _selectedOffers = [];
+  String _selectedOffers = '';
 
 // This function is triggered when a checkbox is checked or unchecked
-  void _itemChange(String itemValue, bool isSelected) {
+  void _itemChange(String itemValue) {
     setState(() {
-      if (isSelected) {
-        _selectedOffers.add(itemValue);
-      } else {
-        _selectedOffers.remove(itemValue);
-      }
+      _selectedOffers = itemValue;
     });
   }
 
@@ -37,15 +33,16 @@ class _MultiSelectCategiryState extends State<MultiSelectOffers> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Select The Sub categories Category'),
+      title: const Text('Select The Offers'),
       content: SingleChildScrollView(
         child: ListBody(
           children: widget.items
-              .map((offer) => CheckboxListTile(
-                    value: _selectedOffers.contains(offer),
+              .map((offer) => RadioListTile(
+                    value: offer,
+                    groupValue: _selectedOffers,
                     title: Text(offer),
                     controlAffinity: ListTileControlAffinity.leading,
-                    onChanged: (isChecked) => _itemChange(offer, isChecked!),
+                    onChanged: (value) => _itemChange(value!),
                   ))
               .toList(),
         ),

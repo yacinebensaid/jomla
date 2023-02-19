@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/view/home/componants/popular_product.dart';
 import 'special_offers.dart';
 
 import '../../../size_config.dart';
@@ -21,6 +22,9 @@ class Body extends StatelessWidget {
             const HomeBanner(),
             const Categories(),
             const SpecialOffers(),
+            SizedBox(height: getProportionateScreenWidth(30)),
+            PopularProducts(),
+            SizedBox(height: getProportionateScreenWidth(30)),
           ],
         ),
       ),
