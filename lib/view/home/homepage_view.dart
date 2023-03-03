@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../size_config.dart';
-import 'componants/body.dart';
+import 'components/body.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});

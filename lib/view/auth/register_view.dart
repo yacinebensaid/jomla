@@ -5,7 +5,7 @@ import 'package:jomla/services/auth/auth_exceptions.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
 import '../../utilities/show_error_dialog.dart';
-import '../../services/crud/userdata_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegistationPage extends StatefulWidget {
   const RegistationPage({super.key});
@@ -51,7 +51,7 @@ class _RegistationPageState extends State<RegistationPage> {
   Widget build(BuildContext context) {
     //we took of all the scafford and returning only
     return Scaffold(
-      appBar: AppBar(title: const Text('register')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.register)),
       body: Column(
         children: [
           TextField(
@@ -61,8 +61,8 @@ class _RegistationPageState extends State<RegistationPage> {
             keyboardType: TextInputType.name,
             enableSuggestions: true,
             autocorrect: true,
-            decoration:
-                const InputDecoration(hintText: 'enter your First name'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterfirstname),
           ),
           TextField(
             controller: _lastName,
@@ -70,7 +70,8 @@ class _RegistationPageState extends State<RegistationPage> {
             //we must do the enablesug, autocorrect, obscuretext
             enableSuggestions: true,
             autocorrect: true,
-            decoration: const InputDecoration(hintText: 'Enter your last name'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterlastname),
           ),
           TextField(
             controller: _phoneNumber,
@@ -79,8 +80,8 @@ class _RegistationPageState extends State<RegistationPage> {
             keyboardType: TextInputType.phone,
             enableSuggestions: true,
             autocorrect: true,
-            decoration:
-                const InputDecoration(hintText: 'Enter your phone number'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterphonenumber),
           ),
           TextField(
             controller: _email,
@@ -89,7 +90,8 @@ class _RegistationPageState extends State<RegistationPage> {
             keyboardType: TextInputType.emailAddress,
             enableSuggestions: false,
             autocorrect: false,
-            decoration: const InputDecoration(hintText: 'Enter your email'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enteremail),
           ),
           TextField(
             controller: _password,
@@ -98,7 +100,8 @@ class _RegistationPageState extends State<RegistationPage> {
             obscureText: true,
             enableSuggestions: false,
             autocorrect: false,
-            decoration: const InputDecoration(hintText: 'Enter your password'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterpassword),
           ),
           TextButton(
             //async because we need the button to read the informations after we press it
@@ -132,33 +135,33 @@ class _RegistationPageState extends State<RegistationPage> {
               } on WeakPasswordAuthException {
                 await showErrorDialog(
                   context,
-                  'your password is weak',
+                  AppLocalizations.of(context)!.weakpassword,
                 );
               } on EmailInUseAuthException {
                 await showErrorDialog(
                   context,
-                  'the email already exists',
+                  AppLocalizations.of(context)!.emailexists,
                 );
               } on InvalidEmailAuthException {
                 await showErrorDialog(
                   context,
-                  'invalid email',
+                  AppLocalizations.of(context)!.invalidemail,
                 );
               } on GenericAuthException {
                 await showErrorDialog(
                   context,
-                  'Registration failed',
+                  AppLocalizations.of(context)!.registerfaild,
                 );
               }
             },
-            child: const Text('register'),
+            child: Text(AppLocalizations.of(context)!.register),
           ),
           TextButton(
               onPressed: () {
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil(loginRout, (route) => false);
               },
-              child: const Text('have an account? login here'))
+              child: Text(AppLocalizations.of(context)!.loginnow))
         ],
       ),
     );

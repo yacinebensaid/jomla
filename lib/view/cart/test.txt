@@ -1,0 +1,31 @@
+String _totalPrice = '';
+  Future<String> _getTotalPrice() async {
+    return await get_totalCartPrice();
+  }
+
+  void getTotalPrice() async {
+    try {
+      String data = await _getTotalPrice();
+      setState(() {
+        _totalPrice = data;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getTotalPrice();
+  }
+
+
+
+  int _totalPrice = ShoppingCart.totalCartPrice;
+
+  
+  TextSpan(
+                          text: _totalPrice.toString(),
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.black))

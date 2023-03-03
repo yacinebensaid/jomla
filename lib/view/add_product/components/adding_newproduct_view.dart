@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -11,6 +10,7 @@ import 'main_category.dart';
 import 'offers.dart';
 import 'sub_categories.dart';
 import '../../var_lib.dart' as vars;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddProductPage extends StatefulWidget {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -143,7 +143,7 @@ class _AddProductPageState extends State<AddProductPage> {
     return Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('Add Product'),
+          title: Text(AppLocalizations.of(context)!.addproduct),
           actions: <Widget>[
             IconButton(
                 icon: const Icon(Icons.save),
@@ -153,10 +153,10 @@ class _AddProductPageState extends State<AddProductPage> {
 
                     if (_mainCategory == '') {
                       showErrorDialog(
-                          context, 'Please choose the main category');
+                          context, AppLocalizations.of(context)!.pleasemaincat);
                     } else if (_selectedSubCategories == '') {
                       showErrorDialog(
-                          context, 'Please choose at least one sub category');
+                          context, AppLocalizations.of(context)!.pleasesubcat);
                     } else {
                       await showSucessDialog(
                           context,
@@ -199,14 +199,14 @@ class _AddProductPageState extends State<AddProductPage> {
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: getProportionateScreenWidth(20),
                           vertical: getProportionateScreenWidth(12)),
-                      labelText: 'Product Refrence',
+                      labelText: AppLocalizations.of(context)!.productref,
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter a product refrence';
+                        return AppLocalizations.of(context)!.pleaseproductref;
                       }
                       return null;
                     },
@@ -229,14 +229,14 @@ class _AddProductPageState extends State<AddProductPage> {
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: getProportionateScreenWidth(20),
                           vertical: getProportionateScreenWidth(12)),
-                      labelText: 'Product Name',
+                      labelText: AppLocalizations.of(context)!.productname,
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter a product Name';
+                        return AppLocalizations.of(context)!.pleaseProductname;
                       }
                       return null;
                     },
@@ -259,14 +259,16 @@ class _AddProductPageState extends State<AddProductPage> {
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: getProportionateScreenWidth(20),
                           vertical: getProportionateScreenWidth(12)),
-                      labelText: 'Product Total Quantity',
+                      labelText:
+                          AppLocalizations.of(context)!.producttotlaquantity,
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter the total quality';
+                        return AppLocalizations.of(context)!
+                            .pleaseproducttotlaquantity;
                       }
                       return null;
                     },
@@ -289,14 +291,16 @@ class _AddProductPageState extends State<AddProductPage> {
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: getProportionateScreenWidth(20),
                           vertical: getProportionateScreenWidth(12)),
-                      labelText: 'Product Minimum Quantity',
+                      labelText:
+                          AppLocalizations.of(context)!.productminimumquantity,
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter the minimum allowed quantity';
+                        return AppLocalizations.of(context)!
+                            .pleaseproductminimumquantity;
                       }
                       return null;
                     },
@@ -319,14 +323,14 @@ class _AddProductPageState extends State<AddProductPage> {
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: getProportionateScreenWidth(20),
                           vertical: getProportionateScreenWidth(12)),
-                      labelText: 'Product Price',
+                      labelText: AppLocalizations.of(context)!.productprice,
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter a product price';
+                        return AppLocalizations.of(context)!.pleaseproductprice;
                       }
                       return null;
                     },
@@ -346,18 +350,21 @@ class _AddProductPageState extends State<AddProductPage> {
                     // ignore: avoid_print
                     onChanged: (value) => print(value),
                     keyboardType: TextInputType.multiline,
+                    maxLines: null,
                     decoration: InputDecoration(
                       contentPadding: EdgeInsets.symmetric(
                           horizontal: getProportionateScreenWidth(20),
                           vertical: getProportionateScreenWidth(12)),
-                      labelText: 'Product Description',
+                      labelText:
+                          AppLocalizations.of(context)!.productdescription,
                       border: InputBorder.none,
                       focusedBorder: InputBorder.none,
                       enabledBorder: InputBorder.none,
                     ),
                     validator: (value) {
                       if (value!.isEmpty) {
-                        return 'Please enter a product description';
+                        return AppLocalizations.of(context)!
+                            .pleaseproductdescription;
                       }
                       return null;
                     },
@@ -372,7 +379,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       // use this button to open the multi-select dialog
                       ElevatedButton(
                         onPressed: _showMainCategory,
-                        child: const Text('Select the main category'),
+                        child: Text(AppLocalizations.of(context)!.maincat),
                       ),
                       // display selected items
                       Wrap(children: [
@@ -410,7 +417,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       // use this button to open the multi-select dialog
                       ElevatedButton(
                         onPressed: _showSubCategories,
-                        child: const Text('Select The sub categories'),
+                        child: Text(AppLocalizations.of(context)!.subcat),
                       ),
                       // display selected items
                       _mainCategory != ''
@@ -449,7 +456,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       // use this button to open the multi-select dialog
                       ElevatedButton(
                         onPressed: _showOffers,
-                        child: const Text('Select The sub categories'),
+                        child: Text(AppLocalizations.of(context)!.selectsubcat),
                       ),
                       // display selected items
                       Wrap(children: [
@@ -482,8 +489,8 @@ class _AddProductPageState extends State<AddProductPage> {
                 Card(
                   child: Column(
                     children: [
-                      const ListTile(
-                        title: Text("Colors"),
+                      ListTile(
+                        title: Text(AppLocalizations.of(context)!.colors),
                       ),
                       Wrap(
                         children: List.generate(_colorOption.split(',').length,
@@ -512,8 +519,8 @@ class _AddProductPageState extends State<AddProductPage> {
                 Card(
                   child: Column(
                     children: [
-                      const ListTile(
-                        title: Text("Size"),
+                      ListTile(
+                        title: Text(AppLocalizations.of(context)!.size),
                       ),
                       Wrap(
                         children: List.generate(_sizeOption.split(',').length,
@@ -543,7 +550,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   onPressed: () async {
                     pickMainImage();
                   },
-                  child: const Text('Add the main Image'),
+                  child: Text(AppLocalizations.of(context)!.mainimage),
                 ),
                 SizedBox(
                   width: getProportionateScreenWidth(0),
@@ -574,13 +581,13 @@ class _AddProductPageState extends State<AddProductPage> {
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),
                 ),
                 ElevatedButton(
-                  child: const Text('Add Images'),
+                  child: Text(AppLocalizations.of(context)!.images),
                   onPressed: () async {
                     pickImage();
                   },

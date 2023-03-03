@@ -5,6 +5,7 @@ import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_exceptions.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import '../../utilities/show_error_dialog.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 //login page is the exact same page as signup page just with some small changes
 
@@ -45,7 +46,7 @@ class _LoginViewState extends State<LoginView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('login'),
+        title: Text(AppLocalizations.of(context)!.login),
       ),
       body: Column(
         children: [
@@ -56,7 +57,8 @@ class _LoginViewState extends State<LoginView> {
             keyboardType: TextInputType.emailAddress,
             enableSuggestions: false,
             autocorrect: false,
-            decoration: const InputDecoration(hintText: 'Enter your email'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enteremail),
           ),
           TextField(
             controller: _password,
@@ -65,7 +67,8 @@ class _LoginViewState extends State<LoginView> {
             obscureText: true,
             enableSuggestions: false,
             autocorrect: false,
-            decoration: const InputDecoration(hintText: 'Enter your password'),
+            decoration: InputDecoration(
+                hintText: AppLocalizations.of(context)!.enterpassword),
           ),
           TextButton(
             //async because we need the button to read the informations after we press it
@@ -102,28 +105,28 @@ class _LoginViewState extends State<LoginView> {
               } on UserNotFoundAuthException {
                 await showErrorDialog(
                   context,
-                  'user not found',
+                  AppLocalizations.of(context)!.usernotfound,
                 );
               } on WrongPasswordAuthException {
                 await showErrorDialog(
                   context,
-                  'wrong password',
+                  AppLocalizations.of(context)!.wrongpassword,
                 );
               } on GenericAuthException {
                 await showErrorDialog(
                   context,
-                  'Authentication Error',
+                  AppLocalizations.of(context)!.authenticationerror,
                 );
               }
             },
-            child: const Text('login'),
+            child: Text(AppLocalizations.of(context)!.login),
           ),
           TextButton(
               onPressed: () {
                 Navigator.of(context)
                     .pushNamedAndRemoveUntil(registerRout, (route) => false);
               },
-              child: const Text('Not registerd yet? register now.'))
+              child: Text(AppLocalizations.of(context)!.registernow))
         ],
       ),
     );

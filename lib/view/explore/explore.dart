@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'componants/body.dart';
+import 'components/body.dart';
 
 class ExploreView extends StatefulWidget {
   const ExploreView({super.key});

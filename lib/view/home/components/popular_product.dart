@@ -6,6 +6,7 @@ import '../../../size_config.dart';
 import '../../products_card/product.dart';
 import '../../products_card/body.dart';
 import 'section_title.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PopularProducts extends StatelessWidget {
   const PopularProducts({super.key});
@@ -27,7 +28,9 @@ class PopularProducts extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: getProportionateScreenWidth(20)),
-                child: SectionTitle(title: "Popular Products", press: () {}),
+                child: SectionTitle(
+                    title: AppLocalizations.of(context)!.popularproducts,
+                    press: () {}),
               ),
               SizedBox(height: getProportionateScreenWidth(20)),
               SingleChildScrollView(

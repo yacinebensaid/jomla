@@ -1,0 +1,266 @@
+{
+    "language": "English",
+    "@language": {
+        "description": "The current language"
+    },
+    "addproduct": "Add Product",
+    "@addproduct": {
+        "description": "A label for a button to add a new product"
+    },
+    "pleasemaincat": "Please choose the main category",
+    "@pleasemaincat": {
+        "description": "A message prompting the user to select a main category"
+    },
+    "pleasesubcat": "Please choose at least one sub category",
+    "@pleasesubcat": {
+        "description": "A message prompting the user to select at least one sub category"
+    },
+    "productref": "Product Reference",
+    "@productref": {
+        "description": "A label for an input field where the user enters a product reference or code"
+    },
+    "pleaseproductref": "Please enter a product reference",
+    "@pleaseproductref": {
+        "description": "A message prompting the user to enter a product reference or code"
+    },
+    "productname": "Product Name",
+    "@productname": {
+        "description": "A label for an input field where the user enters the name of a product"
+    },
+    "pleaseProductname": "Please enter a product name",
+    "@pleaseProductname": {
+        "description": "A message prompting the user to enter a product name"
+    },
+    "producttotlaquantity": "Product Total Quantity",
+    "@producttotlaquantity": {
+        "description": "A label for an input field where the user enters the total quantity of a product"
+    },
+    "pleaseproducttotlaquantity": "Please enter the total quantity",
+    "@pleaseproducttotlaquantity": {
+        "description": "A message prompting the user to enter the total quantity of a product"
+    },
+    "productminimumquantity": "Product Minimum Quantity",
+    "@productminimumquantity": {
+        "description": "A label for an input field where the user enters the minimum allowed quantity of a product"
+    },
+    "pleaseproductminimumquantity": "Please enter the minimum allowed quantity",
+    "@pleaseproductminimumquantity": {
+        "description": "A message prompting the user to enter the minimum allowed quantity of a product"
+    },
+    "productprice": "Product Price",
+    "@productprice": {
+        "description": "A label for an input field where the user enters the price of a product"
+    },
+    "pleaseproductprice": "Please enter a product price",
+    "@pleaseproductprice": {
+        "description": "A message prompting the user to enter a product price"
+    },
+    "productdescription": "Product Description",
+    "@productdescription": {
+        "description": "A label for an input field where the user enters a description of a product"
+    },
+    "pleaseproductdescription": "Please enter a product description",
+    "@pleaseproductdescription": {
+        "description": "A message prompting the user to enter a description of a product"
+    },
+    "maincat": "Select the main category",
+    "@maincat": {
+        "description": "A label for a dropdown menu where the user selects the main category of a product"
+    },
+    "subcat": "Select the subcategories",
+    "@subcat": {
+        "description": "A label for a section where the user can select the subcategories of a product"
+    },
+    "selectsubcat": "Select the sub category",
+    "@selectsubcat": {
+        "description": "Label for the field where a single sub category of a product is selected"
+    },
+    "colors": "Colors",
+    "@colors": {
+        "description": "Label for the field where the colors of a product are selected"
+    },
+    "size": "Size",
+    "@size": {
+        "description": "List of available sizes for a product"
+    },
+    "mainimage": "Add the main Image",
+    "@mainimage": {
+        "description": "Prompt to add the main image of a product"
+    },
+    "images": "Add Images",
+    "@images": {
+        "description": "Prompt to add additional images of a product"
+    },
+    "verify": "verify",
+    "@verify": {
+        "description": "Button to verify email address"
+    },
+    "emailverificationsent": "we have send to you an email verification, please check your inbox!",
+    "@emailverificationsent": {
+        "description": "Message displayed after an email verification is sent"
+    },
+    "emailnotrecieved": "if you have not receive an email verification, press this button",
+    "@emailnotrecieved": {
+        "description": "Prompt to resend email verification if it was not received"
+    },
+    "sendemail": "send verification email",
+    "@sendemail": {
+        "description": "Button to resend email verification"
+    },
+    "restart": "restart",
+    "@restart": {
+        "description": "Button to restart a process or form"
+    },
+    "login": "login",
+    "@login": {
+        "description": "Button to log in to an account"
+    },
+    "enteremail": "Enter your email",
+    "@enteremail": {
+        "description": "Prompt to enter email address"
+    },
+    "enterpassword": "Enter your password",
+    "@enterpassword": {
+        "description": "Prompt to enter password"
+    },
+    "usernotfound": "user not found",
+    "@usernotfound": {
+        "description": "Error message when a user is not found"
+    },
+    "wrongpassword": "wrong password",
+    "@wrongpassword": {
+        "description": "Error message when the entered password is incorrect"
+    },
+    "authenticationerror": "Authentication Error",
+    "@authenticationerror": {
+        "description": "Error message when there is an authentication issue"
+    },
+    "registernow": "Not registerd yet? register now.",
+    "@registernow": {
+        "description": "Prompt to register for a new account"
+    },
+    "register": "register",
+    "@register": {
+        "description": "Button to register for a new account"
+    },
+    "enterfirstname": "enter your First name",
+    "@enterfirstname": {
+        "description": "Prompt to enter first name"
+    },
+    "enterlastname": "Enter your last name",
+    "@enterlastname": {
+        "description": "Prompt to enter last name"
+    },
+    "enterphonenumber": "Enter your phone number",
+    "@enterphonenumber": {
+        "description": "Prompt to enter phone number"
+    },
+    "weakpassword": "your password is weak",
+    "@weakpassword": {
+        "description": "Error message when the entered password is weak"
+    },
+    "emailexists": "the email already exists",
+    "@emailexists": {
+        "description": "Error message when the entered email address already exists in the system"
+    },
+    "invalidemail": "invalid email",
+    "@invalidemail": {
+        "description": "Error message when the entered email address is invalid"
+    },
+    "registerfaild": "Registration failed",
+    "@registerfaild": {
+        "description": "Error message when registration fails for any reason"
+    },
+    "loginnow": "have an account? login here",
+    "@loginnow": {
+        "description": "Prompt to log in to an existing account"
+    },
+    "home": "home",
+    "@home": {
+        "description": "Navigation button to go to the home page"
+    },
+    "cart": "cart",
+    "@cart": {
+        "description": "Navigation button to go to the cart page"
+    },
+    "explore": "explore",
+    "@explore": {
+        "description": "Navigation button to go to the explore page"
+    },
+    "profile": "profile",
+    "@profile": {
+        "description": "Navigation button to go to the profile page"
+    },
+    "youdonthaveproducts": "You don't have products yet",
+    "@youdonthaveproducts": {
+        "description": "message that you don't have products yet"
+    },
+    "totalprice": "Total price: ",
+    "@totalprice": {
+        "description": "lable for total price"
+    },
+    "quantity": "Quantity",
+    "@quantity": {
+        "description": "lable for quantity"
+    },
+    "addvouchercode": "Add voucher code",
+    "@addvouchercode": {
+        "description": "button to add voucher code"
+    },
+    "checkout": "Check Out",
+    "@checkout": {
+        "description": "button for the checkout"
+    },
+    "categories": "Categories",
+    "@categories": {
+        "description": "categories name"
+    },
+    "popularproducts": "Popular Products",
+    "@popularproducts": {
+        "description": "lable for the popular products section"
+    },
+    "searchproduct": "Search product",
+    "@searchproduct": {
+        "description": "hint message for the search bar"
+    },
+    "seemore": "See More",
+    "@seemore": {
+        "description": "see more button"
+    },
+    "specialforyou": "Special for you",
+    "@specialforyou": {
+        "description": "lable for the special offers"
+    },
+    "addtocart": "Add To Cart",
+    "@addtocart": {
+        "description": "button to add product to the cart"
+    },
+    "myaccount": "My Account",
+    "@myaccount": {
+        "description": "button to go to my account"
+    },
+    "notifications":"Notifications",
+    "@notifications": {
+        "description": "button to go to notifications"
+    },
+    "settings": "Settings",
+    "@settings": {
+        "description": "button to go to settings"
+    },
+    "helpcenter": "Help Center",
+    "@helpcenter": {
+        "description": "button to go to helpcenter"
+    },
+    "logout": "Log Out",
+    "@logout": {
+        "description": "button to go to logout"
+    },
+    "surelogout": "are sure you want to log out?",
+    "@surelogout": {
+        "description": "button to log out"
+    },
+    "cancel": "cancel",
+    "@cancel": {
+        "description": "button to cancel"
+    }
+}

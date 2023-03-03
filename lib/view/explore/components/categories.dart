@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/constants/routes.dart';
+import 'package:jomla/view/subcat_details/subcat_details_view.dart';
 import '../../../size_config.dart';
 import 'section_title.dart';
 import '../../var_lib.dart' as vars;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 List mainCategories = vars.get_mainCategoryOptionEX();
 Map<int, String> cateroriesInfo = vars.get_cateroriesInfo();
@@ -15,9 +18,9 @@ class Categories extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const Center(
+        Center(
           child: SectionTitle(
-            title: "Categories",
+            title: AppLocalizations.of(context)!.categories,
           ),
         ),
         SizedBox(height: getProportionateScreenWidth(20)),
@@ -42,14 +45,18 @@ class Categories extends StatelessWidget {
                           image: cateroriesInfo[index * 2]!,
                           category: mainCategories[index * 2],
                           numOfBrands: 18,
-                          press: () {},
+                          press: () => Navigator.pushNamed(context, subcatRout,
+                              arguments: MainCatKey(
+                                  maincatvalue: mainCategories[index * 2])),
                         ),
                       if (index * 2 + 1 < mainCategories.length)
                         SpecialOfferCard(
                           image: cateroriesInfo[index * 2 + 1]!,
                           category: mainCategories[index * 2 + 1],
                           numOfBrands: 18,
-                          press: () {},
+                          press: () => Navigator.pushNamed(context, subcatRout,
+                              arguments: MainCatKey(
+                                  maincatvalue: mainCategories[index * 2 + 1])),
                         ),
                     ],
                   ),

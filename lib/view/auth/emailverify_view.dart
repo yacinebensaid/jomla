@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_service.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class VerifyEmailView extends StatefulWidget {
   const VerifyEmailView({super.key});
@@ -13,17 +14,15 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('verify')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.verify)),
       body: Column(children: [
-        const Text(
-            'we have send to you an email verification, please check your inbox!'),
-        const Text(
-            'if you have not receive an email verification, press this button'),
+        Text(AppLocalizations.of(context)!.emailverificationsent),
+        Text(AppLocalizations.of(context)!.emailnotrecieved),
         TextButton(
           onPressed: () async {
             await AuthService.firebase().sendEmailVerification();
           },
-          child: const Text('send verification email'),
+          child: Text(AppLocalizations.of(context)!.sendemail),
         ),
         TextButton(
             onPressed: () async {
@@ -31,7 +30,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               Navigator.of(context)
                   .pushNamedAndRemoveUntil(registerRout, (route) => false);
             },
-            child: const Text('restart')),
+            child: Text(AppLocalizations.of(context)!.restart)),
       ]),
     );
   }

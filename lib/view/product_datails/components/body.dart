@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:jomla/view/product_datails/components/default_btn.dart';
+import '../../../services/crud/PCF_service.dart';
 import '../../../size_config.dart';
 import '../../products_card/product.dart';
-import 'color_dots.dart';
-import 'default_btn.dart';
 import 'product_description.dart';
 import 'top_rounded_container.dart';
 import 'product_images.dart';
@@ -15,7 +14,7 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return ListView(
       children: [
         ProductImages(product: product),
         TopRoundedContainer(
@@ -24,7 +23,6 @@ class Body extends StatelessWidget {
             children: [
               ProductDescription(
                 product: product,
-                pressOnSeeMore: () {},
               ),
             ],
           ),

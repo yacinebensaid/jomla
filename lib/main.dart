@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/view/auth/emailverify_view.dart';
@@ -10,6 +11,9 @@ import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
 import 'package:jomla/view/home/homepage_view.dart';
 import 'package:jomla/view/bottombar/staticpage_view.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
+import 'package:jomla/view/subcat_details/subcat_details_view.dart';
+import 'l10n/l10n.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() {
   //flutter must initialize the user creation part before clicking on register
@@ -30,8 +34,16 @@ void main() {
         saleRout: (context) => const SalePage(),
         usingJomlaRout: (context) => const UsingJomlaPage(),
         tipsRout: (context) => const TipsPage(),
-        detailsRout: (context) => DetailsScreen(),
+        detailsRout: (context) => const DetailsScreen(),
+        subcatRout: (context) => const SubcatView(),
       },
+      supportedLocales: L10n.all,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
     ),
   );
 }

@@ -9,3 +9,4 @@ const tipsRout = '/tips/';
 ////
 const categoriesRout = '/categories/';
 const detailsRout = '/details/';
+const subcatRout = '/subcat-details/';

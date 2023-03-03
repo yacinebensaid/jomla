@@ -22,6 +22,7 @@ class DefaultButton extends StatelessWidget {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           foregroundColor: kPrimaryColor,
+          backgroundColor: kPrimaryColor,
         ),
         onPressed: press,
         child: Text(

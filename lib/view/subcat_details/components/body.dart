@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/view/home/componants/popular_product.dart';
-import 'special_offers.dart';
-
+import 'package:jomla/view/subcat_details/components/card_rows.dart';
 import '../../../size_config.dart';
-import 'categories_scroll.dart';
-import 'discount_banner.dart';
-import 'home_header.dart';
+import 'subcat_header.dart';
 
 class Body extends StatelessWidget {
-  const Body({super.key});
+  final String maincat;
+
+  const Body({Key? key, required this.maincat}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,12 +17,7 @@ class Body extends StatelessWidget {
             SizedBox(height: getProportionateScreenHeight(20)),
             const HomeHeader(),
             SizedBox(height: getProportionateScreenHeight(5)),
-            const HomeBanner(),
-            const Categories(),
-            const SpecialOffers(),
-            SizedBox(height: getProportionateScreenWidth(30)),
-            PopularProducts(),
-            SizedBox(height: getProportionateScreenWidth(30)),
+            CardRows(maincat: maincat)
           ],
         ),
       ),

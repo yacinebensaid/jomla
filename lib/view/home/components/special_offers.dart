@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../size_config.dart';
 import 'section_title.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SpecialOffers extends StatelessWidget {
   const SpecialOffers({
@@ -16,7 +17,7 @@ class SpecialOffers extends StatelessWidget {
           padding:
               EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
           child: SectionTitle(
-            title: "Special for you",
+            title: AppLocalizations.of(context)!.specialforyou,
             press: () {},
           ),
         ),
