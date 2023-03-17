@@ -16,6 +16,7 @@ class Body extends StatelessWidget {
             const HomeHeader(),
             SizedBox(height: getProportionateScreenHeight(5)),
             const Categories(),
+            SizedBox(height: getProportionateScreenHeight(80)),
           ],
         ),
       ),

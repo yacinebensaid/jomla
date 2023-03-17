@@ -27,6 +27,28 @@ class _BodyState extends State<Body> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              AppLocalizations.of(context)!.cart,
+              style: TextStyle(color: Colors.black),
+            ),
+            FutureBuilder<List>(
+              future: populateDemoCarts(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text(
+                    "number of items: ${snapshot.data!.length}",
+                    style: Theme.of(context).textTheme.caption,
+                  );
+                } else {
+                  return const SizedBox();
+                }
+              },
+            ),
+          ],
+        ),
         FutureBuilder<List<Cart>>(
           future: productsGetter(),
           builder: (context, snapshot) {

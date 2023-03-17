@@ -109,22 +109,43 @@ class UserPCFService {
 ////////////////////////////////////////////// needs work ///////////////
   ///
   ///
+  static Future<List> getFav() async {
+    List favData = [];
+    QuerySnapshot cartQuery = await FirebaseFirestore.instance
+        .collection('UserPCF')
+        .doc(userUID)
+        .collection('favourit')
+        .get();
+    cartQuery.docs.forEach((doc) {
+      Map<String, String> item = {
+        'reference': doc.get('reference'),
+      };
+      favData.add(item);
+    });
+    if (favData.isEmpty) {
+      return ['No products'];
+    } else {
+      return favData;
+    }
+  }
+
   static Future<Object> searchInFav(String reference) async {
-    List products = [];
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('UserPCF')
         .doc(userUID)
         .collection('favourit')
         .where('reference', isEqualTo: reference)
         .get();
-    snapshot.docs.forEach((element) {
-      products.add(element.data());
-    });
-    if (products.isEmpty) {
-      return ['product does not exist'];
-    } else {
-      return products;
-    }
+    return snapshot.docs.isNotEmpty;
+  }
+
+  static delete_from_fav(String reference) {
+    FirebaseFirestore.instance
+        .collection('UserPCF')
+        .doc(userUID)
+        .collection('favourit')
+        .doc(reference)
+        .delete();
   }
 
   static Future<Object> getPurchased() async {

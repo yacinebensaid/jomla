@@ -10,10 +10,11 @@ List<String> categories = [
   'Beauty',
   'More...'
 ];
+
 Map<int, String> indexPages = {};
 
 class Categories extends StatelessWidget {
-  const Categories({super.key});
+  const Categories({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,18 +25,30 @@ class Categories extends StatelessWidget {
         itemCount: categories.length,
         itemBuilder: (BuildContext context, int index) {
           return Container(
-              padding: const EdgeInsets.all(5.0),
-              child: InkWell(
-                onTap: (() => Navigator.of(context).pushNamedAndRemoveUntil(
-                    ////will be passing the name of category not the rout
-                    indexPages[index]!,
-                    (route) => false)),
-                child: Chip(
-                  label: Text(
-                    categories[index],
+            padding: const EdgeInsets.all(5.0),
+            child: InkWell(
+              onTap: (() => Navigator.of(context).pushNamedAndRemoveUntil(
+                  indexPages[index]!, (route) => false)),
+              child: Chip(
+                label: Text(
+                  categories[index],
+                ),
+                backgroundColor: Color(0xFF0074CC),
+                labelStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 15.3,
+                  fontWeight: FontWeight.bold,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(7),
+                  side: BorderSide(
+                    color: Color.fromARGB(255, 117, 218, 255),
+                    width: 0.9,
                   ),
                 ),
-              ));
+              ),
+            ),
+          );
         },
       ),
     );

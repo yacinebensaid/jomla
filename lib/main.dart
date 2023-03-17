@@ -9,11 +9,12 @@ import 'package:jomla/view/banner_links/sale/sale.dart';
 import 'package:jomla/view/banner_links/tips/tips.dart';
 import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
 import 'package:jomla/view/home/homepage_view.dart';
-import 'package:jomla/view/bottombar/staticpage_view.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/subcat_details/subcat_details_view.dart';
 import 'l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
+import 'view/entrypoint/entrypoint.dart';
 
 void main() {
   //flutter must initialize the user creation part before clicking on register
@@ -22,15 +23,13 @@ void main() {
   runApp(
     MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(),
       home: const HomePage(),
       routes: {
         loginRout: (context) => const LoginView(),
         registerRout: (context) => const RegistationPage(),
         verifyemailRout: (context) => const VerifyEmailView(),
-        homepageRout: (context) => const HomeView(),
+        enterypointRout: (context) => const EntryPoint(),
         saleRout: (context) => const SalePage(),
         usingJomlaRout: (context) => const UsingJomlaPage(),
         tipsRout: (context) => const TipsPage(),
@@ -68,7 +67,7 @@ class HomePage extends StatelessWidget {
             // redirecting the user based on his account status
             if (user != null) {
               if (user.isEmailVerified) {
-                return const StaticPage();
+                return const EntryPoint();
               } else {
                 return const VerifyEmailView();
               }

@@ -71,6 +71,7 @@ class CheckoutCard extends StatelessWidget {
                 ),
               ),
             ),
+            SizedBox(height: getProportionateScreenHeight(70)),
           ],
         ),
       ),

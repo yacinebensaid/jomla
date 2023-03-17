@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
+import 'package:jomla/view/products_card/body.dart';
 
 import '../../../constants/routes.dart';
 import '../../../size_config.dart';
 import '../../products_card/product.dart';
-import '../../products_card/body.dart';
 import 'section_title.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -12,7 +12,7 @@ class PopularProducts extends StatelessWidget {
   const PopularProducts({super.key});
 
   Future<List<dynamic>> productGetter() async {
-    List<dynamic> products = await getProducts();
+    List<dynamic> products = await getProductsForCart();
     return products;
   }
 
@@ -64,7 +64,7 @@ class PopularProducts extends StatelessWidget {
           return Text("${snapshot.error}");
         }
 
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       },
     );
   }

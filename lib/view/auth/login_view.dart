@@ -89,7 +89,7 @@ class _LoginViewState extends State<LoginView> {
                   //user email is verified
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).pushNamedAndRemoveUntil(
-                    homepageRout,
+                    enterypointRout,
                     (route) => false,
                   );
                   //////////////////////////////////////////////////

@@ -22,7 +22,7 @@ class HomeBanner extends StatelessWidget {
         width: double.infinity,
         margin: EdgeInsets.all(getProportionateScreenWidth(0)),
         padding: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(20),
+          horizontal: getProportionateScreenWidth(0),
           vertical: getProportionateScreenWidth(15),
         ),
         child: CarouselSlider.builder(
@@ -43,7 +43,6 @@ Map<int, String> indexPages = {
 };
 
 Widget buildImage(BuildContext context, String image, int index) => Container(
-    margin: const EdgeInsets.symmetric(horizontal: 10),
     color: Colors.grey,
     child: InkWell(
       onTap: () {

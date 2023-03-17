@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/product_service.dart';
 import '../../../constants/constants.dart';
+import '../../../services/crud/userdata_service.dart';
 import '../../../size_config.dart';
 import '../../../utilities/show_error_dialog.dart';
 import 'main_category.dart';
@@ -627,6 +629,14 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                   ),
                 ),
+                ElevatedButton(
+                  child: Text('test'),
+                  onPressed: () async {
+                    final data = await UserPCFService.getFav();
+                    print(data);
+                  },
+                ),
+                SizedBox(height: getProportionateScreenHeight(80)),
               ]),
             ),
           ),

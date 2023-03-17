@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-
 import '../../../size_config.dart';
-import 'search_field.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
@@ -10,16 +8,25 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding:
-          EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          SearchField(
-            key: null,
-          ),
-        ],
+    return Container(
+      color: const Color(0xFF00235B),
+      height: 60,
+      child: Padding(
+        padding:
+            EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: SizedBox(
+                height: getProportionateScreenHeight(37),
+                child: Image.asset(
+                    'assets/images/jomla logo1 no-slogon croped.png',
+                    fit: BoxFit.contain),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -1,6 +1,5 @@
+import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/product_service.dart';
-
-import '../../services/crud/PCF_service.dart';
 
 class Product {
   final String description,
@@ -12,13 +11,14 @@ class Product {
       sub_category;
   final int id, available_quantity, minimum_quantity;
   final List sizes, colors, photos;
-  final bool isFavourite, isPopular;
+  late final bool isFavourite;
+  final bool isPopular;
   final double rating;
 
   Product({
     required this.description,
     required this.reference,
-    this.isFavourite = false,
+    required this.isFavourite,
     this.isPopular = true,
     required this.product_name,
     required this.main_photo,
@@ -37,7 +37,7 @@ class Product {
 
 // Our demo Products
 
-Future<List> getProducts() async {
+Future<List> getProductsForCart() async {
   List productsRetrieving =
       await ProductService.searchProductByChoice('offers', 'Free Shipping');
   List<Product> products = [];
@@ -57,6 +57,8 @@ Future<List> getProducts() async {
         sizes: product['sizes'],
         colors: product['colors'],
         photos: product['photos'],
+        isFavourite:
+            await UserPCFService.searchInFav(product['reference']) as bool,
         rating: 4.5);
     products.add(productTem);
     i = i + 1;
@@ -84,6 +86,8 @@ Future<List> getProductsBySubCat(String subcat) async {
         sizes: product['sizes'],
         colors: product['colors'],
         photos: product['photos'],
+        isFavourite:
+            await UserPCFService.searchInFav(product['reference']) as bool,
         rating: 4.5);
     products.add(productTem);
     i = i + 1;
@@ -110,6 +114,8 @@ Future getProductsByReference(String reference) async {
         sizes: product['sizes'],
         colors: product['colors'],
         photos: product['photos'],
+        isFavourite:
+            await UserPCFService.searchInFav(product['reference']) as bool,
         rating: 4.5);
     return productTem;
   }
@@ -169,4 +175,48 @@ class ShoppingCart {
     totalCartPrice = cartPrice;
     return products;
   }
+}
+
+Future<List> getProductsForFavourite() async {
+  Future<List> productRefGetter() async {
+    List products = await UserPCFService.getFav();
+    return products;
+  }
+
+  Future<List> searchingForProducts() async {
+    List productsRetrieving = [];
+    for (final product in await productRefGetter()) {
+      productsRetrieving.add(await ProductService.searchProductByChoice(
+          'reference', product['reference']));
+    }
+    print(productsRetrieving);
+    return productsRetrieving;
+  }
+
+  List<Product> products = [];
+  for (List prod in await searchingForProducts()) {
+    int i = 0;
+    for (Map product in prod) {
+      Product productTem = Product(
+          id: i,
+          product_name: product['product_name'],
+          reference: product['reference'],
+          description: product['description'],
+          main_photo: product['main_photo'],
+          price: product['price'],
+          main_category: product['main_category'],
+          sub_category: product['sub_category'],
+          available_quantity: int.parse(product['available_quantity']),
+          minimum_quantity: int.parse(product['minimum_quantity']),
+          sizes: product['sizes'],
+          colors: product['colors'],
+          photos: product['photos'],
+          isFavourite:
+              await UserPCFService.searchInFav(product['reference']) as bool,
+          rating: 4.5);
+      products.add(productTem);
+      i = i + 1;
+    }
+  }
+  return products;
 }

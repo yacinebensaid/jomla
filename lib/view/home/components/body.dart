@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jomla/view/home/components/popular_product.dart';
+import 'search_field.dart';
 import 'special_offers.dart';
 
 import '../../../size_config.dart';
 import 'categories_scroll.dart';
 import 'discount_banner.dart';
-import 'home_header.dart';
 
 class Body extends StatelessWidget {
   const Body({super.key});
@@ -16,15 +16,17 @@ class Body extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            SizedBox(height: getProportionateScreenHeight(20)),
-            const HomeHeader(),
-            SizedBox(height: getProportionateScreenHeight(5)),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child: SearchField(),
+            ),
+            SizedBox(height: getProportionateScreenHeight(15)),
             const HomeBanner(),
             const Categories(),
-            const SpecialOffers(),
-            SizedBox(height: getProportionateScreenWidth(30)),
             const PopularProducts(),
-            SizedBox(height: getProportionateScreenWidth(30)),
+            SizedBox(height: getProportionateScreenHeight(30)),
+            const SpecialOffers(),
+            SizedBox(height: getProportionateScreenHeight(90)),
           ],
         ),
       ),

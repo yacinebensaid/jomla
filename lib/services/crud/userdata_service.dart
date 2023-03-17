@@ -10,10 +10,23 @@ class DataService {
     required String phoneNumber,
   }) =>
       FirebaseFirestore.instance.collection('UserData').doc(userUID).set({
-        'first name': firstName,
-        'last name': lastName,
-        'phone number': phoneNumber,
+        'first_name': firstName,
+        'last_name': lastName,
+        'phone_number': phoneNumber,
         'role': 'user',
         'adminType': null,
       });
+
+  static Future<Map<String, dynamic>?> getUserData() async {
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('UserData')
+        .doc(userUID)
+        .get();
+
+    if (!docSnapshot.exists) {
+      return null; // User data not found in Firestore
+    }
+
+    return docSnapshot.data();
+  }
 }

@@ -15,12 +15,12 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return const Scaffold(
-      body: Body(),
+    return Scaffold(
+      body: const Body(),
+      backgroundColor: const Color.fromARGB(255, 240, 240, 240),
     );
   }
 }
 
 // we gonna make an alert popup to confirm the logout
 //the buildcontext is a function for building widgits, and context is a pre declared widgits
-

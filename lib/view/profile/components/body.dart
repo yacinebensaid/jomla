@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../constants/routes.dart';
-import '../../../enums/actions_menu.dart';
 import '../../../services/auth/auth_service.dart';
+import '../../../size_config.dart';
 import 'profile_menu.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -13,7 +13,7 @@ class Body extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: [
-          SizedBox(height: 20),
+          const SizedBox(height: 20),
           ProfileMenu(
             text: AppLocalizations.of(context)!.myaccount,
             icon: "assets/icons/User Icon.svg",
@@ -47,6 +47,7 @@ class Body extends StatelessWidget {
               }
             },
           ),
+          SizedBox(height: getProportionateScreenHeight(70)),
         ],
       ),
     );

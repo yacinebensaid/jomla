@@ -16,9 +16,10 @@ class HomeHeader extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
-          SearchField(
-            key: null,
-          ),
+          SizedBox(
+            width: 200, // set a specific width for the SearchField
+            child: SearchField(),
+          )
         ],
       ),
     );
