@@ -67,13 +67,12 @@ class ProductService {
     }
   }
 
-  static Future<List> searchProductByTwoChoices(
-      String choice1, String value1, String choice2, String value2) async {
+  static Future<List> searchProductByChoice2(
+      String choice, String value) async {
     List products = [];
     QuerySnapshot snapshot = await FirebaseFirestore.instance
         .collection('ProductData')
-        .where(choice1, isEqualTo: value1)
-        .where(choice2, isEqualTo: value2)
+        .where(choice, arrayContains: value)
         .get();
     snapshot.docs.forEach((element) {
       products.add(element.data());
@@ -84,4 +83,87 @@ class ProductService {
       return products;
     }
   }
+
+  static Future<List> searchProduct(String value) async {
+    List productsByName = await searchProductByChoice2('nameSearch', value);
+    List productsByMainCat =
+        await searchProductByChoice2('main_category_search', value);
+    List productsBySubCat =
+        await searchProductByChoice2('sub_category_search', value);
+    List products = productsByName + productsByMainCat + productsBySubCat;
+    if (products.isEmpty) {
+      return ['product does not exist'];
+    } else {
+      return products;
+    }
+  }
+
+  static Future<List> getAllProducts() async {
+    List products = [];
+    QuerySnapshot snapshot =
+        await FirebaseFirestore.instance.collection('ProductData').get();
+    snapshot.docs.forEach((element) {
+      products.add(element.data());
+    });
+    if (products.isEmpty) {
+      return ['product does not exist'];
+    } else {
+      return products;
+    }
+  }
 }
+
+/*
+Future<List<Map<String, dynamic>>> searchProducts(String searchText) async {
+  QuerySnapshot<Map<String, dynamic>> querySnapshot =
+      await FirebaseFirestore.instance.collection('ProductData').get();
+  List<Map<String, dynamic>> products = [];
+
+  querySnapshot.docs.forEach((doc) {
+    if (doc['product_name'].toLowerCase().contains(searchText.toLowerCase()) ||
+        doc['reference'].toLowerCase().contains(searchText.toLowerCase()) ||
+        doc['description'].toLowerCase().contains(searchText.toLowerCase())) {
+      products.add(doc.data());
+    }
+  });
+
+  return products;
+}
+*/ 
+
+
+
+
+
+
+/* 
+
+searchindex
+
+
+
+Future<List<Map<String, dynamic>>> searchProducts(String searchText) async {
+  QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance
+      .collection('searchIndex')
+      .where('searchableData', isGreaterThanOrEqualTo: searchText.toLowerCase())
+      .where('searchableData', isLessThanOrEqualTo: searchText.toLowerCase() + '\uf8ff')
+      .get();
+
+  List<Map<String, dynamic>> products = [];
+
+  querySnapshot.docs.forEach((doc) {
+    String productId = doc.id;
+    FirebaseFirestore.instance
+        .collection('ProductData')
+        .doc(productId)
+        .get()
+        .then((productSnapshot) {
+      if (productSnapshot.exists) {
+        products.add(productSnapshot.data()!);
+      }
+    });
+  });
+
+  return products;
+}
+*/

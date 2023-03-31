@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jomla/services/crud/pcf_service.dart';
 
 import '../../../constants/constants.dart';
 import '../../../size_config.dart';
@@ -67,7 +68,9 @@ class CheckoutCard extends StatelessWidget {
                     horizontal: getProportionateScreenWidth(10)),
                 child: DefaultButton(
                   text: AppLocalizations.of(context)!.checkout,
-                  press: () {},
+                  press: () {
+                    UserPCFService.moveItemsToPending();
+                  },
                 ),
               ),
             ),

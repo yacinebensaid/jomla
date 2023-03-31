@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jomla/constants/routes.dart';
@@ -8,50 +9,65 @@ import 'package:jomla/view/auth/register_view.dart';
 import 'package:jomla/view/banner_links/sale/sale.dart';
 import 'package:jomla/view/banner_links/tips/tips.dart';
 import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
-import 'package:jomla/view/home/homepage_view.dart';
+import 'package:jomla/view/entrypoint/entrypoint.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/subcat_details/subcat_details_view.dart';
 import 'l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
-import 'view/entrypoint/entrypoint.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   //flutter must initialize the user creation part before clicking on register
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(),
-      home: const HomePage(),
-      routes: {
-        loginRout: (context) => const LoginView(),
-        registerRout: (context) => const RegistationPage(),
-        verifyemailRout: (context) => const VerifyEmailView(),
-        enterypointRout: (context) => const EntryPoint(),
-        saleRout: (context) => const SalePage(),
-        usingJomlaRout: (context) => const UsingJomlaPage(),
-        tipsRout: (context) => const TipsPage(),
-        detailsRout: (context) => const DetailsScreen(),
-        subcatRout: (context) => const SubcatView(),
-      },
-      supportedLocales: L10n.all,
-      localizationsDelegates: const [
-        AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ],
-    ),
-  );
+  runApp(const MyApp());
 }
 
-// we don't want to have intializiation in every page, we want to initialize eveything just one time from here
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return ScreenUtilInit(
+        designSize: const Size(392.72727272727275, 802.9090909090909),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (context, child) {
+          return MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(),
+            home: const HomePage(),
+            routes: {
+              loginRout: (context) => const LoginView(),
+              registerRout: (context) => const RegistationPage(),
+              verifyemailRout: (context) => const VerifyEmailView(),
+              enterypointRout: (context) => const EntryPoint(),
+              saleRout: (context) => const SalePage(),
+              usingJomlaRout: (context) => const UsingJomlaPage(),
+              tipsRout: (context) => const TipsPage(),
+              detailsRout: (context) => const DetailsScreen(),
+              subcatRout: (context) => const SubcatView(),
+            },
+            supportedLocales: L10n.all,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+          );
+        });
+  }
+}
 
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
@@ -81,8 +97,3 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-
-
-// flutter pub add sqflite
-//flutter pub add path_provider
-// flutter pub add path_provider 

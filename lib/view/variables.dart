@@ -14,10 +14,9 @@ get_sizeOption() {
 
 get_offerOption() {
   return [
-    "Discounts",
+    "On Sale",
     "Free Shipping",
-    "Buy One Get One",
-    "Gift with Purchase"
+    "Free Storage",
   ];
 }
 

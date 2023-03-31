@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
 
 import '../../../size_config.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  CustomAppBar({Key? key})
-      : preferredSize = Size.fromHeight(kToolbarHeight),
+  final VoidCallback onBackButtonPressed;
+  final String userUID;
+  const CustomAppBar({
+    Key? key,
+    required this.onBackButtonPressed,
+    required this.userUID,
+  })  : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
   @override
@@ -25,13 +31,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               width: getProportionateScreenWidth(40),
               child: TextButton(
                 style: TextButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(60),
-                  ),
                   foregroundColor: Colors.white,
                   padding: EdgeInsets.zero,
                 ),
-                onPressed: () => Navigator.pop(context),
+                onPressed: onBackButtonPressed,
                 child: SvgPicture.asset(
                   "assets/icons/Back ICon.svg",
                   height: 15,
@@ -39,28 +42,39 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             ),
             Spacer(),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    "4.5",
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  SvgPicture.asset("assets/icons/Star Icon.svg"),
-                ],
-              ),
-            )
+            userDataContainer(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget userDataContainer() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: FutureBuilder(
+        future: DataService.getUserDataForOrder(userUID),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const Text('Error occurred while fetching user data');
+          }
+          if (!snapshot.hasData) {
+            return const CircularProgressIndicator();
+          }
+          final userData = snapshot.data as Map<String, dynamic>;
+          if (userData['role'] == 'admin') {
+            return IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.edit),
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
       ),
     );
   }

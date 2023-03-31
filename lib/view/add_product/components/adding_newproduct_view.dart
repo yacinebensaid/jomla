@@ -47,33 +47,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
   final ScrollController _scrollController = ScrollController();
 
-  final List _productImages = [];
-  File? image;
-  Future pickImage() async {
-    try {
-      final XFile? image =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      setState(() => _productImages.add(image.path));
-    } on PlatformException catch (e) {
-      // ignore: avoid_print
-      print('faild to upload photo:$e');
-    }
-  }
-
   String _productMainImage = '';
-  File? mainImage;
-  Future pickMainImage() async {
-    try {
-      final XFile? image =
-          await ImagePicker().pickImage(source: ImageSource.gallery);
-      if (image == null) return;
-      setState(() => _productMainImage = image.path);
-    } on PlatformException catch (e) {
-      // ignore: avoid_print
-      print('faild to upload photo:$e');
-    }
-  }
 
   @override
   void initState() {
@@ -140,506 +114,373 @@ class _AddProductPageState extends State<AddProductPage> {
     }
   }
 
+  //////////////////////////////////
+  List<String> _productPhotos = [];
+
+  void _addTextField() {
+    setState(() {
+      _productPhotos = [..._productPhotos, ""];
+    });
+  }
+
+  void _removeTextField(int index) {
+    setState(() {
+      _productPhotos = List.from(_productPhotos)..removeAt(index);
+    });
+  }
+
+  void _updateTextFieldValue(int index, String value) {
+    setState(() {
+      _productPhotos[index] = value;
+    });
+  }
+  //////////////////////////////////
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: Text(AppLocalizations.of(context)!.addproduct),
-          actions: <Widget>[
-            IconButton(
-                icon: const Icon(Icons.save),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState?.save();
-
-                    if (_mainCategory == '') {
-                      showErrorDialog(
-                          context, AppLocalizations.of(context)!.pleasemaincat);
-                    } else if (_selectedSubCategories == '') {
-                      showErrorDialog(
-                          context, AppLocalizations.of(context)!.pleasesubcat);
-                    } else {
-                      await showSucessDialog(
-                          context,
-                          'NOTE:',
-                          await ProductService.productExists(
-                              mainCategory: _mainCategory,
-                              reference: _productRefrence,
-                              productName: _productName,
-                              subCategory: _selectedSubCategories,
-                              availableQuantity: _availableQuantity,
-                              minimumQuantity: _minQuantity,
-                              sizes: _availableSizes,
-                              offers: _selectedOffers,
-                              price: _productPrice,
-                              colors: _availableColors,
-                              mainPhoto: _productMainImage,
-                              photos: _productImages,
-                              description: _productDescription)) as String;
-                    }
-                  }
-                }),
-          ],
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            controller: _scrollController,
-            child: Form(
-              key: _formKey,
-              child: Column(children: [
-                Container(
-                  width: SizeConfig.screenWidth * 0.95,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextFormField(
-                    // ignore: avoid_print
-                    onChanged: (value) => print(value),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(20),
-                          vertical: getProportionateScreenWidth(12)),
-                      labelText: AppLocalizations.of(context)!.productref,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return AppLocalizations.of(context)!.pleaseproductref;
-                      }
-                      return null;
-                    },
-                    onSaved: (value) => _productRefrence = value!,
-                  ),
-                ),
-                const Divider(
-                  height: 7,
-                ),
-                Container(
-                  width: SizeConfig.screenWidth * 0.95,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextFormField(
-                    // ignore: avoid_print
-                    onChanged: (value) => print(value),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(20),
-                          vertical: getProportionateScreenWidth(12)),
-                      labelText: AppLocalizations.of(context)!.productname,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return AppLocalizations.of(context)!.pleaseProductname;
-                      }
-                      return null;
-                    },
-                    onSaved: (value) => _productName = value!,
-                  ),
-                ),
-                const Divider(
-                  height: 7,
-                ),
-                Container(
-                  width: SizeConfig.screenWidth * 0.95,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextFormField(
-                    // ignore: avoid_print
-                    onChanged: (value) => print(value),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(20),
-                          vertical: getProportionateScreenWidth(12)),
-                      labelText:
-                          AppLocalizations.of(context)!.producttotlaquantity,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return AppLocalizations.of(context)!
-                            .pleaseproducttotlaquantity;
-                      }
-                      return null;
-                    },
-                    onSaved: (value) => _availableQuantity = value!,
-                  ),
-                ),
-                const Divider(
-                  height: 7,
-                ),
-                Container(
-                  width: SizeConfig.screenWidth * 0.95,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextFormField(
-                    // ignore: avoid_print
-                    onChanged: (value) => print(value),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(20),
-                          vertical: getProportionateScreenWidth(12)),
-                      labelText:
-                          AppLocalizations.of(context)!.productminimumquantity,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return AppLocalizations.of(context)!
-                            .pleaseproductminimumquantity;
-                      }
-                      return null;
-                    },
-                    onSaved: (value) => _minQuantity = value!,
-                  ),
-                ),
-                const Divider(
-                  height: 7,
-                ),
-                Container(
-                  width: SizeConfig.screenWidth * 0.95,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextFormField(
-                    // ignore: avoid_print
-                    onChanged: (value) => print(value),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(20),
-                          vertical: getProportionateScreenWidth(12)),
-                      labelText: AppLocalizations.of(context)!.productprice,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return AppLocalizations.of(context)!.pleaseproductprice;
-                      }
-                      return null;
-                    },
-                    onSaved: (value) => _productPrice = value!,
-                  ),
-                ),
-                const Divider(
-                  height: 7,
-                ),
-                Container(
-                  width: SizeConfig.screenWidth * 0.95,
-                  decoration: BoxDecoration(
-                    color: kSecondaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: TextFormField(
-                    // ignore: avoid_print
-                    onChanged: (value) => print(value),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: null,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(
-                          horizontal: getProportionateScreenWidth(20),
-                          vertical: getProportionateScreenWidth(12)),
-                      labelText:
-                          AppLocalizations.of(context)!.productdescription,
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                    ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return AppLocalizations.of(context)!
-                            .pleaseproductdescription;
-                      }
-                      return null;
-                    },
-                    onSaved: (value) => _productDescription = value!,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // use this button to open the multi-select dialog
-                      ElevatedButton(
-                        onPressed: _showMainCategory,
-                        child: Text(AppLocalizations.of(context)!.maincat),
-                      ),
-                      // display selected items
-                      Wrap(children: [
-                        _mainCategory != ''
-                            ? InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _mainCategory = '';
-                                    _selectedSubCategories = '';
-                                  });
-                                },
-                                child: Chip(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 8.0),
-                                  label: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Text(_mainCategory),
-                                      const Icon(Icons.clear),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : Container()
-                      ])
-                    ],
-                  ),
-                ),
-                ///////////////////////////////////////////////////////////////////////
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // use this button to open the multi-select dialog
-                      ElevatedButton(
-                        onPressed: _showSubCategories,
-                        child: Text(AppLocalizations.of(context)!.subcat),
-                      ),
-                      // display selected items
-                      _mainCategory != ''
-                          ? Wrap(children: [
-                              _selectedSubCategories != ''
-                                  ? InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          _selectedSubCategories = '';
-                                        });
-                                      },
-                                      child: Chip(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0, vertical: 8.0),
-                                        label: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: <Widget>[
-                                            Text(_selectedSubCategories),
-                                            const Icon(Icons.clear),
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  : Container()
-                            ])
-                          : Container()
-                    ],
-                  ),
-                ),
-                ///////////////////////////////
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      // use this button to open the multi-select dialog
-                      ElevatedButton(
-                        onPressed: _showOffers,
-                        child: Text(AppLocalizations.of(context)!.selectsubcat),
-                      ),
-                      // display selected items
-                      Wrap(children: [
-                        _selectedOffers != ''
-                            ? InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedOffers = '';
-                                  });
-                                },
-                                child: Chip(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0, vertical: 8.0),
-                                  label: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: <Widget>[
-                                      Text(_selectedOffers),
-                                      const Icon(Icons.clear),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            : Container()
-                      ])
-                    ],
-                  ),
-                ),
-                ///////////////////////////////
-
-                Card(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(AppLocalizations.of(context)!.colors),
-                      ),
-                      Wrap(
-                        children: List.generate(_colorOption.split(',').length,
-                            (int index) {
-                          return ChoiceChip(
-                            label: Text(_colorOption.split(',')[index]),
-                            selected: _colorsChecked[index],
-                            onSelected: (bool selected) {
-                              setState(() {
-                                _colorsChecked[index] = selected;
-                                if (selected) {
-                                  _availableColors
-                                      .add(_colorOption.split(',')[index]);
-                                } else {
-                                  _availableColors
-                                      .remove(_colorOption.split(',')[index]);
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-                Card(
-                  child: Column(
-                    children: [
-                      ListTile(
-                        title: Text(AppLocalizations.of(context)!.size),
-                      ),
-                      Wrap(
-                        children: List.generate(_sizeOption.split(',').length,
-                            (int index) {
-                          return ChoiceChip(
-                            label: Text(_sizeOption.split(',')[index]),
-                            selected: _sizesChecked[index],
-                            onSelected: (bool selected) {
-                              setState(() {
-                                _sizesChecked[index] = selected;
-                                if (selected) {
-                                  _availableSizes
-                                      .add(_sizeOption.split(',')[index]);
-                                } else {
-                                  _availableSizes
-                                      .remove(_sizeOption.split(',')[index]);
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ],
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    pickMainImage();
-                  },
-                  child: Text(AppLocalizations.of(context)!.mainimage),
-                ),
-                SizedBox(
-                  width: getProportionateScreenWidth(0),
-                  child: Card(
-                    child: ListView(
-                      shrinkWrap: true,
-                      controller: _scrollController,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              child: Image.file(
-                                File(_productMainImage),
-                                height: 160,
-                                width: 160,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _productMainImage = '';
-                                });
-                              },
-                              child: const Icon(
-                                Icons.remove_circle,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  child: Text(AppLocalizations.of(context)!.images),
-                  onPressed: () async {
-                    pickImage();
-                  },
-                ),
-                SizedBox(
-                  width: getProportionateScreenWidth(0),
-                  child: Card(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      controller: _scrollController,
-                      itemCount: _productImages.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Row(
-                          children: [
-                            SizedBox(
-                              child: Image.file(
-                                File(_productImages[index]),
-                                height: 160,
-                                width: 160,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _productImages.removeAt(index);
-                                });
-                              },
-                              child: const Icon(
-                                Icons.remove_circle,
-                                color: Colors.red,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                ),
-                ElevatedButton(
-                  child: Text('test'),
-                  onPressed: () async {
-                    final data = await UserPCFService.getFav();
-                    print(data);
-                  },
-                ),
-                SizedBox(height: getProportionateScreenHeight(80)),
-              ]),
+    List<Widget> _textFields = [];
+    for (int i = 0; i < _productPhotos.length; i++) {
+      _textFields.add(Row(
+        children: [
+          Expanded(
+            child: TextField(
+              onChanged: (value) {
+                _updateTextFieldValue(i, value);
+              },
+              decoration: InputDecoration(
+                labelText: "Field ${i + 1}",
+              ),
             ),
           ),
-        ));
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              _removeTextField(i);
+            },
+          ),
+        ],
+      ));
+    }
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: Text(AppLocalizations.of(context)!.addproduct),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.save),
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                _formKey.currentState?.save();
+
+                if (_mainCategory == '') {
+                  showErrorDialog(
+                      context, AppLocalizations.of(context)!.pleasemaincat);
+                } else if (_selectedSubCategories == '') {
+                  showErrorDialog(
+                      context, AppLocalizations.of(context)!.pleasesubcat);
+                } else {
+                  await showSucessDialog(
+                      context,
+                      'NOTE:',
+                      await ProductService.productExists(
+                        mainCategory: _mainCategory,
+                        reference: _productRefrence,
+                        productName: _productName,
+                        subCategory: _selectedSubCategories,
+                        availableQuantity: _availableQuantity,
+                        minimumQuantity: _minQuantity,
+                        sizes: _availableSizes,
+                        offers: _selectedOffers,
+                        price: _productPrice,
+                        colors: _availableColors,
+                        mainPhoto: _productMainImage,
+                        photos: _productPhotos,
+                        description: _productDescription,
+                      )) as String;
+                }
+              }
+            },
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          controller: _scrollController,
+          child: Form(
+            key: _formKey,
+            child: Column(children: [
+              _buildTextField(
+                AppLocalizations.of(context)!.productref,
+                AppLocalizations.of(context)!.pleaseproductref,
+                (value) => _productRefrence = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.productname,
+                AppLocalizations.of(context)!.pleaseProductname,
+                (value) => _productName = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.producttotlaquantity,
+                AppLocalizations.of(context)!.pleaseproducttotlaquantity,
+                (value) => _availableQuantity = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.productminimumquantity,
+                AppLocalizations.of(context)!.pleaseproductminimumquantity,
+                (value) => _minQuantity = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.productprice,
+                AppLocalizations.of(context)!.pleaseproductprice,
+                (value) => _productPrice = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.productdescription,
+                AppLocalizations.of(context)!.pleaseproductdescription,
+                (value) => _productDescription = value!,
+                TextInputType.multiline,
+                null,
+              ),
+              SizedBox(height: getProportionateScreenHeight(80)),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // use this button to open the multi-select dialog
+                    ElevatedButton(
+                      onPressed: _showMainCategory,
+                      child: Text(AppLocalizations.of(context)!.maincat),
+                    ),
+                    // display selected items
+                    Wrap(children: [
+                      _mainCategory != ''
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _mainCategory = '';
+                                  _selectedSubCategories = '';
+                                });
+                              },
+                              child: Chip(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(_mainCategory),
+                                    const Icon(Icons.clear),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container()
+                    ])
+                  ],
+                ),
+              ),
+              ///////////////////////////////////////////////////////////////////////
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // use this button to open the multi-select dialog
+                    ElevatedButton(
+                      onPressed: _showSubCategories,
+                      child: Text(AppLocalizations.of(context)!.subcat),
+                    ),
+                    // display selected items
+                    _mainCategory != ''
+                        ? Wrap(children: [
+                            _selectedSubCategories != ''
+                                ? InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSubCategories = '';
+                                      });
+                                    },
+                                    child: Chip(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0, vertical: 8.0),
+                                      label: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(_selectedSubCategories),
+                                          const Icon(Icons.clear),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : Container()
+                          ])
+                        : Container()
+                  ],
+                ),
+              ),
+              ///////////////////////////////
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // use this button to open the multi-select dialog
+                    ElevatedButton(
+                      onPressed: _showOffers,
+                      child: Text(AppLocalizations.of(context)!.selectsubcat),
+                    ),
+                    // display selected items
+                    Wrap(children: [
+                      _selectedOffers != ''
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedOffers = '';
+                                });
+                              },
+                              child: Chip(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(_selectedOffers),
+                                    const Icon(Icons.clear),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container()
+                    ])
+                  ],
+                ),
+              ),
+              ///////////////////////////////
+
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(AppLocalizations.of(context)!.colors),
+                    ),
+                    Wrap(
+                      children: List.generate(_colorOption.split(',').length,
+                          (int index) {
+                        return ChoiceChip(
+                          label: Text(_colorOption.split(',')[index]),
+                          selected: _colorsChecked[index],
+                          onSelected: (bool selected) {
+                            setState(() {
+                              _colorsChecked[index] = selected;
+                              if (selected) {
+                                _availableColors
+                                    .add(_colorOption.split(',')[index]);
+                              } else {
+                                _availableColors
+                                    .remove(_colorOption.split(',')[index]);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(AppLocalizations.of(context)!.size),
+                    ),
+                    Wrap(
+                      children: List.generate(_sizeOption.split(',').length,
+                          (int index) {
+                        return ChoiceChip(
+                          label: Text(_sizeOption.split(',')[index]),
+                          selected: _sizesChecked[index],
+                          onSelected: (bool selected) {
+                            setState(() {
+                              _sizesChecked[index] = selected;
+                              if (selected) {
+                                _availableSizes
+                                    .add(_sizeOption.split(',')[index]);
+                              } else {
+                                _availableSizes
+                                    .remove(_sizeOption.split(',')[index]);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              _buildTextField(
+                'Main Photo',
+                'add thr main photo',
+                (value) => _productMainImage = value!,
+                TextInputType.multiline,
+                null,
+              ),
+              ListTile(
+                title: Text('add product photos'),
+              ),
+              ..._textFields,
+              Row(
+                children: [
+                  Expanded(
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: _addTextField,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.0),
+
+              SizedBox(height: getProportionateScreenHeight(80)),
+            ]),
+          ),
+        ),
+      ),
+    );
   }
+}
+
+Widget _buildTextField(
+  String labelText,
+  String errorText,
+  void Function(String?)? onSaved, [
+  TextInputType keyboardType = TextInputType.text,
+  int? maxLines = 1,
+]) {
+  return Column(
+    children: [
+      TextFormField(
+        onChanged: (value) => print(value),
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: getProportionateScreenWidth(20),
+            vertical: getProportionateScreenWidth(12),
+          ),
+          labelText: labelText,
+          border: InputBorder.none,
+          focusedBorder: InputBorder.none,
+          enabledBorder: InputBorder.none,
+        ),
+        validator: (value) {
+          if (value!.isEmpty) {
+            return errorText;
+          }
+          return null;
+        },
+        onSaved: onSaved,
+        keyboardType: keyboardType,
+        maxLines: maxLines,
+      ),
+      const Divider(height: 7),
+    ],
+  );
 }

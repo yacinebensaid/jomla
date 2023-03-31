@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:jomla/constants/constants.dart';
 
@@ -31,10 +29,7 @@ class _ProductImagesState extends State<ProductImages> {
             child: Hero(
               tag: widget.product.id.toString(),
               child: InteractiveViewer(
-                child: Image(
-                  image: FileImage(File(widget.product.photos[selectedImage])),
-                  fit: BoxFit.cover,
-                ),
+                child: Image.network(widget.product.photos[selectedImage]),
               ),
             ),
           ),
@@ -70,10 +65,7 @@ class _ProductImagesState extends State<ProductImages> {
           border: Border.all(
               color: kPrimaryColor.withOpacity(selectedImage == index ? 1 : 0)),
         ),
-        child: Image(
-          image: FileImage(File(widget.product.photos[index])),
-          fit: BoxFit.cover,
-        ),
+        child: Image.network(widget.product.photos[index]),
       ),
     );
   }

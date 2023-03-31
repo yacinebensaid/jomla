@@ -29,4 +29,17 @@ class DataService {
 
     return docSnapshot.data();
   }
+
+  static Future getUserDataForOrder(String passedUID) async {
+    final docSnapshot = await FirebaseFirestore.instance
+        .collection('UserData')
+        .doc(passedUID)
+        .get();
+
+    if (!docSnapshot.exists) {
+      return null; // User data not found in Firestore
+    }
+
+    return docSnapshot.data();
+  }
 }

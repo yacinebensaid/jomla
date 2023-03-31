@@ -1,4 +1,4 @@
-import '../products_card/product.dart';
+import '../../products_card/product.dart';
 
 class Cart {
   final ProductForCart product;

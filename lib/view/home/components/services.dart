@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../size_config.dart';
 import 'section_title.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SpecialOffers extends StatelessWidget {
   const SpecialOffers({
@@ -17,7 +16,7 @@ class SpecialOffers extends StatelessWidget {
           padding:
               EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
           child: SectionTitle(
-            title: AppLocalizations.of(context)!.specialforyou,
+            title: 'Services',
             press: () {},
           ),
         ),
@@ -70,9 +69,9 @@ class SpecialOfferCard extends StatelessWidget {
         onTap: press,
         child: SizedBox(
           width: getProportionateScreenWidth(242),
-          height: getProportionateScreenWidth(100),
+          height: getProportionateScreenHeight(100),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(15),
             child: Stack(
               children: [
                 Container(

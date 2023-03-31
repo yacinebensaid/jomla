@@ -1,7 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jomla/main.dart';
+import 'package:jomla/services/crud/product_service.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/view/StorageService/storage_service_view.dart';
 import 'package:jomla/view/entrypoint/entrypoint.dart';
 import 'package:jomla/view/favourite/favourite.dart';
+import 'package:jomla/view/home/homepage_view.dart';
+import 'package:jomla/view/pending/pending_view.dart';
+import 'package:jomla/view/products_card/product.dart';
+import 'package:jomla/view/purchased/purchased_view.dart';
+import 'package:jomla/view/shipping_service/shipping_service_view.dart';
+import 'package:jomla/view/support_staff_orientation.dart';
 
 import '../../constants/routes.dart';
 import '../../services/auth/auth_service.dart';
@@ -57,17 +67,20 @@ Widget buildMenuItems(BuildContext context) => Column(
             leading: const Icon(Icons.home, color: Colors.white),
             title: const Text(
               'Home',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: ((context) => const EntryPoint())));
             }),
         ListTile(
-            leading: const Icon(Icons.favorite, color: Colors.white),
+            leading: const Icon(
+              Icons.favorite,
+              color: Colors.white,
+            ),
             title: const Text(
               'Favorites',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
             onTap: () {
               Navigator.of(context).push(MaterialPageRoute(
@@ -77,21 +90,27 @@ Widget buildMenuItems(BuildContext context) => Column(
             leading: const Icon(Icons.pending_actions, color: Colors.white),
             title: const Text(
               'Pending',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
-            onTap: () {}),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: ((context) => const PendingScreen())));
+            }),
         ListTile(
             leading: const Icon(Icons.paid_sharp, color: Colors.white),
             title: const Text(
               'Purchased',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
-            onTap: () {}),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: ((context) => const PurchasedScreen())));
+            }),
         ListTile(
             leading: const Icon(Icons.chat, color: Colors.white),
             title: const Text(
               'Help chat',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
             onTap: () {}),
         ListTile(
@@ -107,22 +126,28 @@ Widget buildMenuItems(BuildContext context) => Column(
             leading: const Icon(Icons.storage_rounded, color: Colors.white),
             title: const Text(
               'Storage',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
-            onTap: () {}),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: ((context) => ProductStoragePage())));
+            }),
         ListTile(
             leading:
                 const Icon(Icons.delivery_dining_rounded, color: Colors.white),
             title: const Text(
               'Delivery',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
-            onTap: () {}),
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: ((context) => ShippingServicePage())));
+            }),
         ListTile(
             leading: const Icon(Icons.more_horiz, color: Colors.white),
             title: const Text(
               'Offers',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
             onTap: () {}),
         ListTile(
@@ -138,21 +163,36 @@ Widget buildMenuItems(BuildContext context) => Column(
             leading: const Icon(Icons.settings, color: Colors.white),
             title: const Text(
               'Settings',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
-            onTap: () {}),
+            onTap: () {
+              print(MediaQuery.of(context).size.height);
+            }),
         ListTile(
             leading: const Icon(Icons.contact_support, color: Colors.white),
             title: const Text(
               'Support',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
-            onTap: () {}),
+            /*
+            Navigator.of(context).push(MaterialPageRoute(
+                            builder: ((context) =>
+                                const StaffOrientationPage())));
+                                DataService.getUserDataForOrder(userUID)
+            */
+            onTap: () async {
+              final userData = await DataService.getUserDataForOrder(userUID!);
+              if (userData['role'] == 'user') {
+              } else {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: ((context) => const StaffOrientationPage())));
+              }
+            }),
         ListTile(
             leading: const Icon(Icons.logout_outlined, color: Colors.white),
             title: const Text(
               'Log out',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 18),
             ),
             onTap: () async {
               final logoutOption = await showLogoutDialog(context);

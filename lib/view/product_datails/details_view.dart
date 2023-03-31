@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/services/auth/auth_service.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
 
 import '../products_card/product.dart';
 import 'components/body.dart';
@@ -13,7 +15,8 @@ class DetailsScreen extends StatelessWidget {
         ModalRoute.of(context)?.settings.arguments as ProductDetailsArguments;
     return Scaffold(
       backgroundColor: Color(0xFFF5F6F9),
-      appBar: CustomAppBar(),
+      appBar: CustomAppBar(
+          onBackButtonPressed: () => Navigator.pop(context), userUID: userUID!),
       body: Body(product: agrs.product),
     );
   }

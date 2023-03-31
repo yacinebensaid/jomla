@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/view/entrypoint/appbar.dart';
+import 'package:jomla/view/product_datails/components/custom_app_bar.dart';
 
 import 'components/body.dart';
 
@@ -15,6 +17,7 @@ class _MyWidgetState extends State<SubcatView> {
     final MainCatKey agrs =
         ModalRoute.of(context)?.settings.arguments as MainCatKey;
     return Scaffold(
+      appBar: MyCustomAppBar(context: context),
       body: Body(maincat: agrs.maincatvalue),
     );
   }

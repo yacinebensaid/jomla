@@ -1,12 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:jomla/services/crud/pcf_service.dart';
 import '../../../constants/routes.dart';
-import '../../../services/crud/PCF_service.dart';
 import '../../../size_config.dart';
 import '../../product_datails/details_view.dart';
 import '../../products_card/product.dart';
-import '../cart.dart';
+import 'cart.dart';
 import 'cart_card.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -52,7 +51,11 @@ class _BodyState extends State<Body> {
         FutureBuilder<List<Cart>>(
           future: productsGetter(),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
               List<Cart> products = snapshot.data!;
               return Padding(
                 padding: EdgeInsets.symmetric(
@@ -74,12 +77,8 @@ class _BodyState extends State<Body> {
                         direction: DismissDirection.endToStart,
                         onDismissed: (direction) {
                           setState(() {
-                            FirebaseFirestore.instance
-                                .collection('UserPCF')
-                                .doc(userUID)
-                                .collection('cart')
-                                .doc(products[index].reference)
-                                .delete();
+                            UserPCFService.delete_from_cart(
+                                products[index].reference);
                             products.removeAt(index);
                           });
                         },

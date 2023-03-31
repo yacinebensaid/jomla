@@ -48,7 +48,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.17.0
-  rive: ^0.10.2
+  flutter_screenutil: ^5.7.0
+
 
 dev_dependencies:
   flutter_test:

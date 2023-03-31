@@ -25,41 +25,49 @@ class FavProducts extends StatelessWidget {
           return Column(
             children: [
               SizedBox(height: getProportionateScreenWidth(20)),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: numOfRows,
-                itemBuilder: (context, index) {
-                  int startIndex = index * 2;
+              SizedBox(
+                width: SizeConfig.screenWidth,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const ClampingScrollPhysics(),
+                  itemCount: numOfRows,
+                  itemBuilder: (context, index) {
+                    int startIndex = index * 2;
 
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (startIndex < products.length)
-                        ProductCard(
-                          product: products[startIndex],
-                          press: () => Navigator.pushNamed(
-                            context,
-                            detailsRout,
-                            arguments: ProductDetailsArguments(
+                    return Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: getProportionateScreenWidth(20),
+                        horizontal: getProportionateScreenWidth(20),
+                      ),
+                      child: Row(
+                        children: [
+                          if (startIndex < products.length)
+                            ProductCard(
                               product: products[startIndex],
+                              press: () => Navigator.pushNamed(
+                                context,
+                                detailsRout,
+                                arguments: ProductDetailsArguments(
+                                  product: products[startIndex],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                      if (startIndex + 1 < products.length)
-                        ProductCard(
-                          product: products[startIndex + 1],
-                          press: () => Navigator.pushNamed(
-                            context,
-                            detailsRout,
-                            arguments: ProductDetailsArguments(
+                          if (startIndex + 1 < products.length)
+                            ProductCard(
                               product: products[startIndex + 1],
+                              press: () => Navigator.pushNamed(
+                                context,
+                                detailsRout,
+                                arguments: ProductDetailsArguments(
+                                  product: products[startIndex + 1],
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
-                    ],
-                  );
-                },
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           );

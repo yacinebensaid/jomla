@@ -7,11 +7,11 @@ import '../../products_card/product.dart';
 import 'section_title.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class PopularProducts extends StatelessWidget {
-  const PopularProducts({super.key});
+class OnSaleProducts extends StatelessWidget {
+  const OnSaleProducts({super.key});
 
   Future<List<dynamic>> productGetter() async {
-    List<dynamic> products = await getProductsForPopular();
+    List<dynamic> products = await getProductsForOnSale();
     return products;
   }
 
@@ -27,9 +27,7 @@ class PopularProducts extends StatelessWidget {
               Padding(
                 padding: EdgeInsets.symmetric(
                     horizontal: getProportionateScreenWidth(20)),
-                child: SectionTitle(
-                    title: AppLocalizations.of(context)!.popularproducts,
-                    press: () {}),
+                child: SectionTitle(title: 'On sale', press: () {}),
               ),
               SizedBox(height: getProportionateScreenWidth(20)),
               SingleChildScrollView(
@@ -39,7 +37,7 @@ class PopularProducts extends StatelessWidget {
                     ...List.generate(
                       products.length,
                       (index) {
-                        if (products[index].section == 'popular') {
+                        if (products[index].section == 'on_sale') {
                           return ProductCard(
                               product: products[index],
                               press: () =>
