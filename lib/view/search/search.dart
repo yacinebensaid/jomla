@@ -18,7 +18,7 @@ class CustumSearchDeligate extends SearchDelegate {
           onPressed: () {
             query = '';
           },
-          icon: Icon(Icons.clear)),
+          icon: const Icon(Icons.clear)),
       IconButton(
           onPressed: () {
             // Show the filtering options
@@ -30,7 +30,7 @@ class CustumSearchDeligate extends SearchDelegate {
                     height: 300,
                     child: Column(
                       children: [
-                        Text('Filtering options'),
+                        const Text('Filtering options'),
                         // Add dropdowns for main category, sub-category, and offer
                         DropdownButtonFormField<String>(
                           value: selectedMainCategory,
@@ -44,7 +44,7 @@ class CustumSearchDeligate extends SearchDelegate {
                             });
                           },
                           decoration:
-                              InputDecoration(labelText: 'Main Category'),
+                              const InputDecoration(labelText: 'Main Category'),
                         ),
                         DropdownButtonFormField<String>(
                           value: selectedSubCategory,
@@ -62,7 +62,7 @@ class CustumSearchDeligate extends SearchDelegate {
                             });
                           },
                           decoration:
-                              InputDecoration(labelText: 'Sub-Category'),
+                              const InputDecoration(labelText: 'Sub-Category'),
                         ),
                         DropdownButtonFormField<String>(
                           value: selectedOffer,
@@ -75,14 +75,14 @@ class CustumSearchDeligate extends SearchDelegate {
                               selectedOffer = value;
                             });
                           },
-                          decoration: InputDecoration(labelText: 'Offer'),
+                          decoration: const InputDecoration(labelText: 'Offer'),
                         ),
                         ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
                             showResults(context);
                           },
-                          child: Text('Apply Filters'),
+                          child: const Text('Apply Filters'),
                         ),
                       ],
                     ),
@@ -91,7 +91,7 @@ class CustumSearchDeligate extends SearchDelegate {
               },
             );
           },
-          icon: Icon(Icons.filter_alt)),
+          icon: const Icon(Icons.filter_alt)),
     ];
   }
 
@@ -101,7 +101,7 @@ class CustumSearchDeligate extends SearchDelegate {
         onPressed: () {
           close(context, null);
         },
-        icon: Icon(Icons.arrow_back));
+        icon: const Icon(Icons.arrow_back));
   }
 
   @override
@@ -111,7 +111,7 @@ class CustumSearchDeligate extends SearchDelegate {
       future: ProductService.getAllProducts(),
       builder: ((context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasData) {
@@ -157,7 +157,7 @@ class CustumSearchDeligate extends SearchDelegate {
       future: ProductService.getAllProducts(),
       builder: ((context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         } else if (snapshot.hasData) {

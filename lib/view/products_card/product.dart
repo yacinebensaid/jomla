@@ -10,7 +10,8 @@ class Product {
       main_category,
       section,
       offers,
-      sub_category;
+      sub_category,
+      owner;
   final int id, available_quantity, minimum_quantity;
   final List sizes, colors, photos;
   late final bool isFavourite;
@@ -18,6 +19,7 @@ class Product {
 
   Product(
       {required this.description,
+      required this.owner,
       required this.reference,
       required this.isFavourite,
       required this.section,
@@ -38,15 +40,16 @@ class Product {
 
 // Our demo Products
 
-Future<List> getProductsForPopular() async {
+Future<List<Product>> getProductsForPopular() async {
   List productsRetrieving =
-      await ProductService.searchProductByChoice('section', 'popular');
+      await ProductService.searchProductByChoiceForRows('section', 'popular');
   List<Product> products = [];
   int i = 0;
   for (Map product in productsRetrieving) {
     Product productTem = Product(
         id: i,
         offers: product['offers'],
+        owner: product['owner'],
         section: product['section'],
         product_name: product['product_name'],
         reference: product['reference'],
@@ -71,13 +74,14 @@ Future<List> getProductsForPopular() async {
 
 Future<List> getProductsForOnSale() async {
   List productsRetrieving =
-      await ProductService.searchProductByChoice('section', 'on_sale');
+      await ProductService.searchProductByChoiceForRows('section', 'on_sale');
   List<Product> products = [];
   int i = 0;
   for (Map product in productsRetrieving) {
     Product productTem = Product(
         id: i,
         offers: product['offers'],
+        owner: product['owner'],
         section: product['section'],
         product_name: product['product_name'],
         reference: product['reference'],
@@ -102,13 +106,14 @@ Future<List> getProductsForOnSale() async {
 
 Future<List> getProductsForNew() async {
   List productsRetrieving =
-      await ProductService.searchProductByChoice('section', 'new');
+      await ProductService.searchProductByChoiceForRows('section', 'new');
   List<Product> products = [];
   int i = 0;
   for (Map product in productsRetrieving) {
     Product productTem = Product(
         id: i,
         offers: product['offers'],
+        owner: product['owner'],
         section: product['section'],
         product_name: product['product_name'],
         reference: product['reference'],
@@ -131,15 +136,16 @@ Future<List> getProductsForNew() async {
   return products;
 }
 
-Future<List> getProductsBySubCat(String subcat) async {
+Future<List<Product>> getProductsBySubCat(String subcat) async {
   List productsRetrieving =
-      await ProductService.searchProductByChoice('sub_category', subcat);
+      await ProductService.searchProductByChoiceForRows('sub_category', subcat);
   List<Product> products = [];
   int i = 0;
   for (Map product in productsRetrieving) {
     Product productTem = Product(
         id: i,
         offers: product['offers'],
+        owner: product['owner'],
         section: product['section'],
         product_name: product['product_name'],
         reference: product['reference'],
@@ -170,6 +176,7 @@ Future getProductsByReference(String reference) async {
     Product productTem = Product(
         id: i,
         offers: product['offers'],
+        owner: product['owner'],
         section: product['section'],
         product_name: product['product_name'],
         reference: product['reference'],
@@ -298,7 +305,7 @@ class PendingCart {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-Future<List> getProductsForFavourite() async {
+Future<List<Product>> getProductsForFavourite() async {
   Future<List> productRefGetter() async {
     List products = await UserPCFService.getFav();
     return products;
@@ -315,29 +322,37 @@ Future<List> getProductsForFavourite() async {
 
   List<Product> products = [];
   for (List prod in await searchingForProducts()) {
-    int i = 0;
-    for (Map product in prod) {
-      Product productTem = Product(
-          id: i,
-          offers: product['offers'],
-          section: product['section'],
-          product_name: product['product_name'],
-          reference: product['reference'],
-          description: product['description'],
-          main_photo: product['main_photo'],
-          price: product['price'],
-          main_category: product['main_category'],
-          sub_category: product['sub_category'],
-          available_quantity: int.parse(product['available_quantity']),
-          minimum_quantity: int.parse(product['minimum_quantity']),
-          sizes: product['sizes'],
-          colors: product['colors'],
-          photos: product['photos'],
-          isFavourite:
-              await UserPCFService.searchInFav(product['reference']) as bool,
-          rating: 4.5);
-      products.add(productTem);
-      i = i + 1;
+    for (final variable in prod) {
+      if (variable.runtimeType == String) {
+        UserPCFService.delete_from_fav(variable);
+      } else {
+        int i = 0;
+        for (Map product in prod) {
+          Product productTem = Product(
+              id: i,
+              offers: product['offers'],
+              owner: product['owner'],
+              section: product['section'],
+              product_name: product['product_name'],
+              reference: product['reference'],
+              description: product['description'],
+              main_photo: product['main_photo'],
+              price: product['price'],
+              main_category: product['main_category'],
+              sub_category: product['sub_category'],
+              available_quantity: int.parse(product['available_quantity']),
+              minimum_quantity: int.parse(product['minimum_quantity']),
+              sizes: product['sizes'],
+              colors: product['colors'],
+              photos: product['photos'],
+              isFavourite:
+                  await UserPCFService.searchInFav(product['reference'])
+                      as bool,
+              rating: 4.5);
+          products.add(productTem);
+          i = i + 1;
+        }
+      }
     }
   }
   return products;
@@ -346,7 +361,12 @@ Future<List> getProductsForFavourite() async {
 ///////////////////////////////purchased///////////////////////////////////////////
 
 class ProductForPurchased {
-  final String reference, quantity, total_price, main_photo, product_name;
+  final String reference,
+      quantity,
+      total_price,
+      main_photo,
+      product_name,
+      purchasedID;
   final int id;
   ProductForPurchased({
     required this.quantity,
@@ -355,6 +375,7 @@ class ProductForPurchased {
     required this.id,
     required this.main_photo,
     required this.product_name,
+    required this.purchasedID,
   });
 }
 
@@ -392,6 +413,7 @@ class PurchasedCart {
         total_price: product['total_price'],
         main_photo: await mainPhotoGetter(product['reference']),
         product_name: await productNameGetter(product['reference']),
+        purchasedID: product['purchaseID'],
       );
       products.add(productTem);
       cartPrice = cartPrice + int.parse(product['total_price']);
@@ -413,6 +435,7 @@ Future<List> getAllProductsForSearch() async {
         id: i,
         offers: product['offers'],
         section: product['section'],
+        owner: product['owner'],
         product_name: product['product_name'],
         reference: product['reference'],
         description: product['description'],

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/view/product_datails/components/default_btn.dart';
-import '../../../services/crud/PCF_service.dart';
-import '../../../size_config.dart';
+
 import '../../products_card/product.dart';
 import 'product_description.dart';
 import 'top_rounded_container.dart';

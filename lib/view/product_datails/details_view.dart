@@ -14,9 +14,11 @@ class DetailsScreen extends StatelessWidget {
     final ProductDetailsArguments agrs =
         ModalRoute.of(context)?.settings.arguments as ProductDetailsArguments;
     return Scaffold(
-      backgroundColor: Color(0xFFF5F6F9),
+      backgroundColor: const Color(0xFFF5F6F9),
       appBar: CustomAppBar(
-          onBackButtonPressed: () => Navigator.pop(context), userUID: userUID!),
+          ref: agrs.product.reference,
+          onBackButtonPressed: () => Navigator.pop(context),
+          userUID: userUID!),
       body: Body(product: agrs.product),
     );
   }

@@ -1,16 +1,19 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/view/auth/emailverify_view.dart';
-import 'package:jomla/view/auth/login_view.dart';
-import 'package:jomla/view/auth/register_view.dart';
+import 'package:jomla/view/auth/login/index.dart';
+import 'package:jomla/view/auth/register/register_view.dart';
 import 'package:jomla/view/banner_links/sale/sale.dart';
 import 'package:jomla/view/banner_links/tips/tips.dart';
 import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
+import 'package:jomla/view/cart/cart_view.dart';
 import 'package:jomla/view/entrypoint/entrypoint.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
+import 'package:jomla/view/product_storing_service/storing_service.dart';
+import 'package:jomla/view/products_shipping_service/shipping_service_view.dart';
 import 'package:jomla/view/subcat_details/subcat_details_view.dart';
 import 'l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -19,7 +22,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 void main() {
   //flutter must initialize the user creation part before clicking on register
   WidgetsFlutterBinding.ensureInitialized();
-
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.black, // Change the status bar color to black
+  ));
   runApp(const MyApp());
 }
 
@@ -34,12 +39,16 @@ class MyApp extends StatelessWidget {
         splitScreenMode: true,
         builder: (context, child) {
           return MaterialApp(
-            title: 'Flutter Demo',
-            theme: ThemeData(),
-            home: const HomePage(),
+            home: const AnnotatedRegion<SystemUiOverlayStyle>(
+              value: SystemUiOverlayStyle(
+                statusBarColor: Colors.black,
+                // Change the status bar color to black
+              ),
+              child: HomePage(),
+            ),
             routes: {
-              loginRout: (context) => const LoginView(),
-              registerRout: (context) => const RegistationPage(),
+              loginRout: (context) => const LoginScreen(),
+              registerRout: (context) => const RegisterPage(),
               verifyemailRout: (context) => const VerifyEmailView(),
               enterypointRout: (context) => const EntryPoint(),
               saleRout: (context) => const SalePage(),
@@ -47,6 +56,9 @@ class MyApp extends StatelessWidget {
               tipsRout: (context) => const TipsPage(),
               detailsRout: (context) => const DetailsScreen(),
               subcatRout: (context) => const SubcatView(),
+              cartRout: (context) => const CartScreen(),
+              shippingServiceRout: (context) => const ShippingServicePage(),
+              storingServiceRout: (context) => const StoringServicePage(),
             },
             supportedLocales: L10n.all,
             localizationsDelegates: const [
@@ -88,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                 return const VerifyEmailView();
               }
             } else {
-              return const LoginView();
+              return const LoginScreen();
             }
           default:
             return const Text('loading');

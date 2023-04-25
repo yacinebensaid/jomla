@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/view/entrypoint/appbar.dart';
-import 'package:jomla/view/product_datails/components/custom_app_bar.dart';
+import 'package:jomla/view/components/appbar.dart';
 
 import 'components/body.dart';
 

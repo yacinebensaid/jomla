@@ -33,23 +33,23 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
 
                 return Card(
                   elevation: 4,
-                  margin: EdgeInsets.all(16),
+                  margin: const EdgeInsets.all(16),
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Full Name: $fullname',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'Phone Number: $userPhonenumber',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                           ),
                         ),
@@ -58,7 +58,7 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
                   ),
                 );
               } else {
-                return CircularProgressIndicator();
+                return const CircularProgressIndicator();
               }
             },
           ),
@@ -79,7 +79,7 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
+                          const Text(
                             'Total Price:',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
@@ -87,7 +87,7 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
                         // Confirm the order
@@ -99,7 +99,7 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
                           widget.orders.removeAt(index);
                         });
                       },
-                      child: Text('Confirm Order'),
+                      child: const Text('Confirm Order'),
                     ),
                   ],
                 ),

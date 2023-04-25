@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/view/add_product/components/adding_newproduct_view.dart';
+import 'package:jomla/view/add_product/adding_newproduct_view.dart';
 import 'package:jomla/view/order_confirmation/all_orders_view.dart';
 
 class StaffOrientationPage extends StatefulWidget {
@@ -23,18 +23,19 @@ class _MyWidgetState extends State<StaffOrientationPage> {
               MaterialPageRoute(builder: (context) => AddProductPage()),
             );
           },
-          child: Text('Add Product'),
+          child: const Text('Add Product'),
         ),
-        SizedBox(height: 16),
+        const SizedBox(height: 16),
         ElevatedButton(
           onPressed: () {
             // Navigate to the 'Confirm Orders' screen
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => UserPendingOrdersPage()),
+              MaterialPageRoute(
+                  builder: (context) => const UserPendingOrdersPage()),
             );
           },
-          child: Text('Confirm Orders'),
+          child: const Text('Confirm Orders'),
         ),
       ],
     );

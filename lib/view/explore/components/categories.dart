@@ -21,6 +21,7 @@ class Categories extends StatelessWidget {
         Center(
           child: SectionTitle(
             title: AppLocalizations.of(context)!.categories,
+            press: () {},
           ),
         ),
         SizedBox(height: getProportionateScreenWidth(20)),
@@ -128,7 +129,6 @@ class SpecialOfferCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        TextSpan(text: "$numOfBrands Brands")
                       ],
                     ),
                   ),

@@ -6,8 +6,10 @@ class PurchasedScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Body(),
+    return SafeArea(
+      child: const Scaffold(
+        body: Body(),
+      ),
     );
   }
 }

@@ -6,6 +6,7 @@ class SectionTitle extends StatelessWidget {
   const SectionTitle({
     Key? key,
     required this.title,
+    required Null Function() press,
   }) : super(key: key);
 
   final String title;

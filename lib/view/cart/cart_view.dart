@@ -7,9 +7,11 @@ class CartScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: const Body(),
-      bottomNavigationBar: const CheckoutCard(),
+    return SafeArea(
+      child: Scaffold(
+        body: const Body(),
+        bottomNavigationBar: const CheckoutCard(),
+      ),
     );
   }
 }

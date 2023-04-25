@@ -47,7 +47,7 @@ class _BodyState extends State<Body> {
                           product: await getProductsByReference(
                               products[index].reference),
                         )),
-                    child: PendingCard(purchasedProd: products[index]),
+                    child: PurchasedCard(purchasedProd: products[index]),
                   ),
                 ),
               );

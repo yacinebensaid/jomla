@@ -44,138 +44,150 @@ class _ProductCardState extends State<ProductCard> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: getProportionateScreenWidth(20)),
-      child: GestureDetector(
-        onTap: widget.press,
-        child: SizedBox(
-          width: getProportionateScreenWidth(widget.width),
-          child: Stack(
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  AspectRatio(
-                    aspectRatio: 1.02,
-                    child: Container(
-                      padding: EdgeInsets.all(getProportionateScreenWidth(20)),
-                      decoration: BoxDecoration(
-                        color: kSecondaryColor.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Image.network(widget.product.main_photo),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    widget.product.product_name,
-                    style: const TextStyle(color: Colors.black),
-                    maxLines: 2,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "\$${widget.product.price}",
-                        style: TextStyle(
-                          fontSize: getProportionateScreenWidth(18),
-                          fontWeight: FontWeight.w600,
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                      InkWell(
-                        borderRadius: BorderRadius.circular(50),
-                        child: Container(
-                          padding:
-                              EdgeInsets.all(getProportionateScreenWidth(8)),
-                          height: getProportionateScreenWidth(28),
-                          width: getProportionateScreenWidth(28),
-                          decoration: BoxDecoration(
-                            color: _isfav
-                                ? kPrimaryColor.withOpacity(0.15)
-                                : kSecondaryColor.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: SvgPicture.asset(
-                            "assets/icons/Heart Icon_2.svg",
-                            color: _isfav
-                                ? const Color(0xFFFF4848)
-                                : const Color(0xFFDBDEE4),
-                          ),
-                        ),
-                        onTap: () {
-                          pressfav();
-                        },
-                      )
-                    ],
-                  )
-                ],
-              ),
-              if (widget.product.offers ==
-                  'On Sale') // Check if the product has an offer
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      widget.product.offers,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: getProportionateScreenWidth(12),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              if (widget.product.offers == 'Free Shipping')
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      widget.product.offers,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: getProportionateScreenWidth(12),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              if (widget.product.offers == 'Free Storage')
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 5, 98, 173),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(
-                      widget.product.offers,
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                        fontSize: getProportionateScreenWidth(12),
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey,
+          width: 0.3,
         ),
       ),
+      child: Stack(children: [
+        Padding(
+          padding: const EdgeInsets.all(7.0),
+          child: GestureDetector(
+            onTap: widget.press,
+            child: SizedBox(
+              width: getProportionateScreenWidth(widget.width),
+              child: Stack(
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AspectRatio(
+                        aspectRatio: 1.02,
+                        child: Container(
+                          padding:
+                              EdgeInsets.all(getProportionateScreenWidth(0)),
+                          decoration: BoxDecoration(
+                            color: kSecondaryColor.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Image.network(widget.product.main_photo),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        widget.product.product_name,
+                        style: const TextStyle(color: Colors.black),
+                        maxLines: 2,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "\$${widget.product.price}",
+                            style: TextStyle(
+                              fontSize: getProportionateScreenWidth(18),
+                              fontWeight: FontWeight.w600,
+                              color: kPrimaryColor,
+                            ),
+                          ),
+                          InkWell(
+                            borderRadius: BorderRadius.circular(50),
+                            child: Container(
+                              padding: EdgeInsets.all(
+                                  getProportionateScreenWidth(8)),
+                              height: getProportionateScreenWidth(28),
+                              width: getProportionateScreenWidth(28),
+                              decoration: BoxDecoration(
+                                color: _isfav
+                                    ? kPrimaryColor.withOpacity(0.15)
+                                    : kSecondaryColor.withOpacity(0.1),
+                                shape: BoxShape.circle,
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/icons/Heart Icon_2.svg",
+                                color: _isfav
+                                    ? const Color(0xFFFF4848)
+                                    : const Color(0xFFDBDEE4),
+                              ),
+                            ),
+                            onTap: () {
+                              pressfav();
+                            },
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (widget.product.offers ==
+            'On Sale') // Check if the product has an offer
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.red,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                widget.product.offers,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: getProportionateScreenWidth(12),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        if (widget.product.offers == 'Free Shipping')
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Colors.green,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                widget.product.offers,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: getProportionateScreenWidth(12),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+        if (widget.product.offers == 'Free Storage')
+          Positioned(
+            top: 0,
+            right: 0,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              decoration: BoxDecoration(
+                color: Color.fromARGB(255, 5, 98, 173),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                widget.product.offers,
+                style: TextStyle(
+                  color: Color.fromARGB(255, 255, 255, 255),
+                  fontSize: getProportionateScreenWidth(12),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+      ]),
     );
   }
 }

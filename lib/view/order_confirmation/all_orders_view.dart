@@ -28,7 +28,7 @@ class _UserPendingOrdersPageState extends State<UserPendingOrdersPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pending Orders'),
+        title: const Text('Pending Orders'),
       ),
       body: RefreshIndicator(
         onRefresh: _refresh,
@@ -36,7 +36,7 @@ class _UserPendingOrdersPageState extends State<UserPendingOrdersPage> {
           future: _allPendingOrders,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
+              return const Center(
                 child: CircularProgressIndicator(),
               );
             } else if (snapshot.hasData) {
@@ -47,9 +47,9 @@ class _UserPendingOrdersPageState extends State<UserPendingOrdersPage> {
                   final userUID = allPendingOrders.keys.toList()[index];
                   final pendingOrders = allPendingOrders[userUID]!;
 
-                  if (pendingOrders.length == 0) {
+                  if (pendingOrders.isEmpty) {
                     // Skip this user if they have no pending orders
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   }
 
                   return GestureDetector(
@@ -73,7 +73,7 @@ class _UserPendingOrdersPageState extends State<UserPendingOrdersPage> {
                 },
               );
             } else {
-              return Center(
+              return const Center(
                 child: Text('No pending orders'),
               );
             }

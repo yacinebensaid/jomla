@@ -1,0 +1,195 @@
+ _buildTextField(
+                AppLocalizations.of(context)!.productname,
+                AppLocalizations.of(context)!.pleaseProductname,
+                (value) => _productName = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.producttotlaquantity,
+                AppLocalizations.of(context)!.pleaseproducttotlaquantity,
+                (value) => _availableQuantity = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.productminimumquantity,
+                AppLocalizations.of(context)!.pleaseproductminimumquantity,
+                (value) => _minQuantity = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.productprice,
+                AppLocalizations.of(context)!.pleaseproductprice,
+                (value) => _productPrice = value!,
+              ),
+              _buildTextField(
+                AppLocalizations.of(context)!.productdescription,
+                AppLocalizations.of(context)!.pleaseproductdescription,
+                (value) => _productDescription = value!,
+                TextInputType.multiline,
+                null,
+              ),
+              SizedBox(height: getProportionateScreenHeight(80)),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _showMainCategory,
+                      child: Text(AppLocalizations.of(context)!.maincat),
+                    ),
+                    Wrap(children: [
+                      _mainCategory != ''
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _mainCategory = '';
+                                  _selectedSubCategories = '';
+                                });
+                              },
+                              child: Chip(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(_mainCategory),
+                                    const Icon(Icons.clear),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container()
+                    ])
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: _showSubCategories,
+                      child: Text(AppLocalizations.of(context)!.subcat),
+                    ),
+                    _mainCategory != ''
+                        ? Wrap(children: [
+                            _selectedSubCategories != ''
+                                ? InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedSubCategories = '';
+                                      });
+                                    },
+                                    child: Chip(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0, vertical: 8.0),
+                                      label: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: <Widget>[
+                                          Text(_selectedSubCategories),
+                                          const Icon(Icons.clear),
+                                        ],
+                                      ),
+                                    ),
+                                  )
+                                : Container()
+                          ])
+                        : Container()
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // use this button to open the multi-select dialog
+                    ElevatedButton(
+                      onPressed: _showOffers,
+                      child: Text(AppLocalizations.of(context)!.selectsubcat),
+                    ),
+                    // display selected items
+                    Wrap(children: [
+                      _selectedOffers != ''
+                          ? InkWell(
+                              onTap: () {
+                                setState(() {
+                                  _selectedOffers = '';
+                                });
+                              },
+                              child: Chip(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 8.0),
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(_selectedOffers),
+                                    const Icon(Icons.clear),
+                                  ],
+                                ),
+                              ),
+                            )
+                          : Container()
+                    ])
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(AppLocalizations.of(context)!.colors),
+                    ),
+                    Wrap(
+                      children: List.generate(_colorOption.split(',').length,
+                          (int index) {
+                        return ChoiceChip(
+                          label: Text(_colorOption.split(',')[index]),
+                          selected: _colorsChecked[index],
+                          onSelected: (bool selected) {
+                            setState(() {
+                              _colorsChecked[index] = selected;
+                              if (selected) {
+                                _availableColors
+                                    .add(_colorOption.split(',')[index]);
+                              } else {
+                                _availableColors
+                                    .remove(_colorOption.split(',')[index]);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    ListTile(
+                      title: Text(AppLocalizations.of(context)!.size),
+                    ),
+                    Wrap(
+                      children: List.generate(_sizeOption.split(',').length,
+                          (int index) {
+                        return ChoiceChip(
+                          label: Text(_sizeOption.split(',')[index]),
+                          selected: _sizesChecked[index],
+                          onSelected: (bool selected) {
+                            setState(() {
+                              _sizesChecked[index] = selected;
+                              if (selected) {
+                                _availableSizes
+                                    .add(_sizeOption.split(',')[index]);
+                              } else {
+                                _availableSizes
+                                    .remove(_sizeOption.split(',')[index]);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),

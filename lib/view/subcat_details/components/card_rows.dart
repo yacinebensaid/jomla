@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/services/crud/product_service.dart';
+import 'package:jomla/view/products_card/loading_row.dart';
 import '../../../constants/routes.dart';
 import '../../../size_config.dart';
 import '../../explore/components/section_title.dart';
@@ -7,19 +9,34 @@ import '../../products_card/body.dart';
 import '../../products_card/product.dart';
 import '../../var_lib.dart' as vars;
 
-class CardRows extends StatelessWidget {
+class CardRows extends StatefulWidget {
   CardRows({
     Key? key,
     required this.maincat,
   }) : super(key: key);
 
   final String maincat;
+
+  @override
+  State<CardRows> createState() => _CardRowsState();
+}
+
+class _CardRowsState extends State<CardRows> {
   final _subCategories = vars.get_subCategoriesOption();
 
-  Future<List<dynamic>> productGetter(String subcat) async {
-    List<dynamic> products = await getProductsBySubCat(subcat);
-
+  Future<List<Product>> productGetter(String subcat) async {
+    List<Product> products = await getProductsBySubCat(subcat);
     return products;
+  }
+
+  bool _isLoading = true;
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -27,17 +44,19 @@ class CardRows extends StatelessWidget {
     return ListView.separated(
       physics: const BouncingScrollPhysics(),
       shrinkWrap: true,
-      itemCount: _subCategories[maincat].length,
+      itemCount: _subCategories[widget.maincat].length,
       separatorBuilder: (context, index) {
         return SizedBox(height: getProportionateScreenWidth(20));
       },
       itemBuilder: (context, index) {
-        String subcat = _subCategories[maincat][index];
-        return FutureBuilder<List<dynamic>>(
+        String subcat = _subCategories[widget.maincat][index];
+        return FutureBuilder<List<Product>>(
           future: productGetter(subcat),
           builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              List<dynamic> products = snapshot.data!;
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return LoadingRow();
+            } else if (snapshot.hasData) {
+              List<Product> products = snapshot.data!;
               if (products.isEmpty) {
                 return Container(); // Return an empty container if there are no products
               } else {
@@ -48,7 +67,10 @@ class CardRows extends StatelessWidget {
                       padding: EdgeInsets.symmetric(
                         horizontal: getProportionateScreenWidth(20),
                       ),
-                      child: SectionTitle(title: subcat),
+                      child: SectionTitle(
+                        title: subcat,
+                        press: () {},
+                      ),
                     ),
                     SizedBox(height: getProportionateScreenWidth(20)),
                     SingleChildScrollView(
@@ -78,10 +100,9 @@ class CardRows extends StatelessWidget {
                   ],
                 );
               }
-            } else if (snapshot.hasError) {
-              return Text("");
+            } else {
+              return Container();
             }
-            return const Center(child: CircularProgressIndicator());
           },
         );
       },

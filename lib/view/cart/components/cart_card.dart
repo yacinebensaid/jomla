@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import '../../../constants/constants.dart';
 import '../../../size_config.dart';

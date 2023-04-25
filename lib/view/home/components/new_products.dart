@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/body.dart';
+import 'package:jomla/view/products_card/loading_row.dart';
 import '../../../constants/routes.dart';
 import '../../../size_config.dart';
 import '../../products_card/product.dart';
 import 'section_title.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class NewProducts extends StatelessWidget {
   const NewProducts({super.key});
@@ -38,13 +38,16 @@ class NewProducts extends StatelessWidget {
                       products.length,
                       (index) {
                         if (products[index].section == 'new') {
-                          return ProductCard(
-                              product: products[index],
-                              press: () =>
-                                  Navigator.pushNamed(context, detailsRout,
-                                      arguments: ProductDetailsArguments(
-                                        product: products[index],
-                                      )));
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 7),
+                            child: ProductCard(
+                                product: products[index],
+                                press: () =>
+                                    Navigator.pushNamed(context, detailsRout,
+                                        arguments: ProductDetailsArguments(
+                                          product: products[index],
+                                        ))),
+                          );
                         }
 
                         return const SizedBox
@@ -60,7 +63,7 @@ class NewProducts extends StatelessWidget {
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         } else {
-          return const Center(child: CircularProgressIndicator());
+          return LoadingRow();
         }
       },
     );

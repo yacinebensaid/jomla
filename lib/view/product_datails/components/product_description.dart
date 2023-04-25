@@ -5,6 +5,7 @@ import '../../../size_config.dart';
 import '../../products_card/product.dart';
 import 'color_dots.dart';
 import 'default_btn.dart';
+import 'owner.dart';
 import 'top_rounded_container.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -37,8 +38,10 @@ class _ProductDescriptionState extends State<ProductDescription> {
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(20),
+        padding: EdgeInsets.only(
+          left: getProportionateScreenWidth(20),
+          right: getProportionateScreenWidth(20),
+          top: getProportionateScreenHeight(20),
         ),
         child: Text(
           widget.product.product_name,
@@ -83,75 +86,78 @@ class _ProductDescriptionState extends State<ProductDescription> {
           SizedBox(width: getProportionateScreenWidth(20)),
         ],
       ),
-      Padding(
-        padding: EdgeInsets.only(
-          left: getProportionateScreenWidth(0),
-          right: getProportionateScreenWidth(0),
+      Center(
+        child: Owner(
+          uid: widget.product.owner,
         ),
-        child: ColorDots(product: widget.product),
+      ),
+      SizedBox(
+        height: getProportionateScreenHeight(20),
       ),
       Padding(
-        padding: EdgeInsets.only(
-          left: getProportionateScreenWidth(20),
-          right: getProportionateScreenWidth(64),
+        padding: const EdgeInsets.only(
+          left: 20,
+        ),
+        child: Text(
+          'Description:',
+          style: TextStyle(
+            fontSize: getProportionateScreenWidth(20),
+            fontWeight: FontWeight.w500,
+            color: Color.fromARGB(255, 151, 151, 151),
+          ),
+        ),
+      ),
+      SizedBox(
+        height: getProportionateScreenHeight(10),
+      ),
+      Padding(
+        padding: const EdgeInsets.only(
+          left: 30,
+          right: 20,
         ),
         child: Text(
           widget.product.description,
-          maxLines: 3,
+          style: TextStyle(
+              fontSize: getProportionateScreenWidth(18),
+              color: Colors.black,
+              height: 1.4),
         ),
       ),
-      Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(20),
-          vertical: 10,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.quantity,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: getProportionateScreenWidth(16),
-              ),
-            ),
-            Text(
-              _quantity.toString(),
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: getProportionateScreenWidth(16),
-              ),
-            ),
-          ],
-        ),
+      SizedBox(
+        height: getProportionateScreenHeight(40),
       ),
       Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(20),
-          vertical: 10,
+        padding: const EdgeInsets.only(
+          left: 20,
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Slider.adaptive(
-                value: _quantity.toDouble(),
-                min: widget.product.minimum_quantity.toDouble(),
-                max: widget.product.available_quantity.toDouble(),
-                onChanged: (newValue) {
-                  setState(() {
-                    _quantity = newValue.round();
-                  });
-                },
-              ),
-            ),
-          ],
+        child: Text(
+          AppLocalizations.of(context)!.quantity,
+          style: TextStyle(
+            fontSize: getProportionateScreenWidth(20),
+            fontWeight: FontWeight.w500,
+            color: Color.fromARGB(255, 151, 151, 151),
+          ),
         ),
       ),
+      SizedBox(
+        height: getProportionateScreenHeight(10),
+      ),
       Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: getProportionateScreenWidth(20),
-          vertical: 10,
+        padding: const EdgeInsets.symmetric(horizontal: 30),
+        child: QuantitySelector(
+          quantity: _quantity,
+          price: int.parse(widget.product.price),
+          minQuantity: widget.product.minimum_quantity,
+          maxQuantity: widget.product.available_quantity,
+          onChanged: (value) {
+            setState(() {
+              _quantity = value;
+            });
+          },
         ),
+      ),
+      SizedBox(
+        height: getProportionateScreenHeight(20),
       ),
       TopRoundedContainer(
           color: Color(0xFFF6F7F9),
@@ -164,7 +170,6 @@ class _ProductDescriptionState extends State<ProductDescription> {
                     left: SizeConfig.screenWidth * 0.15,
                     right: SizeConfig.screenWidth * 0.15,
                     bottom: getProportionateScreenWidth(40),
-                    top: getProportionateScreenWidth(15),
                   ),
                   child: DefaultButton(
                     text: AppLocalizations.of(context)!.addtocart,
@@ -182,5 +187,95 @@ class _ProductDescriptionState extends State<ProductDescription> {
             ],
           ))
     ]);
+  }
+}
+
+class QuantitySelector extends StatefulWidget {
+  final int quantity;
+  final int price;
+  final int minQuantity;
+  final int maxQuantity;
+  final void Function(int) onChanged;
+
+  QuantitySelector(
+      {required this.quantity,
+      required this.minQuantity,
+      required this.maxQuantity,
+      required this.onChanged,
+      required this.price});
+
+  @override
+  _QuantitySelectorState createState() => _QuantitySelectorState();
+}
+
+class _QuantitySelectorState extends State<QuantitySelector> {
+  late int _quantity;
+  late int _totalPrice;
+
+  @override
+  void initState() {
+    super.initState();
+    _quantity = widget.quantity;
+    _totalPrice = widget.quantity * widget.price;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            IconButton(
+              onPressed: () {
+                if (_quantity > widget.minQuantity) {
+                  setState(() {
+                    _quantity--;
+                    _totalPrice = _quantity * widget.price;
+                  });
+                  widget.onChanged(_quantity);
+                }
+              },
+              icon: Icon(Icons.remove),
+            ),
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "$_quantity",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: getProportionateScreenWidth(18),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                if (_quantity < widget.maxQuantity) {
+                  setState(() {
+                    _quantity++;
+                    _totalPrice = _quantity * widget.price;
+                  });
+                  widget.onChanged(_quantity);
+                }
+              },
+              icon: Icon(Icons.add),
+            ),
+          ],
+        ),
+        SizedBox(
+          height: getProportionateScreenHeight(5),
+        ),
+        Text(
+          "Total: \$$_totalPrice",
+          style: TextStyle(
+            fontSize: getProportionateScreenWidth(20),
+            fontWeight: FontWeight.w600,
+            color: kPrimaryColor,
+          ),
+        ),
+      ],
+    );
   }
 }

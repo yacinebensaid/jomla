@@ -8,19 +8,29 @@ import '../../../size_config.dart';
 class FavProducts extends StatelessWidget {
   const FavProducts({super.key});
 
-  Future<List<dynamic>> productGetter() async {
-    List<dynamic> products = await getProductsForFavourite();
-    return products;
-  }
-
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: productGetter(),
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return FutureBuilder<List<Product>>(
+      future: getProductsForFavourite(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<dynamic> products = snapshot.data!;
-          int numOfRows = (products.length / 2).ceil();
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasData) {
+          List<Product> products = snapshot.data!;
+          final cardWidth = getProportionateScreenWidth(
+              160); // Width of each ProductCard widget
+          final spacingWidth = getProportionateScreenWidth(
+              20); // Space between each ProductCard widget
+          final availableWidth = screenWidth -
+              spacingWidth; // Width available for ProductCard widgets after accounting for spacing
+          final numOfCards = (availableWidth / cardWidth)
+              .floor(); // Calculate number of ProductCard widgets that can fit in a row
+          final numOfRows = (products.length / numOfCards)
+              .ceil(); // Calculate number of rows needed to display all products
 
           return Column(
             children: [
@@ -31,39 +41,34 @@ class FavProducts extends StatelessWidget {
                   shrinkWrap: true,
                   physics: const ClampingScrollPhysics(),
                   itemCount: numOfRows,
-                  itemBuilder: (context, index) {
-                    int startIndex = index * 2;
+                  itemBuilder: (context, rowIndex) {
+                    final startIndex = rowIndex * numOfCards;
+                    final endIndex = startIndex + numOfCards;
+                    final rowProducts = products.sublist(
+                        startIndex,
+                        endIndex > products.length
+                            ? products.length
+                            : endIndex);
 
                     return Padding(
                       padding: EdgeInsets.symmetric(
                         vertical: getProportionateScreenWidth(20),
-                        horizontal: getProportionateScreenWidth(20),
+                        horizontal: spacingWidth,
                       ),
                       child: Row(
-                        children: [
-                          if (startIndex < products.length)
-                            ProductCard(
-                              product: products[startIndex],
-                              press: () => Navigator.pushNamed(
-                                context,
-                                detailsRout,
-                                arguments: ProductDetailsArguments(
-                                  product: products[startIndex],
-                                ),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: rowProducts.map((product) {
+                          return ProductCard(
+                            product: product,
+                            press: () => Navigator.pushNamed(
+                              context,
+                              detailsRout,
+                              arguments: ProductDetailsArguments(
+                                product: product,
                               ),
                             ),
-                          if (startIndex + 1 < products.length)
-                            ProductCard(
-                              product: products[startIndex + 1],
-                              press: () => Navigator.pushNamed(
-                                context,
-                                detailsRout,
-                                arguments: ProductDetailsArguments(
-                                  product: products[startIndex + 1],
-                                ),
-                              ),
-                            ),
-                        ],
+                          );
+                        }).toList(),
                       ),
                     );
                   },
@@ -71,11 +76,9 @@ class FavProducts extends StatelessWidget {
               ),
             ],
           );
-        } else if (snapshot.hasError) {
+        } else {
           return Text("${snapshot.error}");
         }
-
-        return const Center(child: CircularProgressIndicator());
       },
     );
   }

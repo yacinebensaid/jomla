@@ -24,97 +24,100 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.cart,
-              style: TextStyle(color: Colors.black),
-            ),
-            FutureBuilder<List>(
-              future: populateDemoCarts(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(
-                    "number of items: ${snapshot.data!.length}",
-                    style: Theme.of(context).textTheme.caption,
-                  );
-                } else {
-                  return const SizedBox();
-                }
-              },
-            ),
-          ],
-        ),
-        FutureBuilder<List<Cart>>(
-          future: productsGetter(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasData) {
-              List<Cart> products = snapshot.data!;
-              return Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: getProportionateScreenWidth(20),
-                ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: products.length,
-                  itemBuilder: (context, index) => GestureDetector(
-                    onTap: () async => Navigator.pushNamed(context, detailsRout,
-                        arguments: ProductDetailsArguments(
-                          product: await getProductsByReference(
-                              products[index].reference),
-                        )),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Dismissible(
-                        key: Key(products[index].id.toString()),
-                        direction: DismissDirection.endToStart,
-                        onDismissed: (direction) {
-                          setState(() {
-                            UserPCFService.delete_from_cart(
-                                products[index].reference);
-                            products.removeAt(index);
-                          });
-                        },
-                        background: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 20),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFE6E6),
-                            borderRadius: BorderRadius.circular(15),
+    return SafeArea(
+      child: Column(
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                AppLocalizations.of(context)!.cart,
+                style: const TextStyle(color: Colors.black),
+              ),
+              FutureBuilder<List>(
+                future: populateDemoCarts(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      "number of items: ${snapshot.data!.length}",
+                      style: Theme.of(context).textTheme.caption,
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            ],
+          ),
+          FutureBuilder<List<Cart>>(
+            future: productsGetter(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasData) {
+                List<Cart> products = snapshot.data!;
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: getProportionateScreenWidth(20),
+                  ),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: products.length,
+                    itemBuilder: (context, index) => GestureDetector(
+                      onTap: () async =>
+                          Navigator.pushNamed(context, detailsRout,
+                              arguments: ProductDetailsArguments(
+                                product: await getProductsByReference(
+                                    products[index].reference),
+                              )),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Dismissible(
+                          key: Key(products[index].id.toString()),
+                          direction: DismissDirection.endToStart,
+                          onDismissed: (direction) {
+                            setState(() {
+                              UserPCFService.delete_from_cart(
+                                  products[index].reference);
+                              products.removeAt(index);
+                            });
+                          },
+                          background: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFE6E6),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Row(
+                              children: [
+                                const Spacer(),
+                                SvgPicture.asset("assets/icons/Trash.svg"),
+                              ],
+                            ),
                           ),
-                          child: Row(
-                            children: [
-                              const Spacer(),
-                              SvgPicture.asset("assets/icons/Trash.svg"),
-                            ],
-                          ),
+                          child: CartCard(cart: products[index]),
                         ),
-                        child: CartCard(cart: products[index]),
                       ),
                     ),
                   ),
-                ),
-              );
-            } else {
-              return Center(
-                child: Text(
-                  AppLocalizations.of(context)!.youdonthaveproducts,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    color: Colors.grey,
+                );
+              } else {
+                return Center(
+                  child: Text(
+                    AppLocalizations.of(context)!.youdonthaveproducts,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      color: Colors.grey,
+                    ),
                   ),
-                ),
-              );
-            }
-          },
-        ),
-      ],
+                );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 }

@@ -112,11 +112,10 @@ class UserPCFService {
 ///////////////////////////PENDING/////////////////////////////////////
 
   static moveItemsToPending() async {
-    Map<String, dynamic>? userdata = await DataService.getUserData();
-    final userFirstName = userdata!['first_name'];
-    final userLastName = userdata['last_name'];
-    final fullname = userFirstName + ' ' + userLastName;
-    final userPhonenumber = userdata['phone_number'];
+    UserData? userdata = await DataService.getUserData(userUID!);
+
+    final fullname = userdata!.name;
+    final userPhonenumber = userdata.phoneNumber;
 
     QuerySnapshot cartQuery = await FirebaseFirestore.instance
         .collection('UserPCF')
@@ -255,6 +254,7 @@ class UserPCFService {
         'reference': doc.get('reference'),
         'quantity': doc.get('quantity'),
         'total_price': doc.get('total_price'),
+        'purchaseID': doc.get('purchaseID'),
       };
       purchasedData.add(item);
     });

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../constants/constants.dart';
 import '../../../size_config.dart';
 import '../../products_card/product.dart';
 import 'rounded_icon_btn.dart';
@@ -25,7 +24,7 @@ class ColorDots extends StatelessWidget {
             product.colors.length,
             (index) => ColorDot(color: product.colors[index]),
           ),
-          Spacer(),
+          const Spacer(),
           RoundedIconBtn(
             icon: Icons.remove,
             press: () {},
@@ -63,7 +62,7 @@ class ColorDot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(right: 2),
+      margin: const EdgeInsets.only(right: 2),
       padding: EdgeInsets.all(getProportionateScreenWidth(8)),
       height: getProportionateScreenWidth(40),
       width: getProportionateScreenWidth(40),

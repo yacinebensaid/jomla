@@ -17,7 +17,9 @@ class ProductImages extends StatefulWidget {
 }
 
 class _ProductImagesState extends State<ProductImages> {
+  ScrollController _scrollController = ScrollController();
   int selectedImage = 0;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -34,14 +36,27 @@ class _ProductImagesState extends State<ProductImages> {
             ),
           ),
         ),
-        // SizedBox(height: getProportionateScreenWidth(20)),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ...List.generate(widget.product.photos.length,
-                (index) => buildSmallProductPreview(index)),
-          ],
-        )
+        SizedBox(height: getProportionateScreenHeight(10)),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 15),
+          child: SizedBox(
+            width: getProportionateScreenWidth(238),
+            height: getProportionateScreenWidth(48),
+            child: ListView.builder(
+              controller: _scrollController,
+              scrollDirection: Axis.horizontal,
+              itemCount: widget.product.photos.length + 2,
+              itemBuilder: (context, index) {
+                if (index == 0 || index == widget.product.photos.length + 1) {
+                  // Padding to indicate that there are more photos
+                  return SizedBox(width: SizeConfig.screenWidth * 0.25);
+                }
+                final photoIndex = index - 1;
+                return buildSmallProductPreview(photoIndex);
+              },
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -52,6 +67,14 @@ class _ProductImagesState extends State<ProductImages> {
         setState(() {
           selectedImage = index;
         });
+        // Calculate the position of the selected image in the ListView
+        double position = (getProportionateScreenWidth(48) + 15) * index;
+        // Scroll the ListView to the selected image position
+        _scrollController.animateTo(
+          position,
+          duration: defaultDuration,
+          curve: Curves.easeInOut,
+        );
       },
       child: AnimatedContainer(
         duration: defaultDuration,
@@ -63,7 +86,8 @@ class _ProductImagesState extends State<ProductImages> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-              color: kPrimaryColor.withOpacity(selectedImage == index ? 1 : 0)),
+            color: kPrimaryColor.withOpacity(selectedImage == index ? 1 : 0),
+          ),
         ),
         child: Image.network(widget.product.photos[index]),
       ),

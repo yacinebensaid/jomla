@@ -14,24 +14,68 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(AppLocalizations.of(context)!.verify)),
-      body: Column(children: [
-        Text(AppLocalizations.of(context)!.emailverificationsent),
-        Text(AppLocalizations.of(context)!.emailnotrecieved),
-        TextButton(
-          onPressed: () async {
-            await AuthService.firebase().sendEmailVerification();
-          },
-          child: Text(AppLocalizations.of(context)!.sendemail),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'We have sent you an email verification, please check your inbox!',
+                style: TextStyle(
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              const Text(
+                'After verifying you email, Login to your account',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () async {
+                  await AuthService.firebase().logOut();
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                    loginRout,
+                    (route) => false,
+                  );
+                },
+                child: Text(
+                  'Go to login page',
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24.0),
+              const Text(
+                'If you have not received an email verification, press this button:',
+                style: TextStyle(
+                  fontSize: 16.0,
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextButton(
+                onPressed: () async {
+                  await AuthService.firebase().sendEmailVerification();
+                },
+                child: Text(
+                  AppLocalizations.of(context)!.sendemail,
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
-        TextButton(
-            onPressed: () async {
-              await AuthService.firebase().logOut();
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil(registerRout, (route) => false);
-            },
-            child: Text(AppLocalizations.of(context)!.restart)),
-      ]),
+      ),
     );
   }
 }

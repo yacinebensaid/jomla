@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jomla/services/crud/product_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/view/product_edit/product_edit.dart';
 
 import '../../../size_config.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onBackButtonPressed;
   final String userUID;
+  final String ref;
   const CustomAppBar({
     Key? key,
     required this.onBackButtonPressed,
     required this.userUID,
+    required this.ref,
   })  : preferredSize = const Size.fromHeight(kToolbarHeight),
         super(key: key);
 
@@ -41,41 +45,79 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ),
               ),
             ),
-            Spacer(),
-            userDataContainer(),
+            const Spacer(),
+            dropDownMenu(),
           ],
         ),
       ),
     );
   }
 
-  Widget userDataContainer() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: FutureBuilder(
-        future: DataService.getUserDataForOrder(userUID),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Error occurred while fetching user data');
-          }
-          if (!snapshot.hasData) {
-            return const CircularProgressIndicator();
-          }
-          final userData = snapshot.data as Map<String, dynamic>;
-          if (userData['role'] == 'admin') {
-            return IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.edit),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
-        },
-      ),
+  Widget dropDownMenu() {
+    return FutureBuilder(
+      future: DataService.getUserData(userUID),
+      builder: (context, snapshot) {
+        final userData = snapshot.data;
+        if (userData == null) {
+          return Container();
+        }
+        return PopupMenuButton<String>(
+          onSelected: (value) async {
+            if (value == 'delete') {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Delete Item"),
+                    content: const Text(
+                        "Are you sure you want to delete this item?"),
+                    actions: [
+                      TextButton(
+                        child: const Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      TextButton(
+                        child: const Text("Delete"),
+                        onPressed: () {
+                          DataService.deleteOwnedProduct(ref);
+                          ProductService.deleteProduct(ref);
+                          // Perform the delete operation here
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            } else if (value == 'edit') {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: ((context) => EditProduct(
+                        ref: ref,
+                      ))));
+            }
+          },
+          itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+            const PopupMenuItem<String>(
+              value: 'signal',
+              child: Text('Signal Product'),
+            ),
+            ...userData.isAdmin
+                ? [
+                    const PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Text('Edit'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Text('Delete'),
+                    ),
+                  ]
+                : []
+          ].toList(),
+        );
+      },
     );
   }
 }

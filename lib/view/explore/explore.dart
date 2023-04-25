@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/view/components/appbar.dart';
 import 'components/body.dart';
 
 class ExploreView extends StatefulWidget {
@@ -11,7 +12,7 @@ class ExploreView extends StatefulWidget {
 class _MyWidgetState extends State<ExploreView> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Body(),
     );
   }
