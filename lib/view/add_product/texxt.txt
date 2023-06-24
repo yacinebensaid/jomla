@@ -193,3 +193,41 @@
                   ],
                 ),
               ),
+
+
+
+
+
+
+
+
+
+
+              /*List<Map<String, dynamic>> getPricingDetails() {
+    List<Map<String, dynamic>> pricingDetails = [];
+
+    for (int i = 0; i < pricingLists.length; i++) {
+      PricingList pricingList = pricingLists[i];
+      String fromValue = pricingList.fromController.text;
+      String toValue = pricingList.toController.text;
+      String priceValue = pricingList.priceController.text;
+
+      pricingDetails.add({
+        'from': fromValue,
+        'to': toValue,
+        'price': priceValue,
+      });
+    }
+
+    return pricingDetails;
+  }*/
+
+
+
+  /*ElevatedButton(
+              onPressed: () {
+                List<Map<String, dynamic>> pricingDetails = getPricingDetails();
+                print(pricingDetails);
+              },
+              child: Text('Get Pricing Details'),
+            ),*/

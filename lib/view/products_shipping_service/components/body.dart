@@ -1,10 +1,20 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:jomla/view/var_lib.dart' as vars;
 
 import 'purchased_prod_dropdown.dart';
 
 class Body extends StatefulWidget {
-  Body({super.key});
+  final VoidCallback goToProfile;
+  List following;
+  bool isAdmin;
+  Body(
+      {Key? key,
+      required this.isAdmin,
+      required this.following,
+      required this.goToProfile})
+      : super(key: key);
 
   @override
   State<Body> createState() => _BodyState();
@@ -79,7 +89,11 @@ class _BodyState extends State<Body> {
                       child: Container(
                         height: MediaQuery.of(context).size.height * 0.8,
                         width: MediaQuery.of(context).size.width * 0.9,
-                        child: PurchasedProducts(),
+                        child: PurchasedProducts(
+                          goToProfile: widget.goToProfile,
+                          following: widget.following,
+                          isAdmin: widget.isAdmin,
+                        ),
                       ),
                     ),
                     actions: <Widget>[

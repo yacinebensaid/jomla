@@ -5,33 +5,33 @@ class Product {
   final String description,
       reference,
       product_name,
-      price,
       main_photo,
       main_category,
       section,
-      offers,
       sub_category,
       owner;
-  final int id, available_quantity, minimum_quantity;
-  final List sizes, colors, photos;
-  late final bool isFavourite;
+  final int id;
+  final String? offers;
+  final int? available_quantity;
+  final List photos, likers, price;
+  final List? variations;
+  final bool isFavourite;
   final double rating;
 
   Product(
       {required this.description,
+      this.variations,
       required this.owner,
       required this.reference,
       required this.isFavourite,
       required this.section,
+      required this.likers,
       required this.product_name,
       required this.main_photo,
       required this.price,
       required this.main_category,
       required this.sub_category,
       required this.available_quantity,
-      required this.minimum_quantity,
-      required this.sizes,
-      required this.colors,
       required this.photos,
       required this.id,
       required this.rating,
@@ -49,6 +49,8 @@ Future<List<Product>> getProductsForPopular() async {
     Product productTem = Product(
         id: i,
         offers: product['offers'],
+        variations: product['variations'],
+        likers: product['likers'],
         owner: product['owner'],
         section: product['section'],
         product_name: product['product_name'],
@@ -59,9 +61,6 @@ Future<List<Product>> getProductsForPopular() async {
         main_category: product['main_category'],
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
-        minimum_quantity: int.parse(product['minimum_quantity']),
-        sizes: product['sizes'],
-        colors: product['colors'],
         photos: product['photos'],
         isFavourite:
             await UserPCFService.searchInFav(product['reference']) as bool,
@@ -81,8 +80,10 @@ Future<List> getProductsForOnSale() async {
     Product productTem = Product(
         id: i,
         offers: product['offers'],
+        variations: product['variations'],
         owner: product['owner'],
         section: product['section'],
+        likers: product['likers'],
         product_name: product['product_name'],
         reference: product['reference'],
         description: product['description'],
@@ -91,9 +92,6 @@ Future<List> getProductsForOnSale() async {
         main_category: product['main_category'],
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
-        minimum_quantity: int.parse(product['minimum_quantity']),
-        sizes: product['sizes'],
-        colors: product['colors'],
         photos: product['photos'],
         isFavourite:
             await UserPCFService.searchInFav(product['reference']) as bool,
@@ -114,18 +112,19 @@ Future<List> getProductsForNew() async {
         id: i,
         offers: product['offers'],
         owner: product['owner'],
+        variations: product['variations'],
         section: product['section'],
         product_name: product['product_name'],
         reference: product['reference'],
         description: product['description'],
+        likers: product['likers'],
         main_photo: product['main_photo'],
         price: product['price'],
         main_category: product['main_category'],
         sub_category: product['sub_category'],
-        available_quantity: int.parse(product['available_quantity']),
-        minimum_quantity: int.parse(product['minimum_quantity']),
-        sizes: product['sizes'],
-        colors: product['colors'],
+        available_quantity: product['available_quantity'] != null
+            ? int.parse(product['available_quantity'])
+            : null,
         photos: product['photos'],
         isFavourite:
             await UserPCFService.searchInFav(product['reference']) as bool,
@@ -146,7 +145,9 @@ Future<List<Product>> getProductsBySubCat(String subcat) async {
         id: i,
         offers: product['offers'],
         owner: product['owner'],
+        variations: product['variations'],
         section: product['section'],
+        likers: product['likers'],
         product_name: product['product_name'],
         reference: product['reference'],
         description: product['description'],
@@ -155,9 +156,6 @@ Future<List<Product>> getProductsBySubCat(String subcat) async {
         main_category: product['main_category'],
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
-        minimum_quantity: int.parse(product['minimum_quantity']),
-        sizes: product['sizes'],
-        colors: product['colors'],
         photos: product['photos'],
         isFavourite:
             await UserPCFService.searchInFav(product['reference']) as bool,
@@ -177,6 +175,8 @@ Future getProductsByReference(String reference) async {
         id: i,
         offers: product['offers'],
         owner: product['owner'],
+        variations: product['variations'],
+        likers: product['likers'],
         section: product['section'],
         product_name: product['product_name'],
         reference: product['reference'],
@@ -186,9 +186,6 @@ Future getProductsByReference(String reference) async {
         main_category: product['main_category'],
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
-        minimum_quantity: int.parse(product['minimum_quantity']),
-        sizes: product['sizes'],
-        colors: product['colors'],
         photos: product['photos'],
         isFavourite:
             await UserPCFService.searchInFav(product['reference']) as bool,
@@ -324,7 +321,7 @@ Future<List<Product>> getProductsForFavourite() async {
   for (List prod in await searchingForProducts()) {
     for (final variable in prod) {
       if (variable.runtimeType == String) {
-        UserPCFService.delete_from_fav(variable);
+        UserPCFService.deletefromfav(variable);
       } else {
         int i = 0;
         for (Map product in prod) {
@@ -332,7 +329,9 @@ Future<List<Product>> getProductsForFavourite() async {
               id: i,
               offers: product['offers'],
               owner: product['owner'],
+              variations: product['variations'],
               section: product['section'],
+              likers: product['likers'],
               product_name: product['product_name'],
               reference: product['reference'],
               description: product['description'],
@@ -341,9 +340,6 @@ Future<List<Product>> getProductsForFavourite() async {
               main_category: product['main_category'],
               sub_category: product['sub_category'],
               available_quantity: int.parse(product['available_quantity']),
-              minimum_quantity: int.parse(product['minimum_quantity']),
-              sizes: product['sizes'],
-              colors: product['colors'],
               photos: product['photos'],
               isFavourite:
                   await UserPCFService.searchInFav(product['reference'])
@@ -435,7 +431,9 @@ Future<List> getAllProductsForSearch() async {
         id: i,
         offers: product['offers'],
         section: product['section'],
+        variations: product['variations'],
         owner: product['owner'],
+        likers: product['likers'],
         product_name: product['product_name'],
         reference: product['reference'],
         description: product['description'],
@@ -444,9 +442,6 @@ Future<List> getAllProductsForSearch() async {
         main_category: product['main_category'],
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
-        minimum_quantity: int.parse(product['minimum_quantity']),
-        sizes: product['sizes'],
-        colors: product['colors'],
         photos: product['photos'],
         isFavourite:
             await UserPCFService.searchInFav(product['reference']) as bool,

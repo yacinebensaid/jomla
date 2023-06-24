@@ -1,30 +1,30 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
+
 import 'package:jomla/view/subcat_details/subcat_details_view.dart';
+
 import '../../../size_config.dart';
-import 'section_title.dart';
 import '../../var_lib.dart' as vars;
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 List mainCategories = vars.get_mainCategoryOptionEX();
 Map<int, String> cateroriesInfo = vars.get_cateroriesInfo();
 
 class Categories extends StatelessWidget {
-  const Categories({
+  final VoidCallback goToProfile;
+  List following;
+  bool isAdmin;
+  Categories({
     Key? key,
+    required this.isAdmin,
+    required this.following,
+    required this.goToProfile,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Center(
-          child: SectionTitle(
-            title: AppLocalizations.of(context)!.categories,
-            press: () {},
-          ),
-        ),
-        SizedBox(height: getProportionateScreenWidth(20)),
+        SizedBox(height: getProportionateScreenWidth(5)),
         SingleChildScrollView(
           child: SizedBox(
             width: SizeConfig.screenWidth,
@@ -46,18 +46,27 @@ class Categories extends StatelessWidget {
                           image: cateroriesInfo[index * 2]!,
                           category: mainCategories[index * 2],
                           numOfBrands: 18,
-                          press: () => Navigator.pushNamed(context, subcatRout,
-                              arguments: MainCatKey(
-                                  maincatvalue: mainCategories[index * 2])),
+                          press: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: ((context) => SubcatView(
+                                      goToProfile: goToProfile,
+                                      following: following,
+                                      maincatvalue: mainCategories[index * 2],
+                                      isAdmin: isAdmin)))),
                         ),
                       if (index * 2 + 1 < mainCategories.length)
                         SpecialOfferCard(
                           image: cateroriesInfo[index * 2 + 1]!,
                           category: mainCategories[index * 2 + 1],
                           numOfBrands: 18,
-                          press: () => Navigator.pushNamed(context, subcatRout,
-                              arguments: MainCatKey(
-                                  maincatvalue: mainCategories[index * 2 + 1])),
+                          press: () => Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: ((context) => SubcatView(
+                                      goToProfile: goToProfile,
+                                      following: following,
+                                      maincatvalue:
+                                          mainCategories[index * 2 + 1],
+                                      isAdmin: isAdmin)))),
                         ),
                     ],
                   ),

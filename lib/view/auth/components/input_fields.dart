@@ -6,6 +6,7 @@ class InputFieldArea extends StatelessWidget {
   final TextEditingController controler;
   final bool obscure;
   final IconData? icon;
+  final int? maxlines;
   final TextInputType? keyboardType;
   final List<TextInputFormatter>? inputFormat;
   const InputFieldArea(
@@ -13,12 +14,13 @@ class InputFieldArea extends StatelessWidget {
       required this.keyboardType,
       required this.controler,
       required this.hint,
+      required this.maxlines,
       required this.obscure,
       required this.inputFormat,
       required this.icon});
   @override
   Widget build(BuildContext context) {
-    return (Container(
+    return Container(
       decoration: const BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -31,6 +33,7 @@ class InputFieldArea extends StatelessWidget {
         controller: controler,
         obscureText: obscure,
         keyboardType: keyboardType,
+        maxLines: maxlines,
         autocorrect: false,
         inputFormatters: inputFormat,
         style: const TextStyle(
@@ -42,12 +45,12 @@ class InputFieldArea extends StatelessWidget {
             color: Colors.black,
           ),
           border: InputBorder.none,
-          hintText: hint,
+          labelText: hint,
           hintStyle: const TextStyle(color: Colors.black, fontSize: 15.0),
           contentPadding: const EdgeInsets.only(
               top: 30.0, right: 30.0, bottom: 30.0, left: 5.0),
         ),
       ),
-    ));
+    );
   }
 }

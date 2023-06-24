@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:jomla/constants/routes.dart';
+import 'package:jomla/services/auth/auth_service.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/view/entrypoint/entrypoint.dart';
 
 class StaggerAnimation extends StatelessWidget {
   StaggerAnimation(
@@ -117,17 +120,31 @@ class StaggerAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    buttonController.addListener(() {
+    buttonController.addListener(() async {
       if (buttonController.isCompleted) {
-        Navigator.of(context).pushNamedAndRemoveUntil(
-          enterypointRout,
-          (route) => false,
-        );
+        final user = AuthService.firebase().currentUser;
+        if (user != null) {
+          if (user.isEmailVerified) {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(
+                  builder: ((context) => EntryPoint(
+                        uid: user.uid,
+                      ))),
+              (route) => false,
+            );
+          }
+        }
       }
     });
+
     return AnimatedBuilder(
       builder: _buildAnimation,
       animation: buttonController,
     );
   }
 }
+
+
+/**/
+
+

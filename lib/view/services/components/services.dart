@@ -32,12 +32,12 @@ class _ServicesState extends State<Services> {
       description: 'Service description',
       imageUrl: 'assets/images/services/shipping.jpeg',
     ),
-    Service(
+    /*Service(
       servicePage: shippingServiceRout,
       name: 'Products\nShipping',
       description: 'Service description',
       imageUrl: 'assets/images/services/shipping_serv.jpeg',
-    ),
+    ),*/
     Service(
       servicePage: storingServiceRout,
       name: 'Stock\nService',

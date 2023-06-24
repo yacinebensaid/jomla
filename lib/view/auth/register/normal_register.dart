@@ -59,12 +59,14 @@ class _NormalRegisterState extends State<NormalRegister> {
             keyboardType: TextInputType.emailAddress,
             inputFormat: null,
             hint: "First Name",
+            maxlines: 1,
             obscure: false,
             icon: Icons.person_outline,
           ),
           InputFieldArea(
             controler: _lastName,
             keyboardType: null,
+            maxlines: 1,
             inputFormat: null,
             hint: "Last Name",
             obscure: false,
@@ -72,6 +74,7 @@ class _NormalRegisterState extends State<NormalRegister> {
           ),
           InputFieldArea(
             controler: _phoneNumber,
+            maxlines: 1,
             keyboardType: TextInputType.phone,
             inputFormat: [
               FilteringTextInputFormatter.digitsOnly,
@@ -86,6 +89,7 @@ class _NormalRegisterState extends State<NormalRegister> {
             controler: _email,
             keyboardType: null,
             inputFormat: null,
+            maxlines: 1,
             hint: "Email",
             obscure: false,
             icon: Icons.email_outlined,
@@ -93,6 +97,7 @@ class _NormalRegisterState extends State<NormalRegister> {
           InputFieldArea(
             controler: _password,
             keyboardType: null,
+            maxlines: 1,
             inputFormat: null,
             hint: "Password",
             obscure: true,
@@ -113,10 +118,11 @@ class _NormalRegisterState extends State<NormalRegister> {
                         password: _password.text,
                       )
                           .then((value) {
-                        DataService.addUserData(
+                        DataService _dataServInstance = DataService();
+                        _dataServInstance.addUserData(
                           full_name: '${_firstName.text} ${_lastName.text}',
                           phoneNumber: _phoneNumber.text,
-                          owned_products: [],
+                          following: [],
                         );
                       });
 

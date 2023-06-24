@@ -3,18 +3,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_service.dart';
-import 'package:jomla/view/auth/emailverify_view.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/view/auth/email_verification/emailverify_view.dart';
 import 'package:jomla/view/auth/login/index.dart';
 import 'package:jomla/view/auth/register/register_view.dart';
 import 'package:jomla/view/banner_links/sale/sale.dart';
 import 'package:jomla/view/banner_links/tips/tips.dart';
 import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
-import 'package:jomla/view/cart/cart_view.dart';
 import 'package:jomla/view/entrypoint/entrypoint.dart';
-import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/product_storing_service/storing_service.dart';
-import 'package:jomla/view/products_shipping_service/shipping_service_view.dart';
-import 'package:jomla/view/subcat_details/subcat_details_view.dart';
 import 'l10n/l10n.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -34,7 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-        designSize: const Size(392.72727272727275, 802.9090909090909),
+        designSize: const Size(411.4, 866.3),
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) {
@@ -50,14 +47,9 @@ class MyApp extends StatelessWidget {
               loginRout: (context) => const LoginScreen(),
               registerRout: (context) => const RegisterPage(),
               verifyemailRout: (context) => const VerifyEmailView(),
-              enterypointRout: (context) => const EntryPoint(),
               saleRout: (context) => const SalePage(),
               usingJomlaRout: (context) => const UsingJomlaPage(),
               tipsRout: (context) => const TipsPage(),
-              detailsRout: (context) => const DetailsScreen(),
-              subcatRout: (context) => const SubcatView(),
-              cartRout: (context) => const CartScreen(),
-              shippingServiceRout: (context) => const ShippingServicePage(),
               storingServiceRout: (context) => const StoringServicePage(),
             },
             supportedLocales: L10n.all,
@@ -95,7 +87,9 @@ class _HomePageState extends State<HomePage> {
             // redirecting the user based on his account status
             if (user != null) {
               if (user.isEmailVerified) {
-                return const EntryPoint();
+                return EntryPoint(
+                  uid: user.uid,
+                );
               } else {
                 return const VerifyEmailView();
               }

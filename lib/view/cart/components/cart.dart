@@ -1,7 +1,7 @@
 import '../../products_card/product.dart';
 
 class Cart {
-  final ProductForCart product;
+  final product;
   final int id;
   final String reference;
   Cart({required this.id, required this.product, required this.reference});

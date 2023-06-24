@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
 import 'package:jomla/view/search/search.dart';
-
 import '../../size_config.dart';
 import 'components/body.dart';
 
 class HomeView extends StatefulWidget {
+  final List following;
+  final bool isAdmin;
+  final String? userType;
+  final VoidCallback goToProfile;
+  final VoidCallback refresh;
   final VoidCallback goToExplore;
   final VoidCallback opendrawer;
 
   const HomeView(
-      {Key? key, required this.goToExplore, required this.opendrawer})
+      {Key? key,
+      required this.goToExplore,
+      required this.opendrawer,
+      required this.userType,
+      required this.isAdmin,
+      required this.refresh,
+      required this.following,
+      required this.goToProfile})
       : super(key: key);
 
   @override
@@ -34,55 +44,75 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
+  Future<void> _onRefresh() async {
+    // Wait for a short delay to give the user time to see the loading animation
+    await Future.delayed(Duration(milliseconds: 500));
+
+    // Navigate to the HomeView again and replace the current route with the new one
+    widget.refresh;
+  }
+
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
-    return Stack(
-      children: [
-        Scaffold(
-          body: Body(
-            toExplore: goToExplore,
-            updateAppBarState: _updateAppBarState,
-          ),
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        ),
-        Container(
-          height: 75,
-          width: SizeConfig.screenWidth,
-          color: Colors.transparent.withOpacity(0.0),
-          child: AppBar(
-            elevation: 0,
-            backgroundColor: _isAppBarTransparent
-                ? Colors.transparent.withOpacity(0.0)
-                : const Color.fromARGB(255, 28, 26, 26),
-            leading: IconButton(
-              icon: const Icon(
-                Icons.menu,
-                color: Colors.white,
-                size: 28,
+    return SafeArea(
+      child: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: Stack(
+          children: [
+            Scaffold(
+              body: Body(
+                userType: widget.userType,
+                goToProfile: widget.goToProfile,
+                following: widget.following,
+                isAdmin: widget.isAdmin,
+                toExplore: goToExplore,
+                updateAppBarState: _updateAppBarState,
               ),
-              onPressed: () {
-                opendrawer();
-              },
+              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             ),
-            actions: [
-              IconButton(
-                padding: const EdgeInsets.only(right: 10),
-                style: IconButton.styleFrom(foregroundColor: Colors.white),
-                icon: const Icon(
-                  Icons.search,
-                  color: Colors.white,
-                  size: 28,
+            Container(
+              height: 55,
+              width: SizeConfig.screenWidth,
+              color: Colors.transparent.withOpacity(0.0),
+              child: AppBar(
+                elevation: 0,
+                backgroundColor: _isAppBarTransparent
+                    ? Colors.transparent.withOpacity(0.0)
+                    : const Color.fromARGB(255, 28, 26, 26),
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.menu,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    opendrawer();
+                  },
                 ),
-                onPressed: () {
-                  showSearch(
-                      context: context, delegate: CustumSearchDeligate());
-                },
+                actions: [
+                  IconButton(
+                    padding: const EdgeInsets.only(right: 10),
+                    style: IconButton.styleFrom(foregroundColor: Colors.white),
+                    icon: const Icon(
+                      Icons.search,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      showSearch(
+                          context: context,
+                          delegate: CustumSearchDeligate(
+                            goToProfile: widget.goToProfile,
+                            isAdmin: widget.isAdmin,
+                            following: widget.following,
+                          ));
+                    },
+                  ),
+                ],
               ),
-            ],
-          ),
-        )
-      ],
+            )
+          ],
+        ),
+      ),
     );
   }
 }

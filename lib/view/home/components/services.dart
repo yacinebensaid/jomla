@@ -1,12 +1,23 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jomla/view/dropshipping/dropship_view.dart';
+import 'package:jomla/view/products_shipping_service/shipping_service_view.dart';
 
 import '../../../size_config.dart';
 import 'section_title.dart';
 
-class SpecialOffers extends StatelessWidget {
-  const SpecialOffers({
+class Services extends StatelessWidget {
+  final List following;
+  final String? userType;
+  final bool isAdmin;
+  final VoidCallback goToProfile;
+  const Services({
     Key? key,
+    required this.following,
+    required this.isAdmin,
+    required this.userType,
+    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -14,40 +25,45 @@ class SpecialOffers extends StatelessWidget {
     return Column(
       children: [
         Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: SectionTitle(
             title: 'Services',
             press: () {},
           ),
         ),
-        SizedBox(height: getProportionateScreenWidth(20)),
+        SizedBox(height: 20.h),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
               SpecialOfferCard(
-                image: "assets/images/services/shipping.jpeg",
-                category: "Shipping for e-com",
-                press: () {},
+                image: "assets/images/services/stock.jpg",
+                category: "Dropship\nService",
+                press: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => Dropship(
+                            userType: userType,
+                            goToProfile: goToProfile,
+                          ))));
+                },
               ),
               SpecialOfferCard(
                 image: "assets/images/services/shipping_serv.jpeg",
-                category: "Product Delivery",
+                category: "Product\nShipping",
                 press: () {
-                  Navigator.of(context).pushNamed(shippingServiceRout);
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: ((context) => ShippingServicePage(
+                            goToProfile: goToProfile,
+                            isAdmin: isAdmin,
+                            following: following,
+                          ))));
+
+                  /* Navigator.of(context).pushNamed(shippingServiceRout);*/
                 },
               ),
               SpecialOfferCard(
-                image: "assets/images/services/stock.jpg",
-                category: "Storig",
-                press: () {
-                  Navigator.of(context).pushNamed(storingServiceRout);
-                },
-              ),
-              SpecialOfferCard(
-                image: "assets/images/categories_imgs/More.jpg",
-                category: "More Services",
+                image: "assets/images/services/affiliate-marketing.jpg",
+                category: "Affiliate\nMarketing",
                 press: () {},
               ),
               SizedBox(width: getProportionateScreenWidth(20)),
@@ -78,7 +94,7 @@ class SpecialOfferCard extends StatelessWidget {
         onTap: press,
         child: SizedBox(
           width: getProportionateScreenWidth(242),
-          height: getProportionateScreenHeight(100),
+          height: getProportionateScreenHeight(120),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Stack(

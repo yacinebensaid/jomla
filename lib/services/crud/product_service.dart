@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jomla/services/auth/auth_service.dart';
+import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
 import 'package:jomla/view/products_card/product.dart';
 import 'crud_exceptions.dart';
@@ -9,13 +10,10 @@ class ProductService {
     required String mainCategory,
     required String productName,
     required String subCategory,
-    required String availableQuantity,
-    required String minimumQuantity,
-    required List sizes,
-    required String price,
-    required List colors,
-    required String offers,
+    required List<Map<String, dynamic>> price,
+    required String? availableQuantity,
     required String mainPhoto,
+    required List<Map<String, Map?>> variations,
     required List photos,
     required String description,
   }) async {
@@ -40,17 +38,18 @@ class ProductService {
           'sub_category': subCategory,
           'reference': reference,
           'product_name': productName,
-          'available_quantity': availableQuantity,
-          'minimum_quantity': minimumQuantity,
-          'sizes': sizes,
+          'variations': variations,
           'price': price,
-          'offers': offers,
-          'colors': colors,
+          'available_quantity': availableQuantity,
           'main_photo': mainPhoto,
           'photos': photos,
           'description': description,
           'owner': userUID,
           'section': '',
+          'created_at': DateTime.now(),
+          'buyers': [],
+          'likers': [],
+          'comments': []
         });
         addProductToUser(userUID, reference);
         return 'Product saved, Product $productName';
@@ -60,14 +59,39 @@ class ProductService {
     }
   }
 
-  static Future<DocumentSnapshot> getProductDataByReference(
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  static Future<Product?> getProductDataByReference(
       String productReference) async {
     DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
         .collection('ProductData')
         .doc(productReference)
         .get();
+    Product? productTem;
+    if (productSnapshot.exists) {
+      Map<String, dynamic> product =
+          productSnapshot.data() as Map<String, dynamic>;
+      productTem = Product(
+          id: 0,
+          offers: product['offers'],
+          owner: product['owner'],
+          variations: product['variations'],
+          section: product['section'],
+          likers: product['likers'],
+          product_name: product['product_name'],
+          reference: product['reference'],
+          description: product['description'],
+          main_photo: product['main_photo'],
+          price: product['price'],
+          main_category: product['main_category'],
+          sub_category: product['sub_category'],
+          available_quantity: null,
+          photos: product['photos'],
+          isFavourite:
+              await UserPCFService.searchInFav(product['reference']) as bool,
+          rating: 4.5);
+    }
 
-    return productSnapshot;
+    return productTem;
   }
 
   static Future<String> updateProduct({
@@ -127,12 +151,13 @@ class ProductService {
       updatedFields['description'] = description;
     }
     if (main_photo != null) {
-      updatedFields['description'] = main_photo;
+      updatedFields['main_photo'] = main_photo;
     }
     if (productPhotos != null) {
-      updatedFields['description'] = productPhotos;
+      updatedFields['photos'] = productPhotos;
     }
-
+    final userUID = AuthService.firebase().currentUser?.uid;
+    updatedFields['edited_by'] = userUID;
     try {
       await FirebaseFirestore.instance
           .collection('ProductData')
@@ -159,6 +184,48 @@ class ProductService {
     } else {
       return products;
     }
+  }
+
+  static Stream<List<Map<String, dynamic>>?> getCommentsStream(
+      String reference) {
+    return FirebaseFirestore.instance
+        .collection('ProductData')
+        .doc(reference)
+        .snapshots()
+        .map((snapshot) {
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null && data['comments'] is List) {
+          final comments = data['comments'] as List;
+          return comments.cast<Map<String, dynamic>>();
+        }
+      }
+
+      return null;
+    });
+  }
+
+  static void addComment(String reference, String uid, String comment) async {
+    final documentRef =
+        FirebaseFirestore.instance.collection('ProductData').doc(reference);
+
+    await FirebaseFirestore.instance.runTransaction((transaction) async {
+      final snapshot = await transaction.get(documentRef);
+
+      if (snapshot.exists) {
+        final data = snapshot.data();
+        if (data != null && data['comments'] is List) {
+          final comments = List<Map<String, dynamic>>.from(data['comments']);
+          comments.add({
+            'uid': uid,
+            'comment': comment,
+            // Add any other fields you need for a comment
+          });
+
+          await transaction.update(documentRef, {'comments': comments});
+        }
+      }
+    });
   }
 
   static void deleteProduct(String value) async {
@@ -234,6 +301,22 @@ class ProductService {
     }
   }
 
+  static Future<List> getAllProductsforSearch() async {
+    List products = [];
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('ProductData')
+        .limit(3)
+        .get();
+    snapshot.docs.forEach((element) {
+      products.add(element.data());
+    });
+    if (products.isEmpty) {
+      return ['product does not exist'];
+    } else {
+      return products;
+    }
+  }
+
   static void addProductToUser(String userID, String productID) {
     FirebaseFirestore.instance
         .collection('UserData')
@@ -244,7 +327,9 @@ class ProductService {
         List<String> ownedProducts =
             List<String>.from(docSnapshot.data()!['owned_products']);
         ownedProducts.add(productID);
-        DataService.addUserData(
+        DataService _dataServInstance = DataService();
+        _dataServInstance.addUserData(
+          following: docSnapshot.data()!['following'],
           full_name: docSnapshot.data()!['name'],
           phoneNumber: docSnapshot.data()!['phone_number'],
           user_type: docSnapshot.data()!['user_type'],
@@ -255,26 +340,49 @@ class ProductService {
     });
   }
 
-  static Future<List<Product>> searchProductByUser(String userUID) async {
+  static Future<List<Product>> searchProductByUser(String _userUID) async {
     List<Product> products = [];
-    final docSnapshot = await FirebaseFirestore.instance
-        .collection('UserData')
-        .doc(userUID)
-        .get();
-    if (docSnapshot.exists) {
-      final userData = docSnapshot.data();
-      List ownedProducts = userData?['owned_products'];
+    UserData? _userdata = await DataService.getUserDataStream(_userUID).first;
 
-      if (ownedProducts != null) {
-        for (final ref in ownedProducts) {
-          if (ref != null) {
-            products.add(await getProductsByReference(ref));
+    if (_userdata != null) {
+      if (_userdata.user_type == 'market') {
+        List? ownedProducts = _userdata.owned_products;
+
+        if (ownedProducts != null) {
+          if (ownedProducts.isNotEmpty) {
+            for (final ref in ownedProducts) {
+              if (ref != null) {
+                products.add(await getProductsByReference(ref));
+              }
+            }
           }
+          return products;
+        } else {
+          throw Exception('User data not found for user with ID: $_userUID');
         }
+      } else if (_userdata.user_type == 'dropshipper') {
+        DropshipperData? dropshipperData =
+            await DataService.getDropshipperData(_userdata.dropshipperID!)
+                .first;
+        if (dropshipperData != null) {
+          List? ownedProducts = dropshipperData.owned_products;
+
+          if (ownedProducts.isNotEmpty) {
+            for (final ref in ownedProducts) {
+              if (ref != null) {
+                products.add(await getProductsByReference(ref));
+              }
+            }
+          }
+          return products;
+        } else {
+          throw Exception('User data not found for user with ID: $_userUID');
+        }
+      } else {
+        throw Exception('User data not found for user with ID: $_userUID');
       }
-      return products;
     } else {
-      throw Exception('User data not found for user with ID: $userUID');
+      throw Exception('User data not found for user with ID: $_userUID');
     }
   }
 }

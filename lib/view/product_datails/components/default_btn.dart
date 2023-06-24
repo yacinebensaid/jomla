@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../constants/constants.dart';
 import '../../../size_config.dart';
 
@@ -16,7 +15,7 @@ class DefaultButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: getProportionateScreenHeight(56),
+      height: getProportionateScreenHeight(50),
       child: TextButton(
         style: TextButton.styleFrom(
           shape:

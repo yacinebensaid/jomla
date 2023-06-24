@@ -63,7 +63,7 @@ class _ServicesViewState extends State<ServicesView> {
                 size: 28,
               ),
               onPressed: () {
-                showSearch(context: context, delegate: CustumSearchDeligate());
+                /*showSearch(context: context, delegate: CustumSearchDeligate());*/
               },
             ),
             IconButton(

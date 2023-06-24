@@ -1,10 +1,22 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+
 import 'package:jomla/view/components/appbar.dart';
 
 import 'components/body.dart';
 
 class SubcatView extends StatefulWidget {
-  const SubcatView({super.key});
+  final VoidCallback goToProfile;
+  List following;
+  String maincatvalue;
+  bool isAdmin;
+  SubcatView(
+      {Key? key,
+      required this.maincatvalue,
+      required this.isAdmin,
+      required this.following,
+      required this.goToProfile})
+      : super(key: key);
 
   @override
   State<SubcatView> createState() => _MyWidgetState();
@@ -13,17 +25,19 @@ class SubcatView extends StatefulWidget {
 class _MyWidgetState extends State<SubcatView> {
   @override
   Widget build(BuildContext context) {
-    final MainCatKey agrs =
-        ModalRoute.of(context)?.settings.arguments as MainCatKey;
     return Scaffold(
-      appBar: MyCustomAppBar(context: context),
-      body: Body(maincat: agrs.maincatvalue),
+      appBar: MyCustomAppBar(
+        goToProfile: widget.goToProfile,
+        following: widget.following,
+        context: context,
+        isAdmin: widget.isAdmin,
+      ),
+      body: Body(
+        goToProfile: widget.goToProfile,
+        following: widget.following,
+        maincat: widget.maincatvalue,
+        isAdmin: widget.isAdmin,
+      ),
     );
   }
-}
-
-class MainCatKey {
-  final String maincatvalue;
-
-  MainCatKey({required this.maincatvalue});
 }

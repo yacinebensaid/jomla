@@ -4,6 +4,7 @@ import '../../../size_config.dart';
 import '../../products_card/product.dart';
 import 'rounded_icon_btn.dart';
 
+/*
 class ColorDots extends StatelessWidget {
   const ColorDots({
     Key? key,
@@ -82,3 +83,4 @@ class ColorDot extends StatelessWidget {
     );
   }
 }
+*/

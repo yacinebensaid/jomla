@@ -51,6 +51,9 @@ dependencies:
   flutter_screenutil: ^5.7.0
   url_launcher: ^6.1.10
   shimmer: ^2.0.0
+  file_picker: ^5.2.11
+  permission_handler: ^10.2.0
+  flutter_colorpicker: ^1.0.3
 
 
 dev_dependencies:

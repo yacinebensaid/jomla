@@ -1,15 +1,18 @@
 export 'variables.dart';
 
-get_colorOption() {
-  return 'red,blue,green,yellow,black,white';
-}
-
 get_mainCategoryOptionAP() {
-  return 'Clothing,Accessories,Electronics,Home,Kitchen,Beauty,Sports,Books,Industrial,Food';
-}
-
-get_sizeOption() {
-  return 'XS,S,M,L,XL,XXL';
+  return [
+    "Clothing",
+    "Accessories",
+    "Electronics",
+    "Home",
+    "Kitchen",
+    "Beauty",
+    "Sports",
+    "Books",
+    "Industrial",
+    "Food"
+  ];
 }
 
 get_offerOption() {

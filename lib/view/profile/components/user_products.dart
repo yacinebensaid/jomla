@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jomla/services/crud/product_service.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/body.dart';
 import 'package:jomla/view/products_card/product.dart';
+import 'package:jomla/view/profile/components/loading_user_products.dart';
+
 import '../../../size_config.dart';
 
 class UserProducts extends StatelessWidget {
+  final VoidCallback goToProfile;
+  List following;
+  bool isAdmin;
   String uid;
-  UserProducts({super.key, required this.uid});
+  UserProducts(
+      {Key? key,
+      required this.isAdmin,
+      required this.uid,
+      required this.following,
+      required this.goToProfile})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,16 +28,10 @@ class UserProducts extends StatelessWidget {
     return FutureBuilder<List<Product>>(
       future: ProductService.searchProductByUser(uid),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasData) {
+        if (snapshot.hasData) {
           List<Product> products = snapshot.data!;
-          final cardWidth = getProportionateScreenWidth(
-              160); // Width of each ProductCard widget
-          final spacingWidth = getProportionateScreenWidth(
-              20); // Space between each ProductCard widget
+          final cardWidth = 160.w; // Width of each ProductCard widget
+          final spacingWidth = 20.w; // Space between each ProductCard widget
           final availableWidth = screenWidth -
               spacingWidth; // Width available for ProductCard widgets after accounting for spacing
           final numOfCards = (availableWidth / cardWidth)
@@ -36,7 +41,7 @@ class UserProducts extends StatelessWidget {
 
           return Column(
             children: [
-              SizedBox(height: getProportionateScreenWidth(20)),
+              SizedBox(height: 20.h),
               SizedBox(
                 width: SizeConfig.screenWidth,
                 child: ListView.builder(
@@ -54,7 +59,7 @@ class UserProducts extends StatelessWidget {
 
                     return Padding(
                       padding: EdgeInsets.symmetric(
-                        vertical: getProportionateScreenWidth(20),
+                        vertical: 20.h,
                         horizontal: spacingWidth,
                       ),
                       child: Row(
@@ -62,13 +67,14 @@ class UserProducts extends StatelessWidget {
                         children: rowProducts.map((product) {
                           return ProductCard(
                             product: product,
-                            press: () => Navigator.pushNamed(
-                              context,
-                              detailsRout,
-                              arguments: ProductDetailsArguments(
-                                product: product,
-                              ),
-                            ),
+                            press: () =>
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: ((context) => DetailsScreen(
+                                          goToProfile: goToProfile,
+                                          following: following,
+                                          isAdmin: isAdmin,
+                                          product: product,
+                                        )))),
                           );
                         }).toList(),
                       ),
@@ -79,7 +85,7 @@ class UserProducts extends StatelessWidget {
             ],
           );
         } else {
-          return Text("${snapshot.error}");
+          return UserProductsLoading();
         }
       },
     );

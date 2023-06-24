@@ -1,14 +1,24 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
 import 'package:jomla/view/purchased/components/purchased.dart';
-import '../../../../constants/routes.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../../../../constants/routes.dart';
 import 'shipping_products_card.dart';
 
 class PurchasedProducts extends StatefulWidget {
-  const PurchasedProducts({Key? key}) : super(key: key);
+  final VoidCallback goToProfile;
+  List following;
+  bool isAdmin;
+  PurchasedProducts(
+      {Key? key,
+      required this.isAdmin,
+      required this.following,
+      required this.goToProfile})
+      : super(key: key);
 
   @override
   _PurchasedProductsState createState() => _PurchasedProductsState();
@@ -71,14 +81,17 @@ class _PurchasedProductsState extends State<PurchasedProducts> {
                               isChecked, _products[index].purchaseID),
                         ),
                         GestureDetector(
-                          onTap: () async => Navigator.pushNamed(
-                            context,
-                            detailsRout,
-                            arguments: ProductDetailsArguments(
-                              product: await getProductsByReference(
-                                  _products[index].reference),
-                            ),
-                          ),
+                          onTap: () async {
+                            Product _product = await getProductsByReference(
+                                _products[index].reference);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: ((context) => DetailsScreen(
+                                      goToProfile: widget.goToProfile,
+                                      following: widget.following,
+                                      isAdmin: widget.isAdmin,
+                                      product: _product,
+                                    ))));
+                          },
                           child: PurchasedCard(purchasedProd: _products[index]),
                         ),
                       ],

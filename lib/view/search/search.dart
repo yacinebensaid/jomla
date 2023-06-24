@@ -1,12 +1,18 @@
 import 'dart:math' show min;
 
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/crud/product_service.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
 
 class CustumSearchDeligate extends SearchDelegate {
+  final VoidCallback goToProfile;
+  List following;
+  final bool isAdmin;
+  CustumSearchDeligate(
+      {required this.isAdmin,
+      required this.following,
+      required this.goToProfile});
   String? selectedMainCategory;
   String? selectedSubCategory;
   String? selectedOffer;
@@ -108,7 +114,7 @@ class CustumSearchDeligate extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     Map<String, String> nameToReferenceMap = {};
     return FutureBuilder(
-      future: ProductService.getAllProducts(),
+      future: ProductService.getAllProductsforSearch(),
       builder: ((context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -137,8 +143,13 @@ class CustumSearchDeligate extends SearchDelegate {
                   onTap: () async {
                     String reference = nameToReferenceMap[result]!;
                     Product product = await getProductsByReference(reference);
-                    Navigator.pushNamed(context, detailsRout,
-                        arguments: ProductDetailsArguments(product: product));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: ((context) => DetailsScreen(
+                              goToProfile: goToProfile,
+                              following: following,
+                              isAdmin: isAdmin,
+                              product: product,
+                            ))));
                   },
                   title: Text(result),
                 );
@@ -154,7 +165,7 @@ class CustumSearchDeligate extends SearchDelegate {
   Widget buildSuggestions(BuildContext context) {
     Map<String, String> nameToReferenceMap = {};
     return FutureBuilder(
-      future: ProductService.getAllProducts(),
+      future: ProductService.getAllProductsforSearch(),
       builder: ((context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
@@ -165,9 +176,6 @@ class CustumSearchDeligate extends SearchDelegate {
           for (Map product in snapshot.data!) {
             String productName = product['product_name'];
             String productReference = product['reference'];
-            String productMainCat = product['main_category'];
-            String productSubCat = product['sub_category'];
-            String productOffer = product['offers'];
             nameToReferenceMap[productName] = productReference;
             productsName.add(productName);
           }
@@ -185,8 +193,13 @@ class CustumSearchDeligate extends SearchDelegate {
                   onTap: () async {
                     String reference = nameToReferenceMap[result]!;
                     Product product = await getProductsByReference(reference);
-                    Navigator.pushNamed(context, detailsRout,
-                        arguments: ProductDetailsArguments(product: product));
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: ((context) => DetailsScreen(
+                              goToProfile: goToProfile,
+                              following: following,
+                              isAdmin: isAdmin,
+                              product: product,
+                            ))));
                   },
                   title: Text(result),
                 );

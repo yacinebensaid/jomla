@@ -26,6 +26,7 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
   late final TextEditingController _marketName;
   late final TextEditingController _phoneNumber;
   late final TextEditingController _marketLocation;
+  late final TextEditingController _descriptionController;
   bool _isOranSelected = true;
   String? _selectedCategory;
 
@@ -39,6 +40,7 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
     _marketName = TextEditingController();
     _marketLocation = TextEditingController();
     _phoneNumber = TextEditingController();
+    _descriptionController = TextEditingController();
     _isOranSelected = true;
   }
 
@@ -47,6 +49,7 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
     _email.dispose();
     _password.dispose();
     _marketName.dispose();
+    _descriptionController.dispose();
     _marketLocation.dispose();
     _phoneNumber.dispose();
     super.dispose();
@@ -64,8 +67,18 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
             keyboardType: TextInputType.emailAddress,
             inputFormat: null,
             hint: "Market Name",
+            maxlines: 1,
             obscure: false,
-            icon: Icons.person_outline,
+            icon: Icons.storefront_outlined,
+          ),
+          InputFieldArea(
+            controler: _descriptionController,
+            inputFormat: null,
+            keyboardType: TextInputType.multiline,
+            obscure: false,
+            maxlines: null,
+            hint: "Market description",
+            icon: Icons.description_outlined,
           ),
           Center(
             child: Container(
@@ -101,6 +114,7 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
           InputFieldArea(
             controler: _phoneNumber,
             keyboardType: TextInputType.phone,
+            maxlines: 1,
             inputFormat: [
               FilteringTextInputFormatter.digitsOnly,
               LengthLimitingTextInputFormatter(10),
@@ -112,6 +126,7 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
           InputFieldArea(
             controler: _email,
             keyboardType: null,
+            maxlines: 1,
             inputFormat: null,
             hint: "Email",
             obscure: false,
@@ -121,6 +136,7 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
             controler: _password,
             keyboardType: null,
             inputFormat: null,
+            maxlines: 1,
             hint: "Password",
             obscure: true,
             icon: Icons.lock_outline,
@@ -160,6 +176,7 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
             controler: _marketLocation,
             keyboardType: TextInputType.streetAddress,
             inputFormat: null,
+            maxlines: 1,
             hint: "Adress",
             obscure: false,
             icon: Icons.location_on_outlined,
@@ -181,13 +198,16 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
                         password: _password.text,
                       )
                           .then((value) {
-                        DataService.addMarketData(
+                        DataService _dataServInstance = DataService();
+                        _dataServInstance.addMarketData(
                           marketName: _marketName.text,
+                          followers: [],
+                          following: [],
                           marketCategory: _selectedCategory!,
+                          description: _descriptionController.text,
                           phoneNumber: _phoneNumber.text,
                           city: city,
                           adress: _marketLocation.text,
-                          owned_products: [],
                         );
                       });
 

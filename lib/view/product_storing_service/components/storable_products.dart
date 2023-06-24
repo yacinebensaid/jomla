@@ -74,14 +74,16 @@ class _PurchasedProductsState extends State<StorableProducts> {
                               isChecked, _products[index].purchaseID),
                         ),
                         GestureDetector(
-                          onTap: () async => Navigator.pushNamed(
+                          onTap: () async {
+                            /* Navigator.pushNamed(
                             context,
                             detailsRout,
                             arguments: ProductDetailsArguments(
                               product: await getProductsByReference(
                                   _products[index].reference),
                             ),
-                          ),
+                          );*/
+                          },
                           child: PurchasedCard(purchasedProd: _products[index]),
                         ),
                       ],

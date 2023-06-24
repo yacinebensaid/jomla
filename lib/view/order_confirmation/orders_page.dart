@@ -26,10 +26,8 @@ class _UserOrdersPageState extends State<UserOrdersPage> {
             future: DataService.getUserDataForOrder(widget.userUID),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final userFirstName = snapshot.data['first_name'];
-                final userLastName = snapshot.data['last_name'];
-                final fullname = userFirstName + ' ' + userLastName;
-                final userPhonenumber = snapshot.data['phone_number'];
+                final fullname = snapshot.data!.name;
+                final userPhonenumber = snapshot.data!.phoneNumber;
 
                 return Card(
                   elevation: 4,

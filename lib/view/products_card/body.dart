@@ -4,6 +4,7 @@ import 'package:jomla/services/crud/pcf_service.dart';
 import '../../constants/constants.dart';
 import '../../size_config.dart';
 import 'product.dart';
+import 'package:jomla/utilities/shimmers.dart';
 
 class ProductCard extends StatefulWidget {
   const ProductCard({
@@ -33,7 +34,7 @@ class _ProductCardState extends State<ProductCard> {
 
   void pressfav() async {
     if (_isfav) {
-      UserPCFService.delete_from_fav(widget.product.reference);
+      UserPCFService.deletefromfav(widget.product.reference);
     } else {
       await UserPCFService.addToFav(reference: widget.product.reference);
     }
@@ -47,6 +48,7 @@ class _ProductCardState extends State<ProductCard> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
+        color: Colors.white,
         border: Border.all(
           color: Colors.grey,
           width: 0.3,
@@ -67,14 +69,25 @@ class _ProductCardState extends State<ProductCard> {
                       AspectRatio(
                         aspectRatio: 1.02,
                         child: Container(
-                          padding:
-                              EdgeInsets.all(getProportionateScreenWidth(0)),
-                          decoration: BoxDecoration(
-                            color: kSecondaryColor.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Image.network(widget.product.main_photo),
-                        ),
+                            padding:
+                                EdgeInsets.all(getProportionateScreenWidth(0)),
+                            decoration: BoxDecoration(
+                              color: kSecondaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Image.network(
+                              widget.product.main_photo,
+                              loadingBuilder: (BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress) {
+                                if (loadingProgress == null) {
+                                  return child;
+                                }
+                                return BuildShimmerEffect();
+                              },
+                              errorBuilder: (_, __, ___) =>
+                                  BuildShimmerEffect(),
+                            )),
                       ),
                       const SizedBox(height: 10),
                       Text(
@@ -82,42 +95,29 @@ class _ProductCardState extends State<ProductCard> {
                         style: const TextStyle(color: Colors.black),
                         maxLines: 2,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "\$${widget.product.price}",
-                            style: TextStyle(
-                              fontSize: getProportionateScreenWidth(18),
-                              fontWeight: FontWeight.w600,
-                              color: kPrimaryColor,
-                            ),
+                      InkWell(
+                        borderRadius: BorderRadius.circular(50),
+                        child: Container(
+                          padding:
+                              EdgeInsets.all(getProportionateScreenWidth(8)),
+                          height: getProportionateScreenWidth(28),
+                          width: getProportionateScreenWidth(28),
+                          decoration: BoxDecoration(
+                            color: _isfav
+                                ? kPrimaryColor.withOpacity(0.15)
+                                : kSecondaryColor.withOpacity(0.1),
+                            shape: BoxShape.circle,
                           ),
-                          InkWell(
-                            borderRadius: BorderRadius.circular(50),
-                            child: Container(
-                              padding: EdgeInsets.all(
-                                  getProportionateScreenWidth(8)),
-                              height: getProportionateScreenWidth(28),
-                              width: getProportionateScreenWidth(28),
-                              decoration: BoxDecoration(
-                                color: _isfav
-                                    ? kPrimaryColor.withOpacity(0.15)
-                                    : kSecondaryColor.withOpacity(0.1),
-                                shape: BoxShape.circle,
-                              ),
-                              child: SvgPicture.asset(
-                                "assets/icons/Heart Icon_2.svg",
-                                color: _isfav
-                                    ? const Color(0xFFFF4848)
-                                    : const Color(0xFFDBDEE4),
-                              ),
-                            ),
-                            onTap: () {
-                              pressfav();
-                            },
-                          )
-                        ],
+                          child: SvgPicture.asset(
+                            "assets/icons/Heart Icon_2.svg",
+                            color: _isfav
+                                ? const Color(0xFFFF4848)
+                                : const Color(0xFFDBDEE4),
+                          ),
+                        ),
+                        onTap: () {
+                          pressfav();
+                        },
                       )
                     ],
                   ),
@@ -138,7 +138,7 @@ class _ProductCardState extends State<ProductCard> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                widget.product.offers,
+                widget.product.offers!,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: getProportionateScreenWidth(12),
@@ -158,7 +158,7 @@ class _ProductCardState extends State<ProductCard> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                widget.product.offers,
+                widget.product.offers!,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: getProportionateScreenWidth(12),
@@ -178,7 +178,7 @@ class _ProductCardState extends State<ProductCard> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                widget.product.offers,
+                widget.product.offers!,
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 255, 255),
                   fontSize: getProportionateScreenWidth(12),

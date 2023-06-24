@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../constants/constants.dart';
 import '../../../size_config.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-
 import 'pending.dart';
 
 class PendingCard extends StatelessWidget {

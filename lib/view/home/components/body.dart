@@ -11,13 +11,23 @@ import 'categories_scroll.dart';
 import 'discount_banner.dart';
 
 class Body extends StatefulWidget {
+  final List following;
+  final String? userType;
+  final bool isAdmin;
+  final VoidCallback goToProfile;
   final void Function(bool isAppBarTransparent) updateAppBarState;
 
   final VoidCallback toExplore;
 
-  const Body(
-      {Key? key, required this.toExplore, required this.updateAppBarState})
-      : super(key: key);
+  const Body({
+    Key? key,
+    required this.userType,
+    required this.toExplore,
+    required this.following,
+    required this.updateAppBarState,
+    required this.isAdmin,
+    required this.goToProfile,
+  }) : super(key: key);
 
   @override
   State<Body> createState() => _BodyState();
@@ -58,51 +68,64 @@ class _BodyState extends State<Body> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: SingleChildScrollView(
-      controller: _scrollController,
-      physics: AlwaysScrollableScrollPhysics(),
-      child: Column(
-        children: [
-          buildCarousel(context),
-          Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Column(children: [
-                const SizedBox(height: 10),
-                buildCategories(context, toExplore),
-                const Divider(),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: getProportionateScreenWidth(20)),
-                  child: SectionTitle(
-                    title: AppLocalizations.of(context)!.popularproducts,
-                    press: () {},
+    return ScrollConfiguration(
+      behavior: NoGlowScrollBehavior(),
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Column(
+          children: [
+            buildCarousel(context),
+            Container(
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 245, 245, 247),
+                ),
+                child: Column(children: [
+                  const SizedBox(height: 10),
+                  buildCategories(context, toExplore, widget.isAdmin,
+                      widget.following, widget.goToProfile),
+                  const Divider(),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10),
+                    child: PopularProducts(
+                      goToProfile: widget.goToProfile,
+                      following: widget.following,
+                      isAdmin: widget.isAdmin,
+                    ),
                   ),
-                ),
-                SizedBox(height: getProportionateScreenHeight(20)),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10),
-                  child: const PopularProducts(),
-                ),
-                const Divider(),
-                const SpecialOffers(),
-                const Divider(),
-                const OnSaleProducts(),
-                const Divider(),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: getProportionateScreenWidth(20)),
-                  child: SectionTitle(title: 'New', press: () {}),
-                ),
-                const NewProducts(),
-                const Divider(),
-                const ExploreMoreProducts(),
-                const SizedBox(height: 20),
-              ]))
-        ],
+                  const Divider(),
+                  Services(
+                    userType: widget.userType,
+                    following: widget.following,
+                    isAdmin: widget.isAdmin,
+                    goToProfile: widget.goToProfile,
+                  ),
+                  const Divider(),
+                  OnSaleProducts(
+                    goToProfile: widget.goToProfile,
+                    isAdmin: widget.isAdmin,
+                    following: widget.following,
+                  ),
+                  const Divider(),
+                  NewProducts(
+                    goToProfile: widget.goToProfile,
+                    isAdmin: widget.isAdmin,
+                    following: widget.following,
+                  ),
+                  const Divider(),
+                  const ExploreMoreProducts(),
+                ])),
+          ],
+        ),
       ),
-    ));
+    );
+  }
+}
+
+class NoGlowScrollBehavior extends ScrollBehavior {
+  @override
+  Widget buildViewportChrome(
+      BuildContext context, Widget child, AxisDirection axisDirection) {
+    return child;
   }
 }

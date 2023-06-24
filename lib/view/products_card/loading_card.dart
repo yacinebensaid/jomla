@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../constants/constants.dart';
 import '../../size_config.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductCardShimmer extends StatelessWidget {
   const ProductCardShimmer({
@@ -27,7 +28,7 @@ class ProductCardShimmer extends StatelessWidget {
         ),
         child: Stack(children: [
           Padding(
-            padding: const EdgeInsets.all(7.0),
+            padding: EdgeInsets.all(7.0.w),
             child: SizedBox(
               width: getProportionateScreenWidth(width),
               child: Stack(
@@ -38,8 +39,6 @@ class ProductCardShimmer extends StatelessWidget {
                       AspectRatio(
                         aspectRatio: aspectRetio,
                         child: Container(
-                          padding:
-                              EdgeInsets.all(getProportionateScreenWidth(0)),
                           decoration: BoxDecoration(
                             color: kSecondaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(15),
@@ -48,30 +47,24 @@ class ProductCardShimmer extends StatelessWidget {
                           // child: Image.network('your_placeholder_image_url'),
                         ),
                       ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 10.h),
                       Container(
-                        height: getProportionateScreenWidth(16),
-                        width: getProportionateScreenWidth(80),
+                        height: 16.h,
+                        width: 80.w,
                         color: Colors.white,
                       ),
-                      const SizedBox(height: 5),
-                      Container(
-                        height: getProportionateScreenWidth(16),
-                        width: getProportionateScreenWidth(60),
-                        color: Colors.white,
-                      ),
-                      const SizedBox(height: 10),
+                      SizedBox(height: 5.h),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Container(
-                            height: getProportionateScreenWidth(18),
-                            width: getProportionateScreenWidth(40),
+                            height: 18.h,
+                            width: 40.w,
                             color: Colors.white,
                           ),
                           Container(
-                            height: getProportionateScreenWidth(28),
-                            width: getProportionateScreenWidth(28),
+                            height: 28.h,
+                            width: 28.w,
                             decoration: BoxDecoration(
                               color: kSecondaryColor.withOpacity(0.1),
                               shape: BoxShape.circle,

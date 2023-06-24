@@ -7,9 +7,6 @@ const usingJomlaRout = '/usingJomla/';
 const tipsRout = '/tips/';
 ////
 const categoriesRout = '/categories/';
-const detailsRout = '/details/';
-const subcatRout = '/subcat-details/';
-const enterypointRout = '/home/';
 const cartRout = '/Cart/';
-const shippingServiceRout = '/Shipping/';
 const storingServiceRout = '/Storing/';
+const profileRout = '/profile/';
