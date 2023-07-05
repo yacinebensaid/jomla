@@ -187,8 +187,9 @@ class NavigationDrawer extends StatelessWidget {
                       style: TextStyle(color: Colors.grey[600], fontSize: 18),
                     ),
                     onTap: () async {
-                      var result = await UserPCFService.addToCart(order: {});
-                      print(result);
+                      UserPCFService.moveItemsToPurchasedTest(
+                          'MMr3UBiitlgWUOkRvJ1Q9xu7Lt53202373153744MMr3UBiitlgWUOkRvJ1Q9xu7Lt53_99',
+                          'MMr3UBiitlgWUOkRvJ1Q9xu7Lt53');
                     }),
                 ListTile(
                   title: Text(

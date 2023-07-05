@@ -2,10 +2,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 
 import 'package:jomla/services/crud/userdata_service.dart';
 import 'package:jomla/view/profile/profile_view.dart';
+import 'package:provider/provider.dart';
 
 class Owner extends StatefulWidget {
   final VoidCallback goToProfile;
@@ -105,13 +107,26 @@ class _OwnerState extends State<Owner> {
                           ? _isFollowing
                               ? ElevatedButton(
                                   onPressed: () {
-                                    DataService followbuttoninst =
-                                        DataService();
-                                    followbuttoninst
-                                        .unfollowFunction(widget.uid);
-                                    setState(() {
-                                      _isFollowing = false;
-                                    });
+                                    final internetConnectionStatus =
+                                        Provider.of<InternetConnectionStatus>(
+                                            context,
+                                            listen: false);
+                                    if (internetConnectionStatus ==
+                                        InternetConnectionStatus.connected) {
+                                      DataService followbuttoninst =
+                                          DataService();
+                                      followbuttoninst
+                                          .unfollowFunction(widget.uid);
+                                      setState(() {
+                                        _isFollowing = false;
+                                      });
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('you are not connected'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ));
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: Colors.white,
@@ -131,12 +146,26 @@ class _OwnerState extends State<Owner> {
                                 )
                               : ElevatedButton(
                                   onPressed: () {
-                                    DataService followbuttoninst =
-                                        DataService();
-                                    followbuttoninst.followFunction(widget.uid);
-                                    setState(() {
-                                      _isFollowing = true;
-                                    });
+                                    final internetConnectionStatus =
+                                        Provider.of<InternetConnectionStatus>(
+                                            context,
+                                            listen: false);
+                                    if (internetConnectionStatus ==
+                                        InternetConnectionStatus.connected) {
+                                      DataService followbuttoninst =
+                                          DataService();
+                                      followbuttoninst
+                                          .followFunction(widget.uid);
+                                      setState(() {
+                                        _isFollowing = true;
+                                      });
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('you are not connected'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ));
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(

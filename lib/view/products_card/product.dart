@@ -185,7 +185,9 @@ Future getProductsByReference(String reference) async {
         price: product['price'],
         main_category: product['main_category'],
         sub_category: product['sub_category'],
-        available_quantity: int.parse(product['available_quantity']),
+        available_quantity: product['available_quantity'] != null
+            ? int.parse(product['available_quantity'])
+            : null,
         photos: product['photos'],
         isFavourite:
             await UserPCFService.searchInFav(product['reference']) as bool,
@@ -219,7 +221,7 @@ class ShoppingCart {
   }
 
   static Future<List> getProductsForCart() async {
-    List productsRetrieving = await UserPCFService.getCart();
+    List productsRetrieving = await UserPCFService.getCart().toList();
 
     Future mainPhotoGetter(String reference) async {
       Product product = await getProductsByReference(reference);
@@ -303,16 +305,11 @@ class PendingCart {
 /////////////////////////////////////////////////////////////////////////////////////
 
 Future<List<Product>> getProductsForFavourite() async {
-  Future<List> productRefGetter() async {
-    List products = await UserPCFService.getFav();
-    return products;
-  }
-
   Future<List> searchingForProducts() async {
     List productsRetrieving = [];
-    for (final product in await productRefGetter()) {
-      productsRetrieving.add(await ProductService.searchProductByChoice(
-          'reference', product['reference']));
+    for (final product in await UserPCFService.getFav()) {
+      productsRetrieving.add(
+          await ProductService.searchProductByChoice('reference', product));
     }
     return productsRetrieving;
   }
@@ -339,7 +336,9 @@ Future<List<Product>> getProductsForFavourite() async {
               price: product['price'],
               main_category: product['main_category'],
               sub_category: product['sub_category'],
-              available_quantity: int.parse(product['available_quantity']),
+              available_quantity: product['available_quantity'] != null
+                  ? int.parse(product['available_quantity'])
+                  : null,
               photos: product['photos'],
               isFavourite:
                   await UserPCFService.searchInFav(product['reference'])
@@ -387,7 +386,6 @@ class PurchasedCart {
 
   static Future<List> getProductsForPurchased() async {
     List productsRetrieving = await UserPCFService.getPurchased();
-
     Future mainPhotoGetter(String reference) async {
       Product product = await getProductsByReference(reference);
       return product.main_photo;

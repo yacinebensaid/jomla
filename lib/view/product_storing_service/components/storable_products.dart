@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+/*import 'package:flutter/material.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
 import 'package:jomla/view/purchased/components/purchased.dart';
@@ -107,4 +107,4 @@ class _PurchasedProductsState extends State<StorableProducts> {
       ],
     );
   }
-}
+}*/

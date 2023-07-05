@@ -84,7 +84,9 @@ class ProductService {
           price: product['price'],
           main_category: product['main_category'],
           sub_category: product['sub_category'],
-          available_quantity: null,
+          available_quantity: product['available_quantity'] != null
+              ? int.parse(product['available_quantity'])
+              : null,
           photos: product['photos'],
           isFavourite:
               await UserPCFService.searchInFav(product['reference']) as bool,

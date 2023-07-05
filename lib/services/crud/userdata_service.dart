@@ -65,16 +65,24 @@ class DataService {
     List? owned_products = null,
     String user_type = "normal",
     bool isAdmin = false,
-  }) =>
-      FirebaseFirestore.instance.collection('UserData').doc(userUID).set({
-        'uid': userUID,
-        'name': full_name,
-        'phone_number': phoneNumber,
-        'user_type': user_type,
-        'isAdmin': isAdmin,
-        'following': following,
-        'owned_products': owned_products,
-      });
+  }) {
+    FirebaseFirestore.instance.collection('UserData').doc(userUID).set({
+      'uid': userUID,
+      'name': full_name,
+      'phone_number': phoneNumber,
+      'user_type': user_type,
+      'isAdmin': isAdmin,
+      'following': following,
+      'owned_products': owned_products,
+    });
+    FirebaseFirestore.instance.collection('UserPCF').doc(userUID).set({
+      'uid': userUID,
+      'name': full_name,
+      'phone_number': phoneNumber,
+      'user_type': user_type,
+      'favourite': [],
+    });
+  }
 
   static Stream<UserData?> getUserDataStream(String passedUID) {
     return FirebaseFirestore.instance
@@ -168,22 +176,30 @@ class DataService {
     required String? description,
     required List followers,
     required List following,
-  }) =>
-      FirebaseFirestore.instance.collection('UserData').doc(userUID).set({
-        'uid': userUID,
-        'name': marketName,
-        'market_category': marketCategory,
-        'phone_number': phoneNumber,
-        'description': description,
-        'followers': followers,
-        'sales': 0,
-        'following': following,
-        'city': city,
-        'adress': adress,
-        'user_type': "market",
-        'isAdmin': false,
-        'owned_products': [],
-      });
+  }) {
+    FirebaseFirestore.instance.collection('UserData').doc(userUID).set({
+      'uid': userUID,
+      'name': marketName,
+      'market_category': marketCategory,
+      'phone_number': phoneNumber,
+      'description': description,
+      'followers': followers,
+      'sales': 0,
+      'following': following,
+      'city': city,
+      'adress': adress,
+      'user_type': "market",
+      'isAdmin': false,
+      'owned_products': [],
+    });
+    FirebaseFirestore.instance.collection('UserPCF').doc(userUID).set({
+      'uid': userUID,
+      'name': marketName,
+      'phone_number': phoneNumber,
+      'user_type': "market",
+      'favourite': [],
+    });
+  }
 
   static Future<List<UserData>> getMarketData() async {
     List<UserData> Markets = [];

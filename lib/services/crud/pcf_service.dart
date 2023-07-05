@@ -112,6 +112,7 @@ class UserPCFService {
               }
             }
             int total_price = price * total_quantity;
+            print(total_quantity);
 
             FirebaseFirestore.instance
                 .collection('UserPCF')
@@ -246,7 +247,7 @@ class UserPCFService {
               .doc(order['reference'])
               .set({
             'reference': order['reference'],
-            'total_quantity': order['quantity'],
+            'total_quantity': total_quantity,
             'total_price': total_price,
             'variations': [
               {
@@ -275,25 +276,261 @@ class UserPCFService {
     }
   }
 
-  static Future<List<CartProduct>> getCart() async {
+//
+  static Stream<List<CartProduct>> getCart() {
     String? userUID = AuthService.firebase().currentUser?.uid;
-    List<CartProduct> cartData = [];
-    QuerySnapshot cartQuery = await FirebaseFirestore.instance
+    return FirebaseFirestore.instance
         .collection('UserPCF')
         .doc(userUID)
         .collection('cart')
-        .get();
+        .snapshots()
+        .map((referenceProduct) {
+      List<CartProduct> cartData = [];
+      final referenceProductData = referenceProduct.docs;
 
-    cartQuery.docs.forEach((doc) {
-      CartProduct item = CartProduct(
+      for (var doc in referenceProductData) {
+        CartProduct item = CartProduct(
           reference: doc.get('reference'),
           total_quantity: doc.get('total_quantity'),
           total_price: doc.get('total_price'),
-          variations: doc.get('variations'));
+          variations: doc.get('variations'),
+        );
 
-      cartData.add(item);
+        cartData.add(item);
+      }
+      return cartData;
     });
-    return cartData;
+  }
+
+  static Future<void> modifyProductInCart(
+      String reference, String? size, int quantity, int? index) async {
+    String? userUID = AuthService.firebase().currentUser?.uid;
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('UserPCF')
+        .doc(userUID)
+        .collection('cart')
+        .doc(reference)
+        .get();
+
+    print(snapshot.data());
+
+    if (index == null && size != null) {
+      if (snapshot.exists) {
+        Map<String, dynamic> newSnapshot = snapshot.data()!;
+        newSnapshot['variations'][0]['sizes'][size] = quantity;
+        int total_quantity = 0;
+        newSnapshot['variations'][0]['sizes'].forEach((size, quantity) {
+          total_quantity = total_quantity + quantity as int;
+        });
+
+        Product? product =
+            await ProductService.getProductDataByReference(reference);
+        List priceQS = product!.price;
+        int price = int.parse(priceQS[0]['price']!);
+        if (int.parse(priceQS.last['from']) < total_quantity) {
+          price = int.parse(priceQS.last['price']!);
+        } else {
+          for (int i = 0; i < priceQS.length; i++) {
+            if (int.parse(priceQS[i]['from']!) <= total_quantity &&
+                total_quantity <= int.parse(priceQS[i]['to']!)) {
+              price = int.parse(priceQS[i]['price']!);
+              break;
+            }
+          }
+        }
+        int total_price = price * total_quantity;
+        newSnapshot['total_price'] = total_price;
+        newSnapshot['total_quantity'] = total_quantity;
+        print(newSnapshot);
+        FirebaseFirestore.instance
+            .collection('UserPCF')
+            .doc(userUID)
+            .collection('cart')
+            .doc(reference)
+            .update(newSnapshot);
+      }
+    } else if (index != null && size != null) {
+      if (snapshot.exists) {
+        Map<String, dynamic> newSnapshot = snapshot.data()!;
+        newSnapshot['variations'][index]['sizes'][size] = quantity;
+        int total_quantity = 0;
+        int j = 0;
+        for (Map vari in newSnapshot['variations']) {
+          newSnapshot['variations'][j]['sizes'].forEach((size, quantity) {
+            total_quantity = total_quantity + quantity as int;
+          });
+          j++;
+        }
+
+        Product? product =
+            await ProductService.getProductDataByReference(reference);
+        List priceQS = product!.price;
+        int price = int.parse(priceQS[0]['price']!);
+        if (int.parse(priceQS.last['from']) < total_quantity) {
+          price = int.parse(priceQS.last['price']!);
+        } else {
+          for (int i = 0; i < priceQS.length; i++) {
+            if (int.parse(priceQS[i]['from']!) <= total_quantity &&
+                total_quantity <= int.parse(priceQS[i]['to']!)) {
+              price = int.parse(priceQS[i]['price']!);
+              break;
+            }
+          }
+        }
+        int total_price = price * total_quantity;
+        newSnapshot['total_price'] = total_price;
+        newSnapshot['total_quantity'] = total_quantity;
+        print(newSnapshot);
+        FirebaseFirestore.instance
+            .collection('UserPCF')
+            .doc(userUID)
+            .collection('cart')
+            .doc(reference)
+            .update(newSnapshot);
+      }
+    } else if (index != null && size == null) {
+      if (snapshot.exists) {
+        Map<String, dynamic> newSnapshot = snapshot.data()!;
+        newSnapshot['variations'][index]['quantity'] = quantity;
+        int total_quantity = 0;
+        int j = 0;
+        for (Map vari in newSnapshot['variations']) {
+          total_quantity =
+              total_quantity + newSnapshot['variations'][j]['quantity'] as int;
+          j++;
+        }
+
+        Product? product =
+            await ProductService.getProductDataByReference(reference);
+        List priceQS = product!.price;
+        int price = int.parse(priceQS[0]['price']!);
+        if (int.parse(priceQS.last['from']) < total_quantity) {
+          price = int.parse(priceQS.last['price']!);
+        } else {
+          for (int i = 0; i < priceQS.length; i++) {
+            if (int.parse(priceQS[i]['from']!) <= total_quantity &&
+                total_quantity <= int.parse(priceQS[i]['to']!)) {
+              price = int.parse(priceQS[i]['price']!);
+              break;
+            }
+          }
+        }
+        int total_price = price * total_quantity;
+        newSnapshot['total_price'] = total_price;
+        newSnapshot['total_quantity'] = total_quantity;
+        print(newSnapshot);
+        FirebaseFirestore.instance
+            .collection('UserPCF')
+            .doc(userUID)
+            .collection('cart')
+            .doc(reference)
+            .update(newSnapshot);
+      }
+    } else if (index == null && size == null) {
+      if (snapshot.exists) {
+        Map<String, dynamic> newSnapshot = snapshot.data()!;
+        newSnapshot['total_quantity'] = quantity;
+
+        Product? product =
+            await ProductService.getProductDataByReference(reference);
+        List priceQS = product!.price;
+        int price = int.parse(priceQS[0]['price']!);
+        if (int.parse(priceQS.last['from']) < quantity) {
+          price = int.parse(priceQS.last['price']!);
+        } else {
+          for (int i = 0; i < priceQS.length; i++) {
+            if (int.parse(priceQS[i]['from']!) <= quantity &&
+                quantity <= int.parse(priceQS[i]['to']!)) {
+              price = int.parse(priceQS[i]['price']!);
+              break;
+            }
+          }
+        }
+        int total_price = price * quantity;
+        newSnapshot['total_price'] = total_price;
+        newSnapshot['total_quantity'] = quantity;
+        print(newSnapshot);
+        FirebaseFirestore.instance
+            .collection('UserPCF')
+            .doc(userUID)
+            .collection('cart')
+            .doc(reference)
+            .update(newSnapshot);
+      }
+    }
+  }
+
+  static delete_variation({
+    required String type,
+    required int index,
+    required String reference,
+    required String? size,
+  }) async {
+    String? userUID = AuthService.firebase().currentUser?.uid;
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
+        .collection('UserPCF')
+        .doc(userUID)
+        .collection('cart')
+        .doc(reference)
+        .get();
+    if (type == 'color') {
+      if (snapshot.exists) {
+        Map<String, dynamic> newSnapshot = snapshot.data()!;
+        newSnapshot['variations'].removeAt(index);
+        if (newSnapshot['variations'].isNotEmpty) {
+          FirebaseFirestore.instance
+              .collection('UserPCF')
+              .doc(userUID)
+              .collection('cart')
+              .doc(reference)
+              .update(newSnapshot);
+        } else {
+          delete_from_cart(reference);
+        }
+      }
+    } else if (type == 'size') {
+      if (snapshot.exists) {
+        Map<String, dynamic> newSnapshot = snapshot.data()!;
+        newSnapshot['variations'][0]['sizes'].remove(size);
+        if (newSnapshot['variations'][0]['sizes'].isNotEmpty) {
+          FirebaseFirestore.instance
+              .collection('UserPCF')
+              .doc(userUID)
+              .collection('cart')
+              .doc(reference)
+              .update(newSnapshot);
+        } else {
+          delete_from_cart(reference);
+        }
+      }
+    } else if (type == 'both') {
+      if (snapshot.exists) {
+        Map<String, dynamic> newSnapshot = snapshot.data()!;
+        newSnapshot['variations'][index]['sizes'].remove(size);
+        if (newSnapshot['variations'][index]['sizes'].isEmpty) {
+          newSnapshot['variations'].removeAt(index);
+          if (newSnapshot['variations'].isNotEmpty) {
+            FirebaseFirestore.instance
+                .collection('UserPCF')
+                .doc(userUID)
+                .collection('cart')
+                .doc(reference)
+                .update(newSnapshot);
+          } else {
+            delete_from_cart(reference);
+          }
+        } else {
+          FirebaseFirestore.instance
+              .collection('UserPCF')
+              .doc(userUID)
+              .collection('cart')
+              .doc(reference)
+              .update(newSnapshot);
+        }
+      }
+    }
   }
 
   static delete_from_cart(String reference) {
@@ -333,48 +570,46 @@ class UserPCFService {
       }
     }
 
-// Get the current list of likers
-
-    FirebaseFirestore.instance
-        .collection('UserPCF')
-        .doc(userUID)
-        .collection('favourit')
-        .doc(reference)
-        .set({
-      'reference': reference,
+    await FirebaseFirestore.instance.collection('UserPCF').doc(userUID).update({
+      'favourite': FieldValue.arrayUnion([reference])
     });
   }
 
   static Future<List> getFav() async {
     String? userUID = AuthService.firebase().currentUser?.uid;
-    List favData = [];
-    QuerySnapshot cartQuery = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> cartQuery = await FirebaseFirestore
+        .instance
         .collection('UserPCF')
         .doc(userUID)
-        .collection('favourit')
         .get();
-    cartQuery.docs.forEach((doc) {
-      Map<String, String> item = {
-        'reference': doc.get('reference'),
-      };
-      favData.add(item);
-    });
-    if (favData.isEmpty) {
-      return ['No products'];
+    Map? snapshotData = cartQuery.data();
+    if (snapshotData != null) {
+      List favData = List<String>.from(snapshotData['favourite']);
+      if (favData.isEmpty) {
+        return ['No products'];
+      } else {
+        return favData;
+      }
     } else {
-      return favData;
+      return ['No products'];
     }
   }
 
-  static Future<Object> searchInFav(String reference) async {
+  static Future<bool> searchInFav(String reference) async {
     String? userUID = AuthService.firebase().currentUser?.uid;
-    QuerySnapshot snapshot = await FirebaseFirestore.instance
+    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+        .instance
         .collection('UserPCF')
         .doc(userUID)
-        .collection('favourit')
-        .where('reference', isEqualTo: reference)
         .get();
-    return snapshot.docs.isNotEmpty;
+    Map? snapshotData = snapshot.data();
+    if (snapshotData != null) {
+      final favouriteList = List<String>.from(snapshotData['favourite']);
+      bool isReferenceExists = favouriteList.contains(reference);
+      return isReferenceExists;
+    } else {
+      return false;
+    }
   }
 
   static deletefromfav(String reference) async {
@@ -399,12 +634,9 @@ class UserPCFService {
 // Add a new UID to the likers list
 
     }
-    FirebaseFirestore.instance
-        .collection('UserPCF')
-        .doc(userUID)
-        .collection('favourit')
-        .doc(reference)
-        .delete();
+    FirebaseFirestore.instance.collection('UserPCF').doc(userUID).update({
+      'favourite': FieldValue.arrayRemove([reference])
+    });
   }
 
 ///////////////////////////////////////////////////////
@@ -444,8 +676,9 @@ class UserPCFService {
           .doc(purchaseID);
       Map<String, dynamic> itemData = {
         'reference': doc.get('reference'),
-        'quantity': doc.get('quantity'),
+        'total_quantity': doc.get('total_quantity'),
         'total_price': doc.get('total_price'),
+        'variations': doc.get('variations'),
         'uid': userUID,
         'purchaseID': purchaseID,
         'timestamp': Timestamp.now(),
@@ -459,28 +692,27 @@ class UserPCFService {
     await batch.commit();
   }
 
-  static Future<List> getPending() async {
+  static Future<List<CartProduct>> getPending() async {
     String? userUID = AuthService.firebase().currentUser?.uid;
-    List pendingData = [];
-    QuerySnapshot cartQuery = await FirebaseFirestore.instance
+    var referenceProduct = await FirebaseFirestore.instance
         .collection('UserPCF')
         .doc(userUID)
         .collection('pending')
         .get();
 
-    cartQuery.docs.forEach((doc) {
-      Map<String, String> item = {
-        'reference': doc.get('reference'),
-        'quantity': doc.get('quantity'),
-        'total_price': doc.get('total_price')
-      };
-      pendingData.add(item);
-    });
-    if (pendingData.isEmpty) {
-      return ['No products'];
-    } else {
-      return pendingData;
+    List<CartProduct> cartData = [];
+    final referenceProductData = referenceProduct.docs;
+    for (var doc in referenceProductData) {
+      CartProduct item = CartProduct(
+        reference: doc.get('reference'),
+        total_quantity: doc.get('total_quantity'),
+        total_price: doc.get('total_price'),
+        variations: doc.get('variations'),
+      );
+
+      cartData.add(item);
     }
+    return cartData;
   }
 
   static Future<Map<String, List<Map<String, dynamic>>>>
@@ -513,11 +745,11 @@ class UserPCFService {
 
 ///////////////////////////////////////////////////////
 ///////////////////////////////PURCHASED//////////////////////////////////////
-  static moveItemsToPurchased(String purchaseID) async {
+  static moveItemsToPurchased(String purchaseID, String uid) async {
     String? userUID = AuthService.firebase().currentUser?.uid;
     DocumentReference pendingDocRef = FirebaseFirestore.instance
         .collection('UserPCF')
-        .doc(userUID)
+        .doc(uid)
         .collection('pending')
         .doc(purchaseID);
 
@@ -534,7 +766,7 @@ class UserPCFService {
 
     DocumentReference purchasedDocRef = FirebaseFirestore.instance
         .collection('UserPCF')
-        .doc(userUID)
+        .doc(uid)
         .collection('purchased')
         .doc(purchaseID);
 
@@ -542,31 +774,143 @@ class UserPCFService {
     batch.set(purchasedDocRef, itemData);
     batch.delete(pendingDocRef);
     await batch.commit();
+
+    Product? productData =
+        await ProductService.getProductDataByReference(itemData['reference']);
+    if (productData != null) {
+      if (productData.available_quantity == null) {
+        if (productData.variations != null) {
+          if (productData.variations!.isNotEmpty) {
+            if (productData.variations![0]['color_details'] != null &&
+                productData.variations![0]['size_details'] == null) {
+              for (Map vari in itemData['variations']) {
+                for (Map variation in productData.variations!) {
+                  if (variation['color_details']['image'] == vari['image']) {
+                    num newQuantity =
+                        int.parse(variation['color_details']['quantity']) -
+                            vari['quantity'];
+                    DocumentSnapshot productSnapshot = await FirebaseFirestore
+                        .instance
+                        .collection('ProductData')
+                        .doc(itemData['reference'])
+                        .get();
+
+                    if (productSnapshot.exists) {
+                      Map<String, dynamic> product =
+                          productSnapshot.data() as Map<String, dynamic>;
+                      product['variations']
+                                  [productData.variations!.indexOf(variation)]
+                              ['color_details']['quantity'] =
+                          newQuantity.toString();
+                      FirebaseFirestore.instance
+                          .collection('ProductData')
+                          .doc(itemData['reference'])
+                          .set(product);
+                    }
+                  }
+                }
+              }
+            } else if (productData.variations![0]['color_details'] == null &&
+                productData.variations![0]['size_details'] != null) {
+              DocumentSnapshot productSnapshot = await FirebaseFirestore
+                  .instance
+                  .collection('ProductData')
+                  .doc(itemData['reference'])
+                  .get();
+              Map<String, dynamic> product =
+                  productSnapshot.data() as Map<String, dynamic>;
+              if (productSnapshot.exists) {
+                itemData['variations'][0]['sizes'].forEach((key, value) async {
+                  num newQuantity = int.parse(productData.variations![0]
+                          ['size_details']['size_quantity'][key]) -
+                      value;
+
+                  product['variations'][0]['size_details']['size_quantity']
+                      [key] = newQuantity.toString();
+                });
+                FirebaseFirestore.instance
+                    .collection('ProductData')
+                    .doc(itemData['reference'])
+                    .set(product);
+              }
+            } else if (productData.variations![0]['color_details'] != null &&
+                productData.variations![0]['size_details'] != null) {
+              for (Map vari in itemData['variations']) {
+                for (Map variation in productData.variations!) {
+                  if (variation['color_details']['image'] == vari['image']) {
+                    DocumentSnapshot productSnapshot = await FirebaseFirestore
+                        .instance
+                        .collection('ProductData')
+                        .doc(itemData['reference'])
+                        .get();
+                    Map<String, dynamic> product =
+                        productSnapshot.data() as Map<String, dynamic>;
+                    ;
+                    if (productSnapshot.exists) {
+                      vari['sizes'].forEach((key, value) {
+                        num newQuantity = int.parse(productData.variations![
+                                    productData.variations!.indexOf(variation)]
+                                ['size_details']['size_quantity'][key]) -
+                            value;
+
+                        product['variations']
+                                    [productData.variations!.indexOf(variation)]
+                                ['size_details']['size_quantity'][key] =
+                            newQuantity.toString();
+                      });
+                      FirebaseFirestore.instance
+                          .collection('ProductData')
+                          .doc(itemData['reference'])
+                          .set(product);
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      } else {
+        num newQuantity =
+            productData.available_quantity! - itemData['total_quantity'];
+        DocumentSnapshot productSnapshot = await FirebaseFirestore.instance
+            .collection('ProductData')
+            .doc(itemData['reference'])
+            .get();
+        if (productSnapshot.exists) {
+          Map<String, dynamic> product =
+              productSnapshot.data() as Map<String, dynamic>;
+          product['available_quantity'] = newQuantity.toString();
+          FirebaseFirestore.instance
+              .collection('ProductData')
+              .doc(itemData['reference'])
+              .set(product);
+        }
+      }
+    }
   }
 
-  static Future<List> getPurchased() async {
+///////////////////////////////////////////////////////////////////////////////
+  static Future<List<CartProduct>> getPurchased() async {
     String? userUID = AuthService.firebase().currentUser?.uid;
-    List purchasedData = [];
-    QuerySnapshot cartQuery = await FirebaseFirestore.instance
+    var referenceProduct = await FirebaseFirestore.instance
         .collection('UserPCF')
         .doc(userUID)
         .collection('purchased')
         .get();
 
-    cartQuery.docs.forEach((doc) {
-      Map<String, String> item = {
-        'reference': doc.get('reference'),
-        'quantity': doc.get('quantity'),
-        'total_price': doc.get('total_price'),
-        'purchaseID': doc.get('purchaseID'),
-      };
-      purchasedData.add(item);
-    });
-    if (purchasedData.isEmpty) {
-      return ['No products'];
-    } else {
-      return purchasedData;
+    List<CartProduct> cartData = [];
+    final referenceProductData = referenceProduct.docs;
+    for (var doc in referenceProductData) {
+      CartProduct item = CartProduct(
+        reference: doc.get('reference'),
+        total_quantity: doc.get('total_quantity'),
+        total_price: doc.get('total_price'),
+        variations: doc.get('variations'),
+      );
+
+      cartData.add(item);
     }
+    return cartData;
   }
 
   static Future<bool> hasPurchasedItem(String reference) async {
@@ -582,5 +926,17 @@ class UserPCFService {
   }
 
 /////////////////////////////////////////////////////////////////////
+  static moveItemsToPurchasedTest(String purchaseID, String uid) async {
+    String? userUID = AuthService.firebase().currentUser?.uid;
+    DocumentReference pendingDocRef = FirebaseFirestore.instance
+        .collection('UserPCF')
+        .doc(uid)
+        .collection('pending')
+        .doc(purchaseID);
 
+    Map<String, dynamic> itemData =
+        (await pendingDocRef.get()).data() as Map<String, dynamic>;
+
+    print(itemData);
+  }
 }

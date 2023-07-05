@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:jomla/view/cart/components/cart.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/view/dropshipping/dropshiper_pay.dart';
 import 'package:jomla/view/dropshipping/dropship_view.dart';
 import 'package:jomla/view/products_shipping_service/shipping_service_view.dart';
 import 'package:jomla/view/services/components/services.dart';
+import 'package:provider/provider.dart';
 import '../../../constants/constants.dart';
-import '../../../size_config.dart';
 import '../../product_datails/components/default_btn.dart';
 
 class CheckoutCard extends StatefulWidget {
   List following;
   bool isAdmin;
+  final List<String> checkedProducts;
   String userType;
   final VoidCallback goToProfile;
   CheckoutCard({
@@ -21,6 +24,7 @@ class CheckoutCard extends StatefulWidget {
     required this.userType,
     required this.following,
     required this.goToProfile,
+    required this.checkedProducts,
   }) : super(key: key);
 
   @override
@@ -94,8 +98,8 @@ class _CheckoutCardState extends State<CheckoutCard> {
     return SafeArea(
       child: Container(
         padding: EdgeInsets.symmetric(
-          vertical: getProportionateScreenWidth(15),
-          horizontal: getProportionateScreenWidth(30),
+          vertical: 10,
+          horizontal: 20,
         ),
         // height: 174,
         decoration: BoxDecoration(
@@ -120,9 +124,9 @@ class _CheckoutCardState extends State<CheckoutCard> {
               Row(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(10),
-                    height: getProportionateScreenWidth(40),
-                    width: getProportionateScreenWidth(40),
+                    padding: EdgeInsets.all(5.w),
+                    height: 35,
+                    width: 35,
                     decoration: BoxDecoration(
                       color: const Color(0xFFF5F6F9),
                       borderRadius: BorderRadius.circular(10),
@@ -140,144 +144,215 @@ class _CheckoutCardState extends State<CheckoutCard> {
                 ],
               ),
               SizedBox(
+                height: 5.h,
+              ),
+              SizedBox(
                 width: double.infinity,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      horizontal: getProportionateScreenWidth(10)),
-                  child: DefaultButton(
-                    text: AppLocalizations.of(context)!.checkout,
-                    press: () {
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            child: SizedBox(
-                              height: widget.userType == 'market' ? 230 : 380,
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Column(
-                                    children:
-                                        List.generate(services.length, (index) {
-                                      final service = services[index];
-                                      return Column(
-                                        children: [
-                                          GestureDetector(
-                                            onTap: () async {
-                                              Navigator.of(context).pop();
-                                              Navigator.of(context).push(
-                                                  MaterialPageRoute(
-                                                      builder: ((context) =>
-                                                          service
-                                                              .servicePage)));
-                                            },
-                                            child: Card(
-                                              margin:
-                                                  const EdgeInsets.symmetric(
+                child: Row(
+                  children: [
+                    Expanded(
+                        flex: 2,
+                        child: Text.rich(
+                          TextSpan(
+                            text: 'Selected: ',
+                            style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[600],
+                                fontSize: 17),
+                            children: [
+                              TextSpan(
+                                  text: "${widget.checkedProducts.length}",
+                                  style: TextStyle(
+                                      fontSize: 17, color: Colors.grey[800])),
+                            ],
+                          ),
+                        )),
+                    Spacer(),
+                    Expanded(
+                      flex: 3,
+                      child: DefaultButton(
+                        text: AppLocalizations.of(context)!.checkout,
+                        press: () {
+                          /*final internetConnectionStatus =
+                                                        Provider.of<
+                                                                InternetConnectionStatus>(
+                                                            context,
+                                                            listen: false);
+                                                    if (internetConnectionStatus ==
+                                                        InternetConnectionStatus
+                                                            .connected) {
+
+                                                   
+                                                    }else{
+                                                       ScaffoldMessenger.of(context)
+                                          .showSnackBar(SnackBar(
+                                        content: Text('you are not connected'),
+                                        behavior: SnackBarBehavior.floating,
+                                      ));
+                                                    } */
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: SizedBox(
+                                  height:
+                                      widget.userType == 'market' ? 220 : 380,
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Column(
+                                        children: List.generate(services.length,
+                                            (index) {
+                                          final service = services[index];
+                                          return Column(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  final internetConnectionStatus =
+                                                      Provider.of<
+                                                              InternetConnectionStatus>(
+                                                          context,
+                                                          listen: false);
+                                                  if (internetConnectionStatus ==
+                                                      InternetConnectionStatus
+                                                          .connected) {
+                                                    Navigator.of(context).pop();
+                                                    UserPCFService
+                                                        .moveItemsToPending();
+                                                    /*
+                                                  Navigator.of(context).push(
+                                                      MaterialPageRoute(
+                                                          builder: ((context) =>
+                                                              service
+                                                                  .servicePage)));*/
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'you are not connected'),
+                                                      behavior: SnackBarBehavior
+                                                          .floating,
+                                                    ));
+                                                  }
+                                                },
+                                                child: Card(
+                                                  margin: const EdgeInsets
+                                                          .symmetric(
                                                       horizontal: 10,
                                                       vertical: 5),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 5,
-                                                    child: Container(
-                                                      height: 150,
-                                                      decoration: BoxDecoration(
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              service.imageUrl),
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  20),
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  20),
-                                                        ),
-                                                      ),
-                                                    ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            20),
                                                   ),
-                                                  Expanded(
-                                                    flex: 6,
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 10),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            service.name,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 20,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
+                                                  child: Row(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 5,
+                                                        child: Container(
+                                                          height: 150,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              image: AssetImage(
+                                                                  service
+                                                                      .imageUrl),
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(20),
+                                                              bottomLeft: Radius
+                                                                  .circular(20),
                                                             ),
                                                           ),
-                                                          Text(
-                                                            service.description,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.grey,
-                                                            ),
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                    ),
+                                                      Expanded(
+                                                        flex: 6,
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                      .symmetric(
+                                                                  horizontal:
+                                                                      20,
+                                                                  vertical: 10),
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                service.name,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                service
+                                                                    .description,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
+                                                ),
                                               ),
+                                            ],
+                                          );
+                                        }),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 20),
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text(
+                                              'cancel',
+                                              style: TextStyle(fontSize: 18),
                                             ),
                                           ),
-                                        ],
-                                      );
-                                    }),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(right: 20),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text(
-                                          'cancel',
-                                          style: TextStyle(fontSize: 18),
                                         ),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],

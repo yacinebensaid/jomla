@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -10,11 +9,17 @@ class Body extends StatefulWidget {
   final VoidCallback goToProfile;
   final List following;
   final bool isAdmin;
+  final List<CartProduct> products;
+  final void Function(List<String> checkedProducts) oncheckedProducts;
+  final void Function() reloadPage;
   const Body(
       {Key? key,
       required this.isAdmin,
       required this.following,
-      required this.goToProfile})
+      required this.goToProfile,
+      required this.oncheckedProducts,
+      required this.reloadPage,
+      required this.products})
       : super(key: key);
 
   @override
@@ -23,85 +28,78 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   List<String> allCheckedProducts = [];
-  void addOrRemoveProduct(String CheckedProduct) {
-    if (allCheckedProducts.contains(CheckedProduct)) {
-      setState(() {
-        allCheckedProducts.remove(CheckedProduct);
-      });
-    } else {
-      setState(() {
-        allCheckedProducts.add(CheckedProduct);
-      });
-    }
-  }
 
   bool isCheckedProduct(String _product) {
     return allCheckedProducts.contains(_product);
   }
 
+  Stream<List<CartProduct>>? _cartProductsFuture;
+  Future<void> _reloadCartProducts() async {
+    widget.reloadPage();
+  }
+
+  late List<CartProduct> products;
+
+  @override
+  void initState() {
+    super.initState();
+    _reloadCartProducts();
+    products = widget.products;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<CartProduct>>(
-      future: UserPCFService.getCart(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Text(snapshot.error.toString());
-        } else if (snapshot.hasData) {
-          List<CartProduct> products = snapshot.data!;
-          return LayoutBuilder(builder: (context, constraints) {
-            return ListView.builder(
-                shrinkWrap: true,
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () async {},
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Stack(
-                        children: [
-                          Hero(
-                            tag:
-                                'product_${products[index].reference}', // Provide a unique tag for each product
-                            child: CartCard(
-                              product: products[index],
-                              goToProfile: widget.goToProfile,
-                              following: widget.following,
-                              isAdmin: widget.isAdmin,
-                            ),
-                          ),
-                          Positioned(
-                            left: 10,
-                            top: 6,
-                            child: Checkbox(
-                              value:
-                                  isCheckedProduct(products[index].reference),
-                              onChanged: (value) {
-                                addOrRemoveProduct(products[index].reference);
-                              },
-                            ),
-                          ),
-                        ],
+    return RefreshIndicator(
+        onRefresh: _reloadCartProducts,
+        child: LayoutBuilder(builder: (context, constraints) {
+          return ListView.builder(
+              shrinkWrap: true,
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Stack(
+                    children: [
+                      Hero(
+                        tag:
+                            'product_${products[index].reference}', // Provide a unique tag for each product
+                        child: CartCard(
+                          reloadPage: _reloadCartProducts,
+                          product: products[index],
+                          goToProfile: widget.goToProfile,
+                          following: widget.following,
+                          isAdmin: widget.isAdmin,
+                        ),
                       ),
-                    ),
-                  );
-                });
-          });
-        } else {
-          return Center(
-            child: Text(
-              AppLocalizations.of(context)!.youdonthaveproducts,
-              style: const TextStyle(
-                fontSize: 24,
-                color: Colors.grey,
-              ),
-            ),
-          );
-        }
-      },
-    );
+                      Positioned(
+                        left: 10,
+                        top: 6,
+                        child: Checkbox(
+                          value: isCheckedProduct(products[index].reference),
+                          onChanged: (value) {
+                            List<String> _allCheckedProducts =
+                                allCheckedProducts;
+                            if (_allCheckedProducts
+                                .contains(products[index].reference)) {
+                              setState(() {
+                                _allCheckedProducts
+                                    .remove(products[index].reference);
+                              });
+                              widget.oncheckedProducts(_allCheckedProducts);
+                            } else {
+                              setState(() {
+                                _allCheckedProducts
+                                    .add(products[index].reference);
+                              });
+                              widget.oncheckedProducts(_allCheckedProducts);
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              });
+        }));
   }
 }

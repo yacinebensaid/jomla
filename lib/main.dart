@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:provider/provider.dart';
 import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_service.dart';
-import 'package:jomla/services/crud/userdata_service.dart';
 import 'package:jomla/view/auth/email_verification/emailverify_view.dart';
 import 'package:jomla/view/auth/login/index.dart';
 import 'package:jomla/view/auth/register/register_view.dart';
@@ -12,9 +15,8 @@ import 'package:jomla/view/banner_links/tips/tips.dart';
 import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
 import 'package:jomla/view/entrypoint/entrypoint.dart';
 import 'package:jomla/view/product_storing_service/storing_service.dart';
+
 import 'l10n/l10n.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   //flutter must initialize the user creation part before clicking on register
@@ -35,30 +37,36 @@ class MyApp extends StatelessWidget {
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) {
-          return MaterialApp(
-            home: const AnnotatedRegion<SystemUiOverlayStyle>(
-              value: SystemUiOverlayStyle(
-                statusBarColor: Colors.black,
-                // Change the status bar color to black
-              ),
-              child: HomePage(),
-            ),
-            routes: {
-              loginRout: (context) => const LoginScreen(),
-              registerRout: (context) => const RegisterPage(),
-              verifyemailRout: (context) => const VerifyEmailView(),
-              saleRout: (context) => const SalePage(),
-              usingJomlaRout: (context) => const UsingJomlaPage(),
-              tipsRout: (context) => const TipsPage(),
-              storingServiceRout: (context) => const StoringServicePage(),
+          return StreamProvider<InternetConnectionStatus>(
+            initialData: InternetConnectionStatus.connected,
+            create: (_) {
+              return InternetConnectionChecker().onStatusChange;
             },
-            supportedLocales: L10n.all,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ],
+            child: MaterialApp(
+              home: const AnnotatedRegion<SystemUiOverlayStyle>(
+                value: SystemUiOverlayStyle(
+                  statusBarColor: Colors.black,
+                  // Change the status bar color to black
+                ),
+                child: HomePage(),
+              ),
+              routes: {
+                loginRout: (context) => const LoginScreen(),
+                registerRout: (context) => const RegisterPage(),
+                verifyemailRout: (context) => const VerifyEmailView(),
+                saleRout: (context) => const SalePage(),
+                usingJomlaRout: (context) => const UsingJomlaPage(),
+                tipsRout: (context) => const TipsPage(),
+                storingServiceRout: (context) => const StoringServicePage(),
+              },
+              supportedLocales: L10n.all,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+            ),
           );
         });
   }

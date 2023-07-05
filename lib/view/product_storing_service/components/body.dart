@@ -27,11 +27,11 @@ class _BodyState extends State<Body> {
             child: Column(
               children: const [
                 WhyUseStoring(),
-                StockEcom(),
+                //StockEcom(),
                 SizedBox(
                   height: 25,
                 ),
-                StockMarkets(),
+                //StockMarkets(),
               ],
             ),
           )

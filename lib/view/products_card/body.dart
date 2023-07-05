@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
@@ -75,18 +76,31 @@ class _ProductCardState extends State<ProductCard> {
                               color: kSecondaryColor.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            child: Image.network(
-                              widget.product.main_photo,
-                              loadingBuilder: (BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress) {
-                                if (loadingProgress == null) {
-                                  return child;
-                                }
+                            child: CachedNetworkImage(
+                              key: UniqueKey(),
+                              imageUrl: widget.product.main_photo,
+                              height: 60,
+                              width: 60,
+                              maxWidthDiskCache: 250,
+                              fit: BoxFit.cover,
+                              placeholder: (context, url) {
                                 return BuildShimmerEffect();
                               },
-                              errorBuilder: (_, __, ___) =>
-                                  BuildShimmerEffect(),
+                              errorWidget: (context, url, error) {
+                                return Image.network(
+                                  widget.product.main_photo,
+                                  loadingBuilder: (BuildContext context,
+                                      Widget child,
+                                      ImageChunkEvent? loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    }
+                                    return BuildShimmerEffect();
+                                  },
+                                  errorBuilder: (_, __, ___) =>
+                                      BuildShimmerEffect(),
+                                );
+                              },
                             )),
                       ),
                       const SizedBox(height: 10),
