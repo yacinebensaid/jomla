@@ -3,18 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:jomla/constants/constants.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/size_config.dart';
 import 'package:jomla/view/dropshipping/dropshiper_pay.dart';
+import 'package:provider/provider.dart';
 
 import 'start_dropship.dart';
 
 class NotDropshiper extends StatefulWidget {
-  final String? userType;
-  final VoidCallback goToProfile;
   NotDropshiper({
     Key? key,
-    required this.userType,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -30,7 +28,7 @@ class _NotDropshiperState extends State<NotDropshiper> {
           const SizedBox(
             height: 200,
           ),
-          startButton(context, widget.goToProfile, widget.userType),
+          startButton(context),
           const SizedBox(height: 50),
           Text(
             'What is dropshipping?',
@@ -51,7 +49,7 @@ class _NotDropshiperState extends State<NotDropshiper> {
             ),
           ),
           const SizedBox(height: 30),
-          startButton(context, widget.goToProfile, widget.userType),
+          startButton(context),
           const SizedBox(height: 30),
           Text(
             'What you will get if you start:',
@@ -72,15 +70,14 @@ class _NotDropshiperState extends State<NotDropshiper> {
             ),
           ),
           const SizedBox(height: 30),
-          startButton(context, widget.goToProfile, widget.userType),
+          startButton(context),
         ],
       ),
     );
   }
 }
 
-Widget startButton(
-    BuildContext context, VoidCallback goToProfile, String? userType) {
+Widget startButton(BuildContext context) {
   return SizedBox(
     width: 270,
     height: getProportionateScreenHeight(56),
@@ -91,14 +88,18 @@ Widget startButton(
         backgroundColor: kPrimaryColor,
       ),
       onPressed: (() {
-        if (userType != null) {
-          if (userType != 'market') {
+        if (Provider.of<UserDataInitializer>(context, listen: false)
+                .getUserType !=
+            null) {
+          if (Provider.of<UserDataInitializer>(context, listen: false)
+                  .getUserType !=
+              'market') {
             Navigator.of(context).pop();
-            if (userType != 'dropshipper') {
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: ((context) => StratDropship(
-                        goToProfile: goToProfile,
-                      ))));
+            if (Provider.of<UserDataInitializer>(context, listen: false)
+                    .getUserType !=
+                'dropshipper') {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: ((context) => StratDropship())));
             } else {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: ((context) => DropshiperPay())));

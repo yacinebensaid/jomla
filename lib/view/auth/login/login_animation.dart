@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
-import 'package:jomla/services/auth/auth_service.dart';
-import 'package:jomla/services/crud/userdata_service.dart';
-import 'package:jomla/view/entrypoint/entrypoint.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
+import 'package:jomla/services/providers.dart';
+import 'package:provider/provider.dart';
 
 class StaggerAnimation extends StatelessWidget {
   StaggerAnimation(
@@ -121,20 +121,8 @@ class StaggerAnimation extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     buttonController.addListener(() async {
-      if (buttonController.isCompleted) {
-        final user = AuthService.firebase().currentUser;
-        if (user != null) {
-          if (user.isEmailVerified) {
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                  builder: ((context) => EntryPoint(
-                        uid: user.uid,
-                      ))),
-              (route) => false,
-            );
-          }
-        }
-      }
+      Provider.of<UserDataInitializer>(context, listen: false);
+      GoRouter.of(context).go('/');
     });
 
     return AnimatedBuilder(

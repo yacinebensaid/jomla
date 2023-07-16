@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
 import 'package:jomla/view/auth/password_recovery/password_recovery.dart';
 import '../components/input_fields.dart';
 import '../components/sign_uplink.dart';
 import '../components/signin_button.dart';
 import 'login_animation.dart';
-import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_exceptions.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/utilities/show_error_dialog.dart';
@@ -167,11 +168,8 @@ class LoginScreenState extends State<LoginScreen>
                                     setState(() {
                                       _isVerifying = false;
                                     });
-                                    Navigator.of(context)
-                                        .pushNamedAndRemoveUntil(
-                                      verifyemailRout,
-                                      (route) => false,
-                                    );
+                                    GoRouter.of(context)
+                                        .pushNamed(RoutsConst.verifyemailRout);
                                   }
                                   // instead of using catch, we gonna handel the espectiontions one by one and by knowing their type
                                 } on UserNotFoundAuthException {

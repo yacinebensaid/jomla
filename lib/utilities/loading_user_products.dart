@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/view/products_card/loading_card.dart';
-import '../../../size_config.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jomla/utilities/loading_card.dart';
+import '../size_config.dart';
 
 class UserProductsLoading extends StatelessWidget {
   UserProductsLoading({
@@ -18,10 +19,8 @@ class UserProductsLoading extends StatelessWidget {
       ProductCardShimmer(),
       ProductCardShimmer()
     ];
-    final cardWidth =
-        getProportionateScreenWidth(160); // Width of each ProductCard widget
-    final spacingWidth = getProportionateScreenWidth(
-        20); // Space between each ProductCard widget
+    final cardWidth = 160.w; // Width of each ProductCard widget
+    final spacingWidth = 20.w;
     final availableWidth = screenWidth -
         spacingWidth; // Width available for ProductCard widgets after accounting for spacing
     final numOfCards = (availableWidth / cardWidth)
@@ -46,7 +45,7 @@ class UserProductsLoading extends StatelessWidget {
 
               return Padding(
                 padding: EdgeInsets.symmetric(
-                  vertical: getProportionateScreenWidth(20),
+                  vertical: 20.h,
                   horizontal: spacingWidth,
                 ),
                 child: Row(
@@ -59,9 +58,6 @@ class UserProductsLoading extends StatelessWidget {
             },
           ),
         ),
-        SizedBox(
-          height: 60,
-        )
       ],
     );
   }

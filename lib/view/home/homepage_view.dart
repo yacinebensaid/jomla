@@ -1,40 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/services/providers.dart';
+import 'package:jomla/view/products_card/product.dart';
 import 'package:jomla/view/search/search.dart';
+import 'package:provider/provider.dart';
 import '../../size_config.dart';
 import 'components/body.dart';
 
 class HomeView extends StatefulWidget {
-  final List following;
-  final bool isAdmin;
-  final String? userType;
-  final VoidCallback goToProfile;
-  final VoidCallback refresh;
-  final VoidCallback goToExplore;
-  final VoidCallback opendrawer;
-
-  const HomeView(
-      {Key? key,
-      required this.goToExplore,
-      required this.opendrawer,
-      required this.userType,
-      required this.isAdmin,
-      required this.refresh,
-      required this.following,
-      required this.goToProfile})
-      : super(key: key);
+  const HomeView({
+    Key? key,
+  }) : super(key: key);
 
   @override
   _HomeViewState createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> {
-  void goToExplore() {
-    widget.goToExplore();
-  }
-
-  void opendrawer() {
-    widget.opendrawer();
-  }
+class _HomeViewState extends State<HomeView>
+    with AutomaticKeepAliveClientMixin<HomeView> {
+  @override
+  bool get wantKeepAlive => true;
 
   bool _isAppBarTransparent = true;
 
@@ -44,16 +28,29 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  Future<void> _onRefresh() async {
-    // Wait for a short delay to give the user time to see the loading animation
-    await Future.delayed(Duration(milliseconds: 500));
+  late Future<List<Product>> _getProductsPopular;
+  late Future<List<Product>> _getProductsOnSale;
+  late Future<List<Product>> _getProductsNew;
+  @override
+  void initState() {
+    _getProductsPopular = getProductsForPopular();
+    _getProductsOnSale = getProductsForOnSale();
+    _getProductsNew = getProductsForNew();
+    super.initState();
+  }
 
-    // Navigate to the HomeView again and replace the current route with the new one
-    widget.refresh;
+  Future<void> _onRefresh() async {
+    await Future.delayed(Duration(milliseconds: 500));
+    setState(() {
+      _getProductsPopular = getProductsForPopular();
+      _getProductsOnSale = getProductsForOnSale();
+      _getProductsNew = getProductsForNew();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     SizeConfig().init(context);
     return SafeArea(
       child: RefreshIndicator(
@@ -62,12 +59,10 @@ class _HomeViewState extends State<HomeView> {
           children: [
             Scaffold(
               body: Body(
-                userType: widget.userType,
-                goToProfile: widget.goToProfile,
-                following: widget.following,
-                isAdmin: widget.isAdmin,
-                toExplore: goToExplore,
                 updateAppBarState: _updateAppBarState,
+                productsPopular: _getProductsPopular,
+                productsOnSale: _getProductsOnSale,
+                productsNew: _getProductsNew,
               ),
               backgroundColor: const Color.fromARGB(255, 255, 255, 255),
             ),
@@ -86,7 +81,7 @@ class _HomeViewState extends State<HomeView> {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    opendrawer();
+                    Provider.of<HomeFunc>(context, listen: false).opendrawer();
                   },
                 ),
                 actions: [
@@ -99,12 +94,7 @@ class _HomeViewState extends State<HomeView> {
                     ),
                     onPressed: () {
                       showSearch(
-                          context: context,
-                          delegate: CustumSearchDeligate(
-                            goToProfile: widget.goToProfile,
-                            isAdmin: widget.isAdmin,
-                            following: widget.following,
-                          ));
+                          context: context, delegate: CustumSearchDeligate());
                     },
                   ),
                 ],

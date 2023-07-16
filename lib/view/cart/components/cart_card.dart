@@ -13,16 +13,10 @@ import '../../../constants/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CartCard extends StatefulWidget {
-  final VoidCallback goToProfile;
-  final List following;
-  final bool isAdmin;
   final void Function() reloadPage;
   CartCard({
     Key? key,
     required this.product,
-    required this.goToProfile,
-    required this.following,
-    required this.isAdmin,
     required this.reloadPage,
   }) : super(key: key);
 
@@ -90,9 +84,6 @@ class _CartCardState extends State<CartCard> {
                   padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: Column(
                     children: [
-                      SizedBox(
-                        height: 8.h,
-                      ),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Row(
@@ -143,9 +134,6 @@ class _CartCardState extends State<CartCard> {
                             )
                           ],
                         ),
-                      ),
-                      SizedBox(
-                        height: 8.h,
                       ),
                       Row(
                         children: [
@@ -274,18 +262,9 @@ class _CartCardState extends State<CartCard> {
                       ),
                       if (quantity > maxqua)
                         maxqua != 0
-                            ? Row(
-                                children: [
-                                  Text(
-                                    'Unavailable quantity',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    'Maximum quantity: ${maxqua}',
-                                    style: TextStyle(color: Colors.red),
-                                  )
-                                ],
+                            ? Text(
+                                'Maximum quantity: ${maxqua}',
+                                style: TextStyle(color: Colors.red),
                               )
                             : Text(
                                 'Out of Stock',
@@ -354,10 +333,8 @@ class _CartCardState extends State<CartCard> {
             await getProductsByReference(widget.product.reference);
         Navigator.of(context).push(MaterialPageRoute(
             builder: ((context) => DetailsScreen(
-                  goToProfile: widget.goToProfile,
-                  following: widget.following,
-                  isAdmin: widget.isAdmin,
                   product: product,
+                  ref: null,
                 ))));
       },
       child: Container(
@@ -406,9 +383,6 @@ class _CartCardState extends State<CartCard> {
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Column(
         children: [
-          SizedBox(
-            height: 8.h,
-          ),
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
@@ -459,9 +433,6 @@ class _CartCardState extends State<CartCard> {
                 )
               ],
             ),
-          ),
-          SizedBox(
-            height: 8.h,
           ),
           ListView.builder(
               shrinkWrap: true,
@@ -818,18 +789,9 @@ class _CartCardState extends State<CartCard> {
           ),
           if (quantity > maxqua)
             maxqua != 0
-                ? Row(
-                    children: [
-                      Text(
-                        'Unavailable quantity',
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      Spacer(),
-                      Text(
-                        'Maximum quantity: ${maxqua}',
-                        style: TextStyle(color: Colors.red),
-                      )
-                    ],
+                ? Text(
+                    'Maximum quantity: ${maxqua}',
+                    style: TextStyle(color: Colors.red),
                   )
                 : Text(
                     'Out of Stock',
@@ -854,9 +816,6 @@ class _CartCardState extends State<CartCard> {
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Column(
         children: [
-          SizedBox(
-            height: 8.h,
-          ),
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
@@ -907,9 +866,6 @@ class _CartCardState extends State<CartCard> {
                 )
               ],
             ),
-          ),
-          SizedBox(
-            height: 8.h,
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -943,9 +899,6 @@ class _CartCardState extends State<CartCard> {
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: Column(
         children: [
-          SizedBox(
-            height: 8.h,
-          ),
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
@@ -996,9 +949,6 @@ class _CartCardState extends State<CartCard> {
                 )
               ],
             ),
-          ),
-          SizedBox(
-            height: 8.h,
           ),
           ListView.builder(
               shrinkWrap: true,
@@ -1174,18 +1124,9 @@ class _CartCardState extends State<CartCard> {
                       ),
                       if (quantity > maxqua)
                         maxqua != 0
-                            ? Row(
-                                children: [
-                                  Text(
-                                    'Unavailable quantity',
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                  Spacer(),
-                                  Text(
-                                    'Maximum quantity: ${maxqua}',
-                                    style: TextStyle(color: Colors.red),
-                                  )
-                                ],
+                            ? Text(
+                                'Maximum quantity: ${maxqua}',
+                                style: TextStyle(color: Colors.red),
                               )
                             : Text(
                                 'Out of Stock',

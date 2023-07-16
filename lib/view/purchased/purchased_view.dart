@@ -4,15 +4,7 @@ import 'package:flutter/material.dart';
 import 'components/body.dart';
 
 class PurchasedScreen extends StatelessWidget {
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
-  PurchasedScreen(
-      {Key? key,
-      required this.isAdmin,
-      required this.following,
-      required this.goToProfile})
-      : super(key: key);
+  PurchasedScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +16,7 @@ class PurchasedScreen extends StatelessWidget {
           backgroundColor: Colors.transparent.withOpacity(0),
           title: Text('Purchased'),
         ),
-        body: Body(
-          goToProfile: goToProfile,
-          following: following,
-          isAdmin: isAdmin,
-        ),
+        body: Body(),
       ),
     );
   }

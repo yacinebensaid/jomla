@@ -4,14 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:jomla/view/search/search.dart';
 
 class SearchForExplore extends StatelessWidget {
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
   SearchForExplore({
     Key? key,
-    required this.isAdmin,
-    required this.following,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -20,12 +14,7 @@ class SearchForExplore extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       child: GestureDetector(
         onTap: () {
-          showSearch(
-              context: context,
-              delegate: CustumSearchDeligate(
-                  isAdmin: isAdmin,
-                  following: following,
-                  goToProfile: goToProfile));
+          showSearch(context: context, delegate: CustumSearchDeligate());
         },
         child: Container(
           decoration: BoxDecoration(

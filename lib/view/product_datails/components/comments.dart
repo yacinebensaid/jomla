@@ -5,12 +5,13 @@ import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/product_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/utilities/success_dialog.dart';
+import 'package:provider/provider.dart';
 
 class Comments extends StatefulWidget {
   final String reference;
-  final bool isAdmin;
-  const Comments({super.key, required this.reference, required this.isAdmin});
+  const Comments({super.key, required this.reference});
 
   @override
   State<Comments> createState() => _CommentsState();
@@ -358,7 +359,7 @@ class _CommentsState extends State<Comments> {
           value: 'signal',
           child: Text('Signal comment'),
         ),
-        ...widget.isAdmin
+        ...Provider.of<UserDataInitializer>(context, listen: false).getIsAdmin
             ? [
                 const PopupMenuItem<String>(
                   value: 'delete',

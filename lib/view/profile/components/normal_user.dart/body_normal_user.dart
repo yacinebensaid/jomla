@@ -1,28 +1,18 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
 
 import 'normal_user_infos.dart';
 import 'under_infos.dart';
 
 class NormalBody extends StatefulWidget {
   bool fromNav;
-  VoidCallback onBackButtonPressed;
-  List following;
-  final VoidCallback goToProfile;
-  bool isAdmin;
-  final String uid;
+  final UserData userdata;
 
   NormalBody({
     Key? key,
     required this.fromNav,
-    required this.onBackButtonPressed,
-    required this.following,
-    required this.goToProfile,
-    required this.isAdmin,
-    required this.uid,
+    required this.userdata,
   }) : super(key: key);
 
   @override
@@ -40,8 +30,7 @@ class _BodyState extends State<NormalBody> {
               color: Color.fromARGB(255, 255, 255, 255),
               child: NormalUserInfos(
                 fromNav: widget.fromNav,
-                onBackButtonPressed: widget.onBackButtonPressed,
-                uid: widget.uid,
+                userdata: widget.userdata,
               )),
           Divider(
             color: Colors.grey,
@@ -49,11 +38,7 @@ class _BodyState extends State<NormalBody> {
           ),
           Container(
             color: Color.fromARGB(255, 255, 255, 255),
-            child: UnderInfos(
-              goToProfile: widget.goToProfile,
-              following: widget.following,
-              isAdmin: widget.isAdmin,
-            ),
+            child: UnderInfos(),
           )
         ],
       ),

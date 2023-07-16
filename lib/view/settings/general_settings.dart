@@ -6,21 +6,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/utilities/success_dialog.dart';
+import 'package:provider/provider.dart';
 
 class GeneralSettings extends StatefulWidget {
-  String name;
-  String? description;
-  String userType;
-  String? image;
-  String phoneNumber;
   GeneralSettings({
     Key? key,
-    required this.name,
-    required this.description,
-    required this.userType,
-    required this.phoneNumber,
-    required this.image,
   }) : super(key: key);
 
   @override
@@ -37,10 +29,15 @@ class _GeneralSettingsState extends State<GeneralSettings> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(text: widget.name);
-    _descriptionController = TextEditingController(text: widget.description);
-    _phoneNumberController = TextEditingController(text: widget.phoneNumber);
-    _image = widget.image;
+    _nameController = TextEditingController(
+        text: Provider.of<UserDataInitializer>(context, listen: false).getName);
+    _descriptionController = TextEditingController(
+        text: Provider.of<UserDataInitializer>(context, listen: false)
+            .getDescription);
+    _phoneNumberController = TextEditingController(
+        text: Provider.of<UserDataInitializer>(context, listen: false)
+            .getPhoneNumber);
+    _image = Provider.of<UserDataInitializer>(context, listen: false).getImage;
   }
 
   @override
@@ -126,7 +123,9 @@ class _GeneralSettingsState extends State<GeneralSettings> {
           padding: EdgeInsets.only(top: 10.h),
           child: Column(
             children: [
-              widget.userType == 'market'
+              Provider.of<UserDataInitializer>(context, listen: false)
+                          .getUserType ==
+                      'market'
                   ? Column(
                       children: [
                         GestureDetector(
@@ -239,12 +238,17 @@ class _GeneralSettingsState extends State<GeneralSettings> {
                   controller: _nameController,
                   decoration: InputDecoration(
                       labelText: 'Name',
-                      icon: Icon(widget.userType == 'market'
+                      icon: Icon(Provider.of<UserDataInitializer>(context,
+                                      listen: false)
+                                  .getUserType ==
+                              'market'
                           ? Icons.storefront_outlined
                           : Icons.person_outlined)),
                 ),
               ),
-              widget.userType == 'market'
+              Provider.of<UserDataInitializer>(context, listen: false)
+                          .getUserType ==
+                      'market'
                   ? Padding(
                       padding: EdgeInsets.all(16.w),
                       child: TextField(

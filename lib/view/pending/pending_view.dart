@@ -4,15 +4,8 @@ import 'package:flutter/material.dart';
 import 'components/body.dart';
 
 class PendingScreen extends StatelessWidget {
-  final VoidCallback goToProfile;
-
-  List following;
-  bool isAdmin;
   PendingScreen({
     Key? key,
-    required this.goToProfile,
-    required this.following,
-    required this.isAdmin,
   }) : super(key: key);
 
   @override
@@ -25,11 +18,7 @@ class PendingScreen extends StatelessWidget {
           backgroundColor: Colors.transparent.withOpacity(0),
           title: Text('Pending'),
         ),
-        body: Body(
-          goToProfile: goToProfile,
-          following: following,
-          isAdmin: isAdmin,
-        ),
+        body: Body(),
       ),
     );
   }

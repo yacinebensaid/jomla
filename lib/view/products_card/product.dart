@@ -62,8 +62,7 @@ Future<List<Product>> getProductsForPopular() async {
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
         photos: product['photos'],
-        isFavourite:
-            await UserPCFService.searchInFav(product['reference']) as bool,
+        isFavourite: await UserPCFService.searchInFav(product['reference']),
         rating: 4.5);
     products.add(productTem);
     i = i + 1;
@@ -71,7 +70,7 @@ Future<List<Product>> getProductsForPopular() async {
   return products;
 }
 
-Future<List> getProductsForOnSale() async {
+Future<List<Product>> getProductsForOnSale() async {
   List productsRetrieving =
       await ProductService.searchProductByChoiceForRows('section', 'on_sale');
   List<Product> products = [];
@@ -93,8 +92,7 @@ Future<List> getProductsForOnSale() async {
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
         photos: product['photos'],
-        isFavourite:
-            await UserPCFService.searchInFav(product['reference']) as bool,
+        isFavourite: await UserPCFService.searchInFav(product['reference']),
         rating: 4.5);
     products.add(productTem);
     i = i + 1;
@@ -102,7 +100,7 @@ Future<List> getProductsForOnSale() async {
   return products;
 }
 
-Future<List> getProductsForNew() async {
+Future<List<Product>> getProductsForNew() async {
   List productsRetrieving =
       await ProductService.searchProductByChoiceForRows('section', 'new');
   List<Product> products = [];
@@ -126,8 +124,7 @@ Future<List> getProductsForNew() async {
             ? int.parse(product['available_quantity'])
             : null,
         photos: product['photos'],
-        isFavourite:
-            await UserPCFService.searchInFav(product['reference']) as bool,
+        isFavourite: await UserPCFService.searchInFav(product['reference']),
         rating: 4.5);
     products.add(productTem);
     i = i + 1;
@@ -157,8 +154,7 @@ Future<List<Product>> getProductsBySubCat(String subcat) async {
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
         photos: product['photos'],
-        isFavourite:
-            await UserPCFService.searchInFav(product['reference']) as bool,
+        isFavourite: await UserPCFService.searchInFav(product['reference']),
         rating: 4.5);
     products.add(productTem);
     i = i + 1;
@@ -189,8 +185,7 @@ Future getProductsByReference(String reference) async {
             ? int.parse(product['available_quantity'])
             : null,
         photos: product['photos'],
-        isFavourite:
-            await UserPCFService.searchInFav(product['reference']) as bool,
+        isFavourite: await UserPCFService.searchInFav(product['reference']),
         rating: 4.5);
     return productTem;
   }
@@ -341,8 +336,7 @@ Future<List<Product>> getProductsForFavourite() async {
                   : null,
               photos: product['photos'],
               isFavourite:
-                  await UserPCFService.searchInFav(product['reference'])
-                      as bool,
+                  await UserPCFService.searchInFav(product['reference']),
               rating: 4.5);
           products.add(productTem);
           i = i + 1;
@@ -441,8 +435,7 @@ Future<List> getAllProductsForSearch() async {
         sub_category: product['sub_category'],
         available_quantity: int.parse(product['available_quantity']),
         photos: product['photos'],
-        isFavourite:
-            await UserPCFService.searchInFav(product['reference']) as bool,
+        isFavourite: await UserPCFService.searchInFav(product['reference']),
         rating: 4.5);
     products.add(productTem);
     i = i + 1;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:jomla/constants/const_routs.dart';
 import 'package:jomla/view/search/search.dart';
 import '../../../constants/routes.dart';
 
@@ -38,9 +39,9 @@ Widget buildCarousel(BuildContext context) {
 }
 
 Map<int, String> indexPages = {
-  0: saleRout,
-  1: usingJomlaRout,
-  2: tipsRout,
+  0: RoutsConst.saleRout,
+  1: RoutsConst.usingJomlaRout,
+  2: RoutsConst.tipsRout,
 };
 Map<int, String> buttonText = {
   0: 'checkout more 0',

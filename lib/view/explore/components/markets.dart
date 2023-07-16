@@ -9,14 +9,8 @@ import 'package:jomla/view/profile/profile_view.dart';
 import 'markets_loading.dart';
 
 class MarketsRow extends StatefulWidget {
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
   MarketsRow({
     Key? key,
-    required this.isAdmin,
-    required this.following,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -33,69 +27,92 @@ class _MarketsRowState extends State<MarketsRow> {
           // Extract the market data from the snapshot
           final marketData = snapshot.data as List<UserData>;
 
-          return Padding(
-            padding: const EdgeInsets.only(right: 18),
-            child: SizedBox(
-              height: 140.h,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: marketData.length,
-                itemBuilder: (context, index) {
-                  final UserData market = marketData[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 18),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: ((context) => ProfileScreen(
-                                  goToProfile: widget.goToProfile,
-                                  userType: marketData[index].user_type,
-                                  fromNav: false,
-                                  following: widget.following,
-                                  uid: market.id,
-                                  isAdmin: widget.isAdmin,
-                                ))));
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          market.picture == null
-                              ? const CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.grey,
-                                  child: Icon(
-                                    CupertinoIcons.person,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.grey,
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(60),
-                                    child: Center(
-                                      child: Image.network(
-                                        market.picture!,
-                                        fit: BoxFit.cover,
-                                        width: 100,
-                                        height: 100,
+          return Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.only(right: 15.w, left: 15.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Markets',
+                      style: TextStyle(
+                          fontSize: 20.w,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                        onPressed: () {},
+                        child: Text('See more',
+                            style: TextStyle(
+                              fontSize: 14.w,
+                              color: Colors.grey,
+                            )))
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(right: 15.w),
+                child: SizedBox(
+                  height: 130.h,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: marketData.length,
+                    itemBuilder: (context, index) {
+                      final UserData market = marketData[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(left: 18),
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: ((context) => ProfileScreen(
+                                      fromNav: false,
+                                      uid: market.id,
+                                    ))));
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              market.picture == null
+                                  ? CircleAvatar(
+                                      radius: 50.w,
+                                      backgroundColor: Colors.grey,
+                                      child: Icon(
+                                        CupertinoIcons.person,
+                                        color: Colors.white,
+                                      ),
+                                    )
+                                  : CircleAvatar(
+                                      radius: 50.w,
+                                      backgroundColor: Colors.grey,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(60),
+                                        child: Center(
+                                          child: Image.network(
+                                            market.picture!,
+                                            fit: BoxFit.cover,
+                                            width: 100.w,
+                                            height: 100.h,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                          const SizedBox(height: 8),
-                          Text(
-                            market.name,
-                            style: const TextStyle(
-                                fontSize: 17, fontWeight: FontWeight.w500),
+                              SizedBox(height: 8.h),
+                              Text(
+                                market.name,
+                                style: TextStyle(
+                                    fontSize: 17.h,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
+                        ),
+                      );
+                    },
+                  ),
+                ),
               ),
-            ),
+            ],
           );
         } else {
           return const LoadingMarketsRow();

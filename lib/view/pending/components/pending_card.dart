@@ -9,15 +9,9 @@ import '../../../constants/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PendingCard extends StatefulWidget {
-  final VoidCallback goToProfile;
-  final List following;
-  final bool isAdmin;
   PendingCard({
     Key? key,
     required this.product,
-    required this.goToProfile,
-    required this.following,
-    required this.isAdmin,
   }) : super(key: key);
 
   final CartProduct product;
@@ -193,10 +187,8 @@ class _PendingCardState extends State<PendingCard> {
             await getProductsByReference(widget.product.reference);
         Navigator.of(context).push(MaterialPageRoute(
             builder: ((context) => DetailsScreen(
-                  goToProfile: widget.goToProfile,
-                  following: widget.following,
-                  isAdmin: widget.isAdmin,
                   product: product,
+                  ref: null,
                 ))));
       },
       child: SizedBox(

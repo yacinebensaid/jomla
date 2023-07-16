@@ -1,23 +1,15 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jomla/utilities/reusable.dart';
 import 'package:jomla/view/dropshipping/dropship_view.dart';
 import 'package:jomla/view/products_shipping_service/shipping_service_view.dart';
 
 import '../../../size_config.dart';
-import 'section_title.dart';
 
 class Services extends StatelessWidget {
-  final List following;
-  final String? userType;
-  final bool isAdmin;
-  final VoidCallback goToProfile;
   const Services({
     Key? key,
-    required this.following,
-    required this.isAdmin,
-    required this.userType,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -40,11 +32,8 @@ class Services extends StatelessWidget {
                 image: "assets/images/services/stock.jpg",
                 category: "Dropship\nService",
                 press: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: ((context) => Dropship(
-                            userType: userType,
-                            goToProfile: goToProfile,
-                          ))));
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: ((context) => Dropship())));
                 },
               ),
               SpecialOfferCard(
@@ -52,11 +41,7 @@ class Services extends StatelessWidget {
                 category: "Product\nShipping",
                 press: () {
                   Navigator.of(context).push(MaterialPageRoute(
-                      builder: ((context) => ShippingServicePage(
-                            goToProfile: goToProfile,
-                            isAdmin: isAdmin,
-                            following: following,
-                          ))));
+                      builder: ((context) => ShippingServicePage())));
 
                   /* Navigator.of(context).pushNamed(shippingServiceRout);*/
                 },

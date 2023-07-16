@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
 import 'package:jomla/size_config.dart';
-import 'package:jomla/view/search/search.dart';
 
 import 'components/body.dart';
 
@@ -73,9 +71,7 @@ class _ServicesViewState extends State<ServicesView> {
                 color: Colors.white,
                 size: 28,
               ),
-              onPressed: () {
-                Navigator.of(context).pushNamed(cartRout);
-              },
+              onPressed: () {},
             ),
           ],
         ),

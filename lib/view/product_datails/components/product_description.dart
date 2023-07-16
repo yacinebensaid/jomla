@@ -10,14 +10,8 @@ import 'comments.dart';
 import 'owner.dart';
 
 class ProductDescription extends StatefulWidget {
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
   ProductDescription({
     Key? key,
-    required this.goToProfile,
-    required this.following,
-    required this.isAdmin,
     required this.product,
   }) : super(key: key);
 
@@ -231,10 +225,7 @@ class _ProductDescriptionState extends State<ProductDescription> {
         ),
         Center(
           child: Owner(
-            goToProfile: widget.goToProfile,
-            following: widget.following,
             uid: widget.product.owner,
-            isAdmin: widget.isAdmin,
           ),
         ),
         SizedBox(
@@ -242,7 +233,6 @@ class _ProductDescriptionState extends State<ProductDescription> {
         ),
         Comments(
           reference: widget.product.reference,
-          isAdmin: widget.isAdmin,
         ),
         SizedBox(
           height: 20.h,

@@ -12,10 +12,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
 
 class StratDropship extends StatefulWidget {
-  final VoidCallback goToProfile;
   StratDropship({
     Key? key,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -139,7 +137,6 @@ class _StratDropshipState extends State<StratDropship> {
           _descriptionController.text,
           _logoFileUrl);
 
-      widget.goToProfile();
       setState(() {
         _congrats = true;
       });

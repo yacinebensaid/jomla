@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
 import 'package:jomla/utilities/show_error_dialog.dart';
 import 'package:jomla/view/auth/components/signup_button.dart';
 import 'package:shimmer/shimmer.dart';
@@ -201,8 +203,6 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
                         DataService _dataServInstance = DataService();
                         _dataServInstance.addMarketData(
                           marketName: _marketName.text,
-                          followers: [],
-                          following: [],
                           marketCategory: _selectedCategory!,
                           description: _descriptionController.text,
                           phoneNumber: _phoneNumber.text,
@@ -215,7 +215,8 @@ class _RealMarketsRegisterState extends State<RealMarketsRegister> {
                       await AuthService.firebase().sendEmailVerification();
                       //we use pushnamed only because the user can back to the registration page
                       // ignore: use_build_context_synchronously
-                      Navigator.of(context).pushNamed(verifyemailRout);
+                      GoRouter.of(context)
+                          .pushNamed(RoutsConst.verifyemailRout);
                       setState(() {
                         _isVerifying = false;
                       });

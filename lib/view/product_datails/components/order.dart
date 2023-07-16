@@ -132,7 +132,6 @@ class _OrderProductState extends State<OrderProduct> {
                                   order['quantity'] = null;
                                   order['total_price'] = null;
                                   order['reference'] = widget.product.reference;
-                                  print(order);
                                   UserPCFService.addToCart(order: order);
 
                                   setState(() {
@@ -199,7 +198,6 @@ class _OrderProductState extends State<OrderProduct> {
                                   order['quantity'] = _quantity;
                                   order['total_price'] = null;
                                   order['reference'] = widget.product.reference;
-                                  print(order);
                                   UserPCFService.addToCart(order: order);
 
                                   setState(() {
@@ -275,23 +273,6 @@ class _OrderProductState extends State<OrderProduct> {
       ),
     );
   }
-  /*final internetConnectionStatus =
-                                                        Provider.of<
-                                                                InternetConnectionStatus>(
-                                                            context,
-                                                            listen: false);
-                                                    if (internetConnectionStatus ==
-                                                        InternetConnectionStatus
-                                                            .connected) {
-
-                                                   
-                                                    }else{
-                                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('you are not connected'),
-                                        behavior: SnackBarBehavior.floating,
-                                      ));
-                                                    } */
 
   //////////////////////////////////////////////////////////////////////////////////
 

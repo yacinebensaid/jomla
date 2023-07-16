@@ -3,19 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/body.dart';
 import 'package:jomla/view/products_card/product.dart';
-import 'package:jomla/view/profile/components/loading_user_products.dart';
+import 'package:jomla/utilities/loading_user_products.dart';
 import '../../../size_config.dart';
 
 class FavProducts extends StatelessWidget {
-  final VoidCallback goToProfile;
-
-  final List following;
-  final bool isAdmin;
-  const FavProducts(
-      {super.key,
-      required this.isAdmin,
-      required this.following,
-      required this.goToProfile});
+  const FavProducts({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,16 +50,8 @@ class FavProducts extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: rowProducts.map((product) {
                       return ProductCard(
-                          product: product,
-                          press: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: ((context) => DetailsScreen(
-                                      goToProfile: goToProfile,
-                                      following: following,
-                                      isAdmin: isAdmin,
-                                      product: product,
-                                    ))));
-                          });
+                        product: product,
+                      );
                     }).toList(),
                   ),
                 );

@@ -1,26 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jomla/services/providers.dart';
+import 'package:provider/provider.dart';
 
 import 'dropship_settings/dropship_settings.dart';
 import 'general_settings.dart';
 import 'security_settings.dart';
 
 class SettingsView extends StatefulWidget {
-  String name;
-  String userType;
-  String? description;
-  String? dropshipID;
-  String? image;
-  String phoneNumber;
   SettingsView({
     Key? key,
-    required this.name,
-    required this.image,
-    required this.dropshipID,
-    required this.userType,
-    required this.description,
-    required this.phoneNumber,
   }) : super(key: key);
 
   @override
@@ -46,13 +36,7 @@ class _SettingsViewState extends State<SettingsView> {
               onTap: () {
                 Navigator.of(context)
                     .push(MaterialPageRoute(builder: ((context) {
-                  return GeneralSettings(
-                    image: widget.image,
-                    userType: widget.userType,
-                    description: widget.description,
-                    name: widget.name,
-                    phoneNumber: widget.phoneNumber,
-                  );
+                  return GeneralSettings();
                 })));
               },
               child: Row(
@@ -69,7 +53,9 @@ class _SettingsViewState extends State<SettingsView> {
                 ],
               ),
             ),
-            widget.userType == 'dropshipper'
+            Provider.of<UserDataInitializer>(context, listen: false)
+                        .getUserType ==
+                    'dropshipper'
                 ? Column(
                     children: [
                       Divider(
@@ -80,7 +66,11 @@ class _SettingsViewState extends State<SettingsView> {
                         onTap: () {
                           Navigator.of(context).push(MaterialPageRoute(
                               builder: ((context) => DropshipSettings(
-                                    dropshipID: widget.dropshipID!,
+                                    dropshipID:
+                                        Provider.of<UserDataInitializer>(
+                                                context,
+                                                listen: false)
+                                            .getDropshipperID!,
                                   ))));
                         },
                         child: Row(

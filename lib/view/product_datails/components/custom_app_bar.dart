@@ -4,17 +4,17 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:jomla/services/crud/product_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/view/product_edit/product_edit.dart';
+import 'package:provider/provider.dart';
 
 import '../../../size_config.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  bool isAdmin;
   final VoidCallback onBackButtonPressed;
   final String ref;
   CustomAppBar({
     Key? key,
-    required this.isAdmin,
     required this.onBackButtonPressed,
     required this.ref,
   })  : preferredSize = const Size.fromHeight(kToolbarHeight),
@@ -99,7 +99,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           value: 'signal',
           child: Text('Signal Product'),
         ),
-        ...isAdmin
+        ...Provider.of<UserDataInitializer>(context, listen: false).getIsAdmin
             ? [
                 const PopupMenuItem<String>(
                   value: 'edit',

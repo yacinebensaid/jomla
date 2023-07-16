@@ -1,32 +1,34 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
-import 'package:jomla/view/explore/components/section_title.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:jomla/services/providers.dart';
+
+import 'package:jomla/view/products_card/product.dart';
+import 'package:provider/provider.dart';
+
+import 'categories_scroll.dart';
+import 'discount_banner.dart';
 import 'explore_more_products.dart';
+import 'following_products.dart';
 import 'new_products.dart';
 import 'onsale_product.dart';
 import 'popular_product.dart';
 import 'services.dart';
-import '../../../size_config.dart';
-import 'categories_scroll.dart';
-import 'discount_banner.dart';
 
 class Body extends StatefulWidget {
-  final List following;
-  final String? userType;
-  final bool isAdmin;
-  final VoidCallback goToProfile;
-  final void Function(bool isAppBarTransparent) updateAppBarState;
+  final Future<List<Product>> productsPopular;
+  final Future<List<Product>> productsOnSale;
+  final Future<List<Product>> productsNew;
 
-  final VoidCallback toExplore;
+  final void Function(bool isAppBarTransparent) updateAppBarState;
 
   const Body({
     Key? key,
-    required this.userType,
-    required this.toExplore,
-    required this.following,
+    required this.productsPopular,
     required this.updateAppBarState,
-    required this.isAdmin,
-    required this.goToProfile,
+    required this.productsOnSale,
+    required this.productsNew,
   }) : super(key: key);
 
   @override
@@ -34,10 +36,6 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
-  void toExplore() {
-    widget.toExplore();
-  }
-
   final _scrollController = ScrollController();
 
   bool _isAppBarTransparent = true;
@@ -82,37 +80,28 @@ class _BodyState extends State<Body> {
                 ),
                 child: Column(children: [
                   const SizedBox(height: 10),
-                  buildCategories(context, toExplore, widget.isAdmin,
-                      widget.following, widget.goToProfile),
-                  const Divider(),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 10),
-                    child: PopularProducts(
-                      goToProfile: widget.goToProfile,
-                      following: widget.following,
-                      isAdmin: widget.isAdmin,
-                    ),
+                  buildCategories(
+                    context,
                   ),
                   const Divider(),
-                  Services(
-                    userType: widget.userType,
-                    following: widget.following,
-                    isAdmin: widget.isAdmin,
-                    goToProfile: widget.goToProfile,
+                  PopularProducts(
+                    products: widget.productsPopular,
                   ),
+                  const Divider(),
+                  Services(),
                   const Divider(),
                   OnSaleProducts(
-                    goToProfile: widget.goToProfile,
-                    isAdmin: widget.isAdmin,
-                    following: widget.following,
+                    products: widget.productsOnSale,
                   ),
                   const Divider(),
                   NewProducts(
-                    goToProfile: widget.goToProfile,
-                    isAdmin: widget.isAdmin,
-                    following: widget.following,
+                    products: widget.productsNew,
                   ),
                   const Divider(),
+                  if (Provider.of<UserDataInitializer>(context, listen: false)
+                      .getFollowing
+                      .isNotEmpty)
+                    FollowingProducts(),
                   const ExploreMoreProducts(),
                 ])),
           ],

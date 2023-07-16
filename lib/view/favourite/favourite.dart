@@ -4,15 +4,8 @@ import 'package:flutter/material.dart';
 import 'components/body.dart';
 
 class FavouriteView extends StatefulWidget {
-  final VoidCallback goToProfile;
-
-  final List following;
-  final bool isAdmin;
   const FavouriteView({
     Key? key,
-    required this.goToProfile,
-    required this.following,
-    required this.isAdmin,
   }) : super(key: key);
 
   @override
@@ -30,11 +23,7 @@ class _FarouriteViewState extends State<FavouriteView> {
           backgroundColor: Colors.transparent.withOpacity(0),
           title: const Text('Favourite'),
         ),
-        body: Body(
-          goToProfile: widget.goToProfile,
-          following: widget.following,
-          isAdmin: widget.isAdmin,
-        ),
+        body: Body(),
       ),
     );
   }

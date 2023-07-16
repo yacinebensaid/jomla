@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'loading_card.dart';
+import '../../utilities/loading_card.dart';
 
 class LoadingRow extends StatelessWidget {
   const LoadingRow({super.key});

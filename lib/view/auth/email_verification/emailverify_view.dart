@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -39,10 +40,7 @@ class _VerifyEmailViewState extends State<VerifyEmailView> {
               ElevatedButton(
                 onPressed: () async {
                   await AuthService.firebase().logOut();
-                  Navigator.of(context).pushNamedAndRemoveUntil(
-                    loginRout,
-                    (route) => false,
-                  );
+                  GoRouter.of(context).pushNamed(RoutsConst.loginRout);
                 },
                 child: Text(
                   'Go to login page',

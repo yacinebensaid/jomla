@@ -23,7 +23,10 @@ class AddProductPage extends StatefulWidget {
   _AddProductPageState createState() => _AddProductPageState();
 }
 
-class _AddProductPageState extends State<AddProductPage> {
+class _AddProductPageState extends State<AddProductPage>
+    with AutomaticKeepAliveClientMixin<AddProductPage> {
+  @override
+  bool get wantKeepAlive => true;
   final _formKey = GlobalKey<FormState>();
 
   String _productName = '';
@@ -320,6 +323,7 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(

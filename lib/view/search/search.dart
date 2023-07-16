@@ -6,13 +6,6 @@ import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
 
 class CustumSearchDeligate extends SearchDelegate {
-  final VoidCallback goToProfile;
-  List following;
-  final bool isAdmin;
-  CustumSearchDeligate(
-      {required this.isAdmin,
-      required this.following,
-      required this.goToProfile});
   String? selectedMainCategory;
   String? selectedSubCategory;
   String? selectedOffer;
@@ -145,10 +138,8 @@ class CustumSearchDeligate extends SearchDelegate {
                     Product product = await getProductsByReference(reference);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: ((context) => DetailsScreen(
-                              goToProfile: goToProfile,
-                              following: following,
-                              isAdmin: isAdmin,
                               product: product,
+                              ref: null,
                             ))));
                   },
                   title: Text(result),
@@ -195,10 +186,8 @@ class CustumSearchDeligate extends SearchDelegate {
                     Product product = await getProductsByReference(reference);
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: ((context) => DetailsScreen(
-                              goToProfile: goToProfile,
-                              following: following,
-                              isAdmin: isAdmin,
                               product: product,
+                              ref: null,
                             ))));
                   },
                   title: Text(result),

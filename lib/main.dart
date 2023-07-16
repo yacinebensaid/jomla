@@ -4,18 +4,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:jomla/services/auth/auth_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:provider/provider.dart';
 import 'package:jomla/constants/routes.dart';
-import 'package:jomla/services/auth/auth_service.dart';
-import 'package:jomla/view/auth/email_verification/emailverify_view.dart';
-import 'package:jomla/view/auth/login/index.dart';
-import 'package:jomla/view/auth/register/register_view.dart';
-import 'package:jomla/view/banner_links/sale/sale.dart';
-import 'package:jomla/view/banner_links/tips/tips.dart';
-import 'package:jomla/view/banner_links/using_jomla/using_jomla.dart';
-import 'package:jomla/view/entrypoint/entrypoint.dart';
-import 'package:jomla/view/product_storing_service/storing_service.dart';
-
 import 'l10n/l10n.dart';
 
 void main() {
@@ -24,7 +16,21 @@ void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.black, // Change the status bar color to black
   ));
-  runApp(const MyApp());
+  AuthService.firebase().initialize().then((value) => runApp(MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) =>
+                UserDataInitializer(user: AuthService.firebase().currentUser),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => CheckedCartProducts(),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => HomeFunc(),
+          )
+        ],
+        child: const MyApp(),
+      )));
 }
 
 class MyApp extends StatelessWidget {
@@ -42,23 +48,9 @@ class MyApp extends StatelessWidget {
             create: (_) {
               return InternetConnectionChecker().onStatusChange;
             },
-            child: MaterialApp(
-              home: const AnnotatedRegion<SystemUiOverlayStyle>(
-                value: SystemUiOverlayStyle(
-                  statusBarColor: Colors.black,
-                  // Change the status bar color to black
-                ),
-                child: HomePage(),
-              ),
-              routes: {
-                loginRout: (context) => const LoginScreen(),
-                registerRout: (context) => const RegisterPage(),
-                verifyemailRout: (context) => const VerifyEmailView(),
-                saleRout: (context) => const SalePage(),
-                usingJomlaRout: (context) => const UsingJomlaPage(),
-                tipsRout: (context) => const TipsPage(),
-                storingServiceRout: (context) => const StoringServicePage(),
-              },
+            child: MaterialApp.router(
+              debugShowCheckedModeBanner: false,
+              routerConfig: MyAppRouter().router,
               supportedLocales: L10n.all,
               localizationsDelegates: const [
                 AppLocalizations.delegate,
@@ -71,7 +63,7 @@ class MyApp extends StatelessWidget {
         });
   }
 }
-
+/*
 class HomePage extends StatefulWidget {
   const HomePage({Key? key});
 
@@ -110,4 +102,4 @@ class _HomePageState extends State<HomePage> {
       },
     );
   }
-}
+}*/

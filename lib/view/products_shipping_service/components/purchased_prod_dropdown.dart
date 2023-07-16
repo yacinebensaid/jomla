@@ -5,20 +5,10 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
 import 'package:jomla/view/purchased/components/purchased.dart';
-
-import '../../../../constants/routes.dart';
 import 'shipping_products_card.dart';
 
 class PurchasedProducts extends StatefulWidget {
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
-  PurchasedProducts(
-      {Key? key,
-      required this.isAdmin,
-      required this.following,
-      required this.goToProfile})
-      : super(key: key);
+  PurchasedProducts({Key? key}) : super(key: key);
 
   @override
   _PurchasedProductsState createState() => _PurchasedProductsState();
@@ -86,10 +76,8 @@ class _PurchasedProductsState extends State<PurchasedProducts> {
                                 _products[index].reference);
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: ((context) => DetailsScreen(
-                                      goToProfile: widget.goToProfile,
-                                      following: widget.following,
-                                      isAdmin: widget.isAdmin,
                                       product: _product,
+                                      ref: null,
                                     ))));
                           },
                           child: PurchasedCard(purchasedProd: _products[index]),

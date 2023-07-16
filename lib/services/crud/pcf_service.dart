@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
 import 'package:jomla/view/products_card/product.dart';
@@ -596,17 +598,21 @@ class UserPCFService {
   }
 
   static Future<bool> searchInFav(String reference) async {
-    String? userUID = AuthService.firebase().currentUser?.uid;
-    DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
-        .instance
-        .collection('UserPCF')
-        .doc(userUID)
-        .get();
-    Map? snapshotData = snapshot.data();
-    if (snapshotData != null) {
-      final favouriteList = List<String>.from(snapshotData['favourite']);
-      bool isReferenceExists = favouriteList.contains(reference);
-      return isReferenceExists;
+    if (AuthService.firebase().currentUser != null) {
+      String? userUID = AuthService.firebase().currentUser?.uid;
+      DocumentSnapshot<Map<String, dynamic>> snapshot = await FirebaseFirestore
+          .instance
+          .collection('UserPCF')
+          .doc(userUID)
+          .get();
+      Map? snapshotData = snapshot.data();
+      if (snapshotData != null) {
+        final favouriteList = List<String>.from(snapshotData['favourite']);
+        bool isReferenceExists = favouriteList.contains(reference);
+        return isReferenceExists;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }

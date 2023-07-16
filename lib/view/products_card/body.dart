@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
 import '../../constants/constants.dart';
 import '../../size_config.dart';
@@ -13,12 +15,10 @@ class ProductCard extends StatefulWidget {
     this.width = 140,
     this.aspectRetio = 1.02,
     required this.product,
-    required this.press,
   }) : super(key: key);
 
   final double width, aspectRetio;
   final Product product;
-  final GestureTapCallback press;
 
   @override
   _ProductCardState createState() => _ProductCardState();
@@ -59,7 +59,10 @@ class _ProductCardState extends State<ProductCard> {
         Padding(
           padding: const EdgeInsets.all(7.0),
           child: GestureDetector(
-            onTap: widget.press,
+            onTap: () {
+              GoRouter.of(context)
+                  .pushNamed(RoutsConst.productRout, extra: widget.product);
+            },
             child: SizedBox(
               width: getProportionateScreenWidth(widget.width),
               child: Stack(

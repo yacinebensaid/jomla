@@ -38,12 +38,7 @@ class _ServicesState extends State<Services> {
       description: 'Service description',
       imageUrl: 'assets/images/services/shipping_serv.jpeg',
     ),*/
-    Service(
-      servicePage: storingServiceRout,
-      name: 'Stock\nService',
-      description: 'Service description',
-      imageUrl: 'assets/images/services/stock.jpg',
-    ),
+
     Service(
       servicePage: null,
       name: 'Website/\nApp creation',

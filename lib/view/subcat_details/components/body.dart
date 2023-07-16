@@ -6,17 +6,11 @@ import 'package:jomla/view/subcat_details/components/card_rows.dart';
 import '../../../size_config.dart';
 
 class Body extends StatefulWidget {
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
   final String maincat;
 
   Body({
     Key? key,
-    required this.isAdmin,
     required this.maincat,
-    required this.following,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -39,10 +33,7 @@ class _BodyState extends State<Body> {
             children: [
               SizedBox(height: getProportionateScreenWidth(20)),
               CardRows(
-                goToProfile: widget.goToProfile,
                 maincat: widget.maincat,
-                following: widget.following,
-                isAdmin: widget.isAdmin,
               ),
             ],
           ),

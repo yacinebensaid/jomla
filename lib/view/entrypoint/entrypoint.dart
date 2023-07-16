@@ -1,79 +1,262 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
+import 'package:jomla/constants/routes.dart';
+import 'package:jomla/services/auth/auth_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/size_config.dart';
-import 'package:jomla/view/add_product/adding_newproduct_view.dart';
-import 'package:jomla/view/cart/cart_view.dart';
+
 import 'package:jomla/view/components/appbar.dart';
-import 'package:jomla/view/explore/explore.dart';
-import 'package:jomla/view/home/homepage_view.dart';
+
+import 'package:provider/provider.dart';
 import '../components/drawer.dart';
-import '../profile/profile_view.dart';
 
 class EntryPoint extends StatefulWidget {
-  String uid;
-  EntryPoint({
-    Key? key,
-    required this.uid,
-  }) : super(key: key);
+  final Widget child;
+  const EntryPoint({super.key, required this.child});
 
   @override
   State<EntryPoint> createState() => _EntryPointState();
 }
 
 class _EntryPointState extends State<EntryPoint> {
-  int _selectedIndex = 0;
   final PageController pageController = PageController(initialPage: 0);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late String name = '', user_type = 'normal', phoneNumber = '', id;
-  String? description;
-  String? image;
-  String? dropshipperID;
-  late List following = [];
-  late bool isAdmin = false;
-  late List? owned_products;
+  String? uid;
+  int _selectedIndex = 0;
+
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
-    id = widget.uid;
-    _initializeUserData();
+
+    if (AuthService.firebase().currentUser != null) {
+      uid = AuthService.firebase().currentUser!.uid;
+    }
   }
 
-  void _initializeUserData() {
-    Stream<UserData?> userDataStream =
-        DataService.getUserDataStream(widget.uid);
-    userDataStream.listen((userData) {
-      if (userData != null) {
-        setState(() {
-          following = userData.following;
-          isAdmin = userData.isAdmin;
-          image = userData.picture;
-          description = userData.description;
-          name = userData.name;
-          dropshipperID = userData.dropshipperID;
-          owned_products = userData.owned_products;
-          phoneNumber = userData.phoneNumber;
-          user_type = userData.user_type;
-        });
-      }
-    });
-  }
-
-  void onTapped(int index) {
+  void onTapped(BuildContext context, int index) {
     setState(() {
       _selectedIndex = index;
     });
+    switch (index) {
+      case 0:
+        GoRouter.of(context).go('/');
+        break;
+      case 1:
+        GoRouter.of(context).go('/cart');
+        break;
+      case 2:
+        Provider.of<UserDataInitializer>(context, listen: false).getUserType ==
+                'market'
+            ? GoRouter.of(context).go('/add')
+            : GoRouter.of(context).go('/explore');
 
-    pageController.jumpToPage(index);
+        break;
+      case 3:
+        Provider.of<UserDataInitializer>(context, listen: false).getUserType ==
+                'market'
+            ? GoRouter.of(context).go('/explore')
+            : GoRouter.of(context).go('/profile/${uid}');
+
+        break;
+      case 4:
+        if (Provider.of<UserDataInitializer>(context, listen: false)
+                .getUserType ==
+            'market') GoRouter.of(context).go('/profile/${uid}');
+        break;
+      default:
+        MyAppRouter().router.namedLocation(RoutsConst.loginRout);
+    }
   }
 
-  void goToExplore() {
-    user_type != 'market'
+  @override
+  Widget build(BuildContext context) {
+    Provider.of<HomeFunc>(context)
+        .initialize(page_Controller: pageController, scaffoldKey: _scaffoldKey);
+    SizeConfig().init(context);
+    return Scaffold(
+        key: _scaffoldKey,
+        resizeToAvoidBottomInset: false,
+        //key: _scaffoldKey,
+        appBar: _selectedIndex == 1
+            ? MyCustomAppBar(
+                context: context,
+              )
+            : null,
+        drawer: NavigationDrawer(),
+        body: widget.child,
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Color.fromARGB(255, 255, 255, 255).withOpacity(1.0),
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'home',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart),
+              label: 'cart',
+            ),
+            if (Provider.of<UserDataInitializer>(context, listen: false)
+                    .getUserType ==
+                'market')
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.add),
+                label: 'add',
+              ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.explore),
+              label: 'explore',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline_sharp),
+              label: 'profile',
+            ),
+          ],
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          currentIndex: _selectedIndex,
+          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+          unselectedItemColor: Colors.grey,
+          onTap: ((value) {
+            onTapped(context, value);
+          }),
+        ));
+  }
+}
+
+
+/*class EntryPoint extends StatefulWidget {
+  final StatefulNavigationShell navigationShell;
+  EntryPoint({
+    required this.navigationShell,
+    Key? key,
+  }) : super(key: key ?? const ValueKey('EntryPoint'));
+
+  @override
+  State<EntryPoint> createState() => _EntryPointState();
+}
+
+class _EntryPointState extends State<EntryPoint> {
+
+  
+}*/
+
+
+
+
+
+
+/*int _selectedIndex = 0;
+  final PageController pageController = PageController(initialPage: 0);
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); */
+
+
+/*Stack(children: [
+            PageView(
+              controller: pageController,
+              children: [
+                HomeView(
+                  opendrawer: opendrawer,
+                  goToExplore: goToExplore,
+                ), // pass the function here
+                CartScreen(),
+                Provider.of<UserDataInitializer>(context, listen: false)
+                            .getUserType ==
+                        'market'
+                    ? AddProductPage()
+                    : ExploreView(),
+                Provider.of<UserDataInitializer>(context, listen: false)
+                            .getUserType ==
+                        'market'
+                    ? ExploreView()
+                    : ProfileScreen(
+                        fromNav: true,
+                        uid: Provider.of<UserDataInitializer>(context,
+                                        listen: false)
+                                    .getUSER !=
+                                null
+                            ? Provider.of<UserDataInitializer>(context,
+                                    listen: false)
+                                .getUSER!
+                                .uid
+                            : null,
+                      ),
+                if (Provider.of<UserDataInitializer>(context, listen: false)
+                        .getUserType ==
+                    'market')
+                  ProfileScreen(
+                    fromNav: true,
+                    uid: Provider.of<UserDataInitializer>(context, listen: false)
+                                .getUSER !=
+                            null
+                        ? Provider.of<UserDataInitializer>(context, listen: false)
+                            .getUSER!
+                            .uid
+                        : null,
+                  )
+              ],
+              //i don't want to return anything if the user_type != 'market'
+              onPageChanged: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
+            ),
+          ]), */
+
+
+
+/*BottomNavigationBar(
+          backgroundColor: Color.fromARGB(255, 255, 255, 255).withOpacity(1.0),
+          type: BottomNavigationBarType.fixed,
+          items: <BottomNavigationBarItem>[
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: '',
+              
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart),
+              label: '',
+            ),
+            if (Provider.of<UserDataInitializer>(context, listen: false)
+                    .getUserType ==
+                'market')
+              const BottomNavigationBarItem(
+                icon: Icon(Icons.add),
+                label: '',
+              ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.explore),
+              label: '',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline_sharp),
+              label: '',
+            ),
+          ],
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          currentIndex: _selectedIndex,
+          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
+          unselectedItemColor: Colors.grey,
+          onTap: onTapped,
+        ),*/
+
+
+
+/*void goToExplore() {
+    Provider.of<UserDataInitializer>(context, listen: false).getUserType !=
+            'market'
         ? pageController.jumpToPage(2)
         : pageController.jumpToPage(3);
   }
 
   void goToProfile() {
-    user_type != 'market'
+    Provider.of<UserDataInitializer>(context, listen: false).getUserType !=
+            'market'
         ? pageController.jumpToPage(3)
         : pageController.jumpToPage(4);
   }
@@ -88,125 +271,4 @@ class _EntryPointState extends State<EntryPoint> {
     } else {
       pageController.jumpToPage(0);
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    SizeConfig().init(context);
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      key: _scaffoldKey,
-      appBar: _selectedIndex == 1
-          ? MyCustomAppBar(
-              goToProfile: goToProfile,
-              following: following,
-              context: context,
-              isAdmin: isAdmin,
-            )
-          : null,
-      drawer: NavigationDrawer(
-        userType: user_type,
-        name: name,
-        picture: image,
-        image: image,
-        dropshipID: dropshipperID,
-        description: description,
-        phoneNumber: phoneNumber,
-        goToProfile: goToProfile,
-        isAdmin: isAdmin,
-        following: following,
-      ),
-      body: Stack(children: [
-        PageView(
-          controller: pageController,
-          children: [
-            HomeView(
-              userType: user_type,
-              refresh: goToHome,
-              goToProfile: goToProfile,
-              following: following,
-              opendrawer: opendrawer,
-              goToExplore: goToExplore,
-              isAdmin: isAdmin,
-            ), // pass the function here
-            CartScreen(
-              following: following,
-              goToProfile: goToProfile,
-              userType: user_type,
-              isAdmin: isAdmin,
-            ),
-            user_type == 'market'
-                ? AddProductPage()
-                : ExploreView(
-                    goToProfile: goToProfile,
-                    following: following,
-                    isAdmin: isAdmin,
-                  ),
-            user_type == 'market'
-                ? ExploreView(
-                    goToProfile: goToProfile,
-                    following: following,
-                    isAdmin: isAdmin,
-                  )
-                : ProfileScreen(
-                    goToProfile: goToProfile,
-                    userType: user_type,
-                    fromNav: true,
-                    following: following,
-                    uid: id,
-                    isAdmin: isAdmin,
-                  ),
-            if (user_type == 'market')
-              ProfileScreen(
-                goToProfile: goToProfile,
-                userType: user_type,
-                fromNav: true,
-                following: following,
-                uid: id,
-                isAdmin: isAdmin,
-              )
-          ],
-          //i don't want to return anything if the user_type != 'market'
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
-      ]),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255).withOpacity(1.0),
-        type: BottomNavigationBarType.fixed,
-        items: <BottomNavigationBarItem>[
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: '',
-          ),
-          if (user_type == 'market')
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.add),
-              label: '',
-            ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.explore),
-            label: '',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline_sharp),
-            label: '',
-          ),
-        ],
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        currentIndex: _selectedIndex,
-        selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-        unselectedItemColor: Colors.grey,
-        onTap: onTapped,
-      ),
-    );
-  }
-}
+  } */

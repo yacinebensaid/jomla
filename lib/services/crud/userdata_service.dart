@@ -174,8 +174,6 @@ class DataService {
     required String city,
     required String adress,
     required String? description,
-    required List followers,
-    required List following,
   }) {
     FirebaseFirestore.instance.collection('UserData').doc(userUID).set({
       'uid': userUID,
@@ -183,9 +181,9 @@ class DataService {
       'market_category': marketCategory,
       'phone_number': phoneNumber,
       'description': description,
-      'followers': followers,
-      'sales': 0,
-      'following': following,
+      'followers': [],
+      'sales': [],
+      'following': [],
       'city': city,
       'adress': adress,
       'user_type': "market",

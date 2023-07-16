@@ -6,20 +6,14 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/view/profile/profile_view.dart';
 import 'package:provider/provider.dart';
 
 class Owner extends StatefulWidget {
-  final VoidCallback goToProfile;
-
-  List following;
-  bool isAdmin;
   String uid;
   Owner({
     Key? key,
-    required this.goToProfile,
-    required this.following,
-    required this.isAdmin,
     required this.uid,
   }) : super(key: key);
 
@@ -35,7 +29,9 @@ class _OwnerState extends State<Owner> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _isFollowing = widget.following.contains(widget.uid);
+    _isFollowing = Provider.of<UserDataInitializer>(context, listen: false)
+        .getFollowing
+        .contains(widget.uid);
   }
 
   @override
@@ -68,12 +64,8 @@ class _OwnerState extends State<Owner> {
                 onTap: () {
                   Navigator.of(context).push(MaterialPageRoute(
                       builder: ((context) => ProfileScreen(
-                            goToProfile: widget.goToProfile,
-                            userType: snapshot.data!.user_type,
                             fromNav: false,
                             uid: widget.uid,
-                            following: widget.following,
-                            isAdmin: widget.isAdmin,
                           ))));
                 },
                 child: Container(
@@ -113,13 +105,19 @@ class _OwnerState extends State<Owner> {
                                             listen: false);
                                     if (internetConnectionStatus ==
                                         InternetConnectionStatus.connected) {
-                                      DataService followbuttoninst =
-                                          DataService();
-                                      followbuttoninst
-                                          .unfollowFunction(widget.uid);
                                       setState(() {
                                         _isFollowing = false;
                                       });
+                                      if (Provider.of<UserDataInitializer>(
+                                              context,
+                                              listen: false)
+                                          .getFollowing
+                                          .contains(widget.uid)) {
+                                        DataService followbuttoninst =
+                                            DataService();
+                                        followbuttoninst
+                                            .unfollowFunction(widget.uid);
+                                      }
                                     } else {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(
@@ -152,13 +150,20 @@ class _OwnerState extends State<Owner> {
                                             listen: false);
                                     if (internetConnectionStatus ==
                                         InternetConnectionStatus.connected) {
-                                      DataService followbuttoninst =
-                                          DataService();
-                                      followbuttoninst
-                                          .followFunction(widget.uid);
                                       setState(() {
                                         _isFollowing = true;
                                       });
+                                      if (Provider.of<UserDataInitializer>(
+                                              context,
+                                              listen: false)
+                                          .getFollowing
+                                          .contains(widget.uid)) {
+                                      } else {
+                                        DataService followbuttoninst =
+                                            DataService();
+                                        followbuttoninst
+                                            .followFunction(widget.uid);
+                                      }
                                     } else {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(SnackBar(

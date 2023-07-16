@@ -1,37 +1,21 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jomla/services/crud/pcf_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/view/favourite/favourite.dart';
 import 'package:jomla/view/pending/pending_view.dart';
 import 'package:jomla/view/purchased/purchased_view.dart';
 import 'package:jomla/view/settings/settings_view.dart';
 import 'package:jomla/view/support_staff_orientation.dart';
+import 'package:provider/provider.dart';
 import '../../constants/routes.dart';
 import '../../services/auth/auth_service.dart';
 
 class NavigationDrawer extends StatelessWidget {
-  String name;
-  String? picture;
-  String? description;
-  String phoneNumber;
-  String? dropshipID;
-  String userType;
-  String? image;
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
-  NavigationDrawer(
-      {super.key,
-      required this.following,
-      required this.isAdmin,
-      required this.userType,
-      required this.picture,
-      required this.image,
-      required this.goToProfile,
-      required this.name,
-      required this.dropshipID,
-      required this.description,
-      required this.phoneNumber});
+  NavigationDrawer({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,36 +30,43 @@ class NavigationDrawer extends StatelessWidget {
                 const SizedBox(
                   height: 8,
                 ),
-                ListTile(
-                  leading: picture == null
-                      ? const CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.grey,
-                          child: Icon(
-                            CupertinoIcons.person,
-                            color: Colors.white,
-                          ),
-                        )
-                      : CircleAvatar(
-                          radius: 22,
-                          backgroundColor: Colors.grey,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(60),
-                            child: Center(
-                              child: Image.network(
-                                picture!,
-                                fit: BoxFit.cover,
-                                width: 44,
-                                height: 44,
+                if (AuthService.firebase().currentUser != null)
+                  ListTile(
+                    leading:
+                        Provider.of<UserDataInitializer>(context, listen: false)
+                                    .getImage ==
+                                null
+                            ? const CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey,
+                                child: Icon(
+                                  CupertinoIcons.person,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : CircleAvatar(
+                                radius: 22,
+                                backgroundColor: Colors.grey,
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(60),
+                                  child: Center(
+                                    child: Image.network(
+                                      Provider.of<UserDataInitializer>(context,
+                                              listen: false)
+                                          .getImage!,
+                                      fit: BoxFit.cover,
+                                      width: 44,
+                                      height: 44,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                  title: Text(
-                    name,
-                    style: const TextStyle(color: Colors.black, fontSize: 18),
+                    title: Text(
+                      Provider.of<UserDataInitializer>(context, listen: false)
+                          .getName!,
+                      style: const TextStyle(color: Colors.black, fontSize: 18),
+                    ),
                   ),
-                ),
                 const Divider(
                   height: 10,
                   thickness: 0.15,
@@ -110,11 +101,7 @@ class NavigationDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: ((context) => FavouriteView(
-                                goToProfile: goToProfile,
-                                isAdmin: isAdmin,
-                                following: following,
-                              ))));
+                          builder: ((context) => FavouriteView())));
                     }),
                 ListTile(
                     leading:
@@ -125,11 +112,7 @@ class NavigationDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: ((context) => PendingScreen(
-                                goToProfile: goToProfile,
-                                following: following,
-                                isAdmin: isAdmin,
-                              ))));
+                          builder: ((context) => PendingScreen())));
                     }),
                 ListTile(
                     leading: Icon(Icons.paid_sharp, color: Colors.grey[600]),
@@ -139,11 +122,7 @@ class NavigationDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: ((context) => PurchasedScreen(
-                                goToProfile: goToProfile,
-                                following: following,
-                                isAdmin: isAdmin,
-                              ))));
+                          builder: ((context) => PurchasedScreen())));
                     }),
                 ListTile(
                     leading: Icon(Icons.chat, color: Colors.grey[600]),
@@ -186,10 +165,10 @@ class NavigationDrawer extends StatelessWidget {
                       'Offers',
                       style: TextStyle(color: Colors.grey[600], fontSize: 18),
                     ),
-                    onTap: () async {
-                      UserPCFService.moveItemsToPurchasedTest(
-                          'MMr3UBiitlgWUOkRvJ1Q9xu7Lt53202373153744MMr3UBiitlgWUOkRvJ1Q9xu7Lt53_99',
-                          'MMr3UBiitlgWUOkRvJ1Q9xu7Lt53');
+                    onTap: () {
+                      print(Provider.of<UserDataInitializer>(context,
+                              listen: false)
+                          .getName);
                     }),
                 ListTile(
                   title: Text(
@@ -208,14 +187,7 @@ class NavigationDrawer extends StatelessWidget {
                     ),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: ((context) => SettingsView(
-                                name: name,
-                                dropshipID: dropshipID,
-                                userType: userType,
-                                image: image,
-                                description: description,
-                                phoneNumber: phoneNumber,
-                              ))));
+                          builder: ((context) => SettingsView())));
                     }),
                 ListTile(
                     leading:
@@ -231,7 +203,9 @@ class NavigationDrawer extends StatelessWidget {
                                   DataService.getUserDataForOrder(userUID)
               */
                     onTap: () async {
-                      if (isAdmin) {
+                      if (Provider.of<UserDataInitializer>(context,
+                              listen: false)
+                          .getIsAdmin) {
                         Navigator.of(context).push(MaterialPageRoute(
                             builder: ((context) =>
                                 const StaffOrientationPage())));
@@ -248,10 +222,7 @@ class NavigationDrawer extends StatelessWidget {
                       final logoutOption = await showLogoutDialog(context);
                       if (logoutOption) {
                         await AuthService.firebase().logOut();
-                        Navigator.of(context)
-                            .pushNamedAndRemoveUntil(loginRout, (_) => false);
                       }
-                      print(AuthService.firebase().currentUser?.uid);
                     })
               ],
             ),

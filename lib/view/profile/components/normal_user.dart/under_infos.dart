@@ -4,6 +4,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/view/home/components/services.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
@@ -11,16 +12,11 @@ import 'package:jomla/view/profile/components/normal_user.dart/mini_purchased_ca
 import 'package:jomla/view/profile/profile_view.dart';
 import 'package:jomla/view/purchased/components/purchased.dart';
 import 'package:jomla/view/purchased/purchased_view.dart';
+import 'package:provider/provider.dart';
 
 class UnderInfos extends StatelessWidget {
-  List following;
-  bool isAdmin;
-  final VoidCallback goToProfile;
   UnderInfos({
     Key? key,
-    required this.following,
-    required this.isAdmin,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -65,11 +61,7 @@ class UnderInfos extends StatelessWidget {
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                  builder: ((context) => PurchasedScreen(
-                                        goToProfile: goToProfile,
-                                        following: following,
-                                        isAdmin: isAdmin,
-                                      ))));
+                                  builder: ((context) => PurchasedScreen())));
                             },
                             child: Text(
                               'See all',
@@ -114,10 +106,8 @@ class UnderInfos extends StatelessWidget {
                                         Navigator.of(context)
                                             .push(MaterialPageRoute(
                                           builder: ((context) => DetailsScreen(
-                                                goToProfile: goToProfile,
-                                                following: following,
-                                                isAdmin: isAdmin,
                                                 product: _product,
+                                                ref: null,
                                               )),
                                         ));
                                       },
@@ -194,18 +184,26 @@ class UnderInfos extends StatelessWidget {
                       SizedBox(
                         height: 5.h,
                       ),
-                      following.isNotEmpty
+                      Provider.of<UserDataInitializer>(context, listen: false)
+                              .getFollowing
+                              .isNotEmpty
                           ? Padding(
                               padding: EdgeInsets.symmetric(horizontal: 10.w),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
                                   children: List.generate(
-                                    following.length,
+                                    Provider.of<UserDataInitializer>(context,
+                                            listen: false)
+                                        .getFollowing
+                                        .length,
                                     (index) {
                                       return FutureBuilder(
                                         future: DataService.getUserDataForOrder(
-                                            following[index]),
+                                            Provider.of<UserDataInitializer>(
+                                                    context,
+                                                    listen: false)
+                                                .getFollowing[index]),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
@@ -223,18 +221,9 @@ class UnderInfos extends StatelessWidget {
                                                       MaterialPageRoute(
                                                           builder: ((context) =>
                                                               ProfileScreen(
-                                                                goToProfile:
-                                                                    goToProfile,
-                                                                userType: snapshot
-                                                                    .data!
-                                                                    .user_type,
                                                                 fromNav: false,
                                                                 uid: snapshot
                                                                     .data!.id,
-                                                                following:
-                                                                    following,
-                                                                isAdmin:
-                                                                    isAdmin,
                                                               ))));
                                                 },
                                                 child: Column(
@@ -304,12 +293,7 @@ class UnderInfos extends StatelessWidget {
                             ),
                     ])),
             SizedBox(height: 10.h),
-            Services(
-              userType: 'normal',
-              following: following,
-              goToProfile: goToProfile,
-              isAdmin: isAdmin,
-            )
+            Services()
           ],
         )
       ],

@@ -10,14 +10,8 @@ List mainCategories = vars.get_mainCategoryOptionEX();
 Map<int, String> cateroriesInfo = vars.get_cateroriesInfo();
 
 class Categories extends StatelessWidget {
-  final VoidCallback goToProfile;
-  List following;
-  bool isAdmin;
   Categories({
     Key? key,
-    required this.isAdmin,
-    required this.following,
-    required this.goToProfile,
   }) : super(key: key);
 
   @override
@@ -46,27 +40,23 @@ class Categories extends StatelessWidget {
                           image: cateroriesInfo[index * 2]!,
                           category: mainCategories[index * 2],
                           numOfBrands: 18,
-                          press: () => Navigator.of(context).push(
-                              MaterialPageRoute(
+                          press: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
                                   builder: ((context) => SubcatView(
-                                      goToProfile: goToProfile,
-                                      following: following,
-                                      maincatvalue: mainCategories[index * 2],
-                                      isAdmin: isAdmin)))),
+                                        maincatvalue: mainCategories[index * 2],
+                                      )))),
                         ),
                       if (index * 2 + 1 < mainCategories.length)
                         SpecialOfferCard(
                           image: cateroriesInfo[index * 2 + 1]!,
                           category: mainCategories[index * 2 + 1],
                           numOfBrands: 18,
-                          press: () => Navigator.of(context).push(
-                              MaterialPageRoute(
+                          press: () =>
+                              Navigator.of(context).push(MaterialPageRoute(
                                   builder: ((context) => SubcatView(
-                                      goToProfile: goToProfile,
-                                      following: following,
-                                      maincatvalue:
-                                          mainCategories[index * 2 + 1],
-                                      isAdmin: isAdmin)))),
+                                        maincatvalue:
+                                            mainCategories[index * 2 + 1],
+                                      )))),
                         ),
                     ],
                   ),

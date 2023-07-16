@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/view/dropshipping/dropshiper_pay.dart';
 import 'package:jomla/view/dropshipping/dropship_view.dart';
 import 'package:jomla/view/products_shipping_service/shipping_service_view.dart';
@@ -13,17 +14,9 @@ import '../../../constants/constants.dart';
 import '../../product_datails/components/default_btn.dart';
 
 class CheckoutCard extends StatefulWidget {
-  List following;
-  bool isAdmin;
-  final List<String> checkedProducts;
-  String userType;
-  final VoidCallback goToProfile;
+  final Map<String, CartProduct> checkedProducts;
   CheckoutCard({
     Key? key,
-    required this.isAdmin,
-    required this.userType,
-    required this.following,
-    required this.goToProfile,
     required this.checkedProducts,
   }) : super(key: key);
 
@@ -38,27 +31,22 @@ class _CheckoutCardState extends State<CheckoutCard> {
     // TODO: implement initState
     super.initState();
 
-    widget.userType == 'market'
+    Provider.of<UserDataInitializer>(context, listen: false).getUserType ==
+            'market'
         ? services = [
             Service(
-              servicePage: ShippingServicePage(
-                goToProfile: widget.goToProfile,
-                isAdmin: widget.isAdmin,
-                following: widget.following,
-              ),
+              servicePage: ShippingServicePage(),
               name: 'Products\nShipping',
               description: 'Service description',
               imageUrl: 'assets/images/services/shipping_serv.jpeg',
             ),
           ]
-        : widget.userType == 'dropshipper'
+        : Provider.of<UserDataInitializer>(context, listen: false)
+                    .getUserType ==
+                'dropshipper'
             ? services = [
                 Service(
-                  servicePage: ShippingServicePage(
-                    goToProfile: widget.goToProfile,
-                    isAdmin: widget.isAdmin,
-                    following: widget.following,
-                  ),
+                  servicePage: ShippingServicePage(),
                   name: 'Products\nShipping',
                   description: 'Service description',
                   imageUrl: 'assets/images/services/shipping_serv.jpeg',
@@ -72,20 +60,13 @@ class _CheckoutCardState extends State<CheckoutCard> {
               ]
             : services = [
                 Service(
-                  servicePage: ShippingServicePage(
-                    goToProfile: widget.goToProfile,
-                    isAdmin: widget.isAdmin,
-                    following: widget.following,
-                  ),
+                  servicePage: ShippingServicePage(),
                   name: 'Products\nShipping',
                   description: 'Service description',
                   imageUrl: 'assets/images/services/shipping_serv.jpeg',
                 ),
                 Service(
-                  servicePage: Dropship(
-                    userType: widget.userType,
-                    goToProfile: widget.goToProfile,
-                  ),
+                  servicePage: Dropship(),
                   name: 'Dropship\nService',
                   description: 'Service description',
                   imageUrl: 'assets/images/services/shipping.jpeg',
@@ -151,46 +132,51 @@ class _CheckoutCardState extends State<CheckoutCard> {
                 child: Row(
                   children: [
                     Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: Text.rich(
                           TextSpan(
                             text: 'Selected: ',
                             style: TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Colors.grey[600],
-                                fontSize: 17),
+                                fontSize: 17.w),
                             children: [
                               TextSpan(
-                                  text: "${widget.checkedProducts.length}",
+                                  text:
+                                      "${Provider.of<CheckedCartProducts>(context, listen: false).getChackeMap.length}",
                                   style: TextStyle(
-                                      fontSize: 17, color: Colors.grey[800])),
+                                      fontSize: 17.w, color: Colors.grey[800])),
                             ],
                           ),
                         )),
-                    Spacer(),
                     Expanded(
-                      flex: 3,
+                      flex: 4,
+                      child: Text.rich(
+                        TextSpan(
+                          text: 'Total: ',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[600],
+                              fontSize: 17.w),
+                          children: [
+                            TextSpan(
+                                text:
+                                    '${Provider.of<CheckedCartProducts>(context, listen: false).getTotalPrice}',
+                                style: TextStyle(
+                                    fontSize: 17.w, color: Colors.grey[800])),
+                            TextSpan(
+                                text: ' da',
+                                style: TextStyle(
+                                    fontSize: 15.w, color: Colors.grey[600])),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 4,
                       child: DefaultButton(
                         text: AppLocalizations.of(context)!.checkout,
                         press: () {
-                          /*final internetConnectionStatus =
-                                                        Provider.of<
-                                                                InternetConnectionStatus>(
-                                                            context,
-                                                            listen: false);
-                                                    if (internetConnectionStatus ==
-                                                        InternetConnectionStatus
-                                                            .connected) {
-
-                                                   
-                                                    }else{
-                                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('you are not connected'),
-                                        behavior: SnackBarBehavior.floating,
-                                      ));
-                                                    } */
-
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
@@ -199,8 +185,13 @@ class _CheckoutCardState extends State<CheckoutCard> {
                                   borderRadius: BorderRadius.circular(20.0),
                                 ),
                                 child: SizedBox(
-                                  height:
-                                      widget.userType == 'market' ? 220 : 380,
+                                  height: Provider.of<UserDataInitializer>(
+                                                  context,
+                                                  listen: false)
+                                              .getUserType ==
+                                          'market'
+                                      ? 220
+                                      : 380,
                                   child: Column(
                                     children: [
                                       SizedBox(

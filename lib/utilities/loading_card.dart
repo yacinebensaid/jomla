@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../constants/constants.dart';
-import '../../size_config.dart';
+import '../constants/constants.dart';
+import '../size_config.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProductCardShimmer extends StatelessWidget {

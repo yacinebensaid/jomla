@@ -24,8 +24,9 @@ List<Map<String, dynamic>> categories = [
 ];
 
 @override
-Widget buildCategories(BuildContext context, VoidCallback toExplore,
-    bool isAdmin, List following, final VoidCallback goToProfile) {
+Widget buildCategories(
+  BuildContext context,
+) {
   return SizedBox(
     height: getProportionateScreenHeight(100),
     child: ListView.builder(
@@ -36,9 +37,7 @@ Widget buildCategories(BuildContext context, VoidCallback toExplore,
           return CategoriesForHome(
             image: categories[index]['image'],
             category: categories[index]['name'],
-            press: () {
-              toExplore();
-            },
+            press: () {},
           );
         }
         return CategoriesForHome(
@@ -47,10 +46,8 @@ Widget buildCategories(BuildContext context, VoidCallback toExplore,
           press: () {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: ((context) => SubcatView(
-                    goToProfile: goToProfile,
-                    following: following,
-                    maincatvalue: categories[index]['name'],
-                    isAdmin: isAdmin))));
+                      maincatvalue: categories[index]['name'],
+                    ))));
           },
         );
       },

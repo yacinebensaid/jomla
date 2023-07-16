@@ -1,23 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
 import 'user_infos.dart';
 import 'user_products.dart';
 
 class Body extends StatefulWidget {
-  final VoidCallback goToProfile;
-  bool fromNav;
-  VoidCallback onBackButtonPressed;
-  List following;
-  bool isAdmin;
-  final String uid;
+  final bool fromNav;
 
-  Body({
+  final UserData userdata;
+
+  const Body({
     Key? key,
-    required this.isAdmin,
-    required this.following,
-    required this.uid,
     required this.fromNav,
-    required this.onBackButtonPressed,
-    required this.goToProfile,
+    required this.userdata,
   }) : super(key: key);
 
   @override
@@ -35,17 +29,12 @@ class _BodyState extends State<Body> {
               color: const Color.fromARGB(255, 240, 240, 240),
               child: UserInfos(
                 fromNav: widget.fromNav,
-                onBackButtonPressed: widget.onBackButtonPressed,
-                following: widget.following,
-                uid: widget.uid,
+                userdata: widget.userdata,
               )),
           Container(
             color: Color(0xFFF5F6F9),
             child: UserProducts(
-              goToProfile: widget.goToProfile,
-              following: widget.following,
-              uid: widget.uid,
-              isAdmin: widget.isAdmin,
+              uid: widget.userdata.id,
             ),
           )
         ],

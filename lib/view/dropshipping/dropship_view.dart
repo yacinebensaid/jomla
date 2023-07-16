@@ -3,12 +3,8 @@ import 'package:flutter/material.dart';
 import 'components/not_dropshiper.dart';
 
 class Dropship extends StatefulWidget {
-  final String? userType;
-  final VoidCallback goToProfile;
   const Dropship({
     Key? key,
-    required this.goToProfile,
-    required this.userType,
   }) : super(key: key);
 
   @override
@@ -22,10 +18,7 @@ class _DropshipPayState extends State<Dropship> {
       child: Scaffold(
         body: Container(
           color: Color(0xFFF5F6F9),
-          child: NotDropshiper(
-            userType: widget.userType,
-            goToProfile: widget.goToProfile,
-          ),
+          child: NotDropshiper(),
         ),
       ),
     );

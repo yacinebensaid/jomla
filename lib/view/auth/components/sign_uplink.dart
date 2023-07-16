@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
 import 'package:jomla/constants/routes.dart';
 
 class SignUpLink extends StatelessWidget {
@@ -24,8 +26,8 @@ class SignUpLink extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.pushReplacementNamed(
-                  context, registerRout); // Navigates to '/register' route
+              GoRouter.of(context).pushNamed(
+                  RoutsConst.registerRout); // Navigates to '/register' route
             },
             child: const Text(
               "Sign Up",
