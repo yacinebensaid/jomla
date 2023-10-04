@@ -5,11 +5,8 @@ import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/providers.dart';
 import 'package:jomla/size_config.dart';
-
-import 'package:jomla/view/components/appbar.dart';
-
 import 'package:provider/provider.dart';
-import '../components/drawer.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class EntryPoint extends StatefulWidget {
   final Widget child;
@@ -22,9 +19,10 @@ class EntryPoint extends StatefulWidget {
 class _EntryPointState extends State<EntryPoint> {
   final PageController pageController = PageController(initialPage: 0);
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  String? uid;
-  int _selectedIndex = 0;
+  final ScrollController scrollController = ScrollController();
+  int selectedIndex = 0;
 
+  String? uid;
   @override
   void initState() {
     // TODO: implement initState
@@ -36,35 +34,26 @@ class _EntryPointState extends State<EntryPoint> {
   }
 
   void onTapped(BuildContext context, int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
     switch (index) {
       case 0:
+        selectedIndex = index;
         GoRouter.of(context).go('/');
         break;
       case 1:
-        GoRouter.of(context).go('/cart');
+        selectedIndex = index;
+        GoRouter.of(context).go('/explore');
         break;
       case 2:
-        Provider.of<UserDataInitializer>(context, listen: false).getUserType ==
-                'market'
-            ? GoRouter.of(context).go('/add')
-            : GoRouter.of(context).go('/explore');
+        selectedIndex = index;
 
+        GoRouter.of(context).go('/cart');
         break;
       case 3:
-        Provider.of<UserDataInitializer>(context, listen: false).getUserType ==
-                'market'
-            ? GoRouter.of(context).go('/explore')
-            : GoRouter.of(context).go('/profile/${uid}');
+        selectedIndex = index;
+        GoRouter.of(context).go('/profile/${uid}');
 
         break;
-      case 4:
-        if (Provider.of<UserDataInitializer>(context, listen: false)
-                .getUserType ==
-            'market') GoRouter.of(context).go('/profile/${uid}');
-        break;
+
       default:
         MyAppRouter().router.namedLocation(RoutsConst.loginRout);
     }
@@ -72,203 +61,85 @@ class _EntryPointState extends State<EntryPoint> {
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<HomeFunc>(context)
-        .initialize(page_Controller: pageController, scaffoldKey: _scaffoldKey);
+    Provider.of<HomeFunc>(context).initialize(
+        page_Controller: pageController,
+        scrollController: scrollController,
+        onTap: onTapped);
     SizeConfig().init(context);
-    return Scaffold(
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
         key: _scaffoldKey,
-        resizeToAvoidBottomInset: false,
-        //key: _scaffoldKey,
-        appBar: _selectedIndex == 1
-            ? MyCustomAppBar(
-                context: context,
+        body: widget.child,
+        bottomNavigationBar: !kIsWeb
+            ? Material(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.symmetric(
+                      horizontal: BorderSide(
+                        color: Color.fromARGB(255, 190, 190, 190),
+                        width: 1.5,
+                      ),
+                    ),
+                  ),
+                  child: TabBar(
+                    indicator: CustomTabIndicator(),
+                    labelColor: Color.fromARGB(255, 17, 176, 216),
+                    indicatorWeight: 2.0,
+                    indicatorPadding:
+                        const EdgeInsets.symmetric(horizontal: 20),
+                    tabs: const [
+                      Tab(
+                        child: Icon(Icons.home_outlined),
+                      ),
+                      Tab(
+                        child: Icon(Icons.explore_outlined),
+                      ),
+                      Tab(
+                        child: Icon(Icons.shopping_cart_outlined),
+                      ),
+                      Tab(
+                        child: Icon(Icons.person_outlined),
+                      ),
+                    ],
+                    unselectedLabelColor: Color.fromARGB(255, 77, 113, 133),
+                    onTap: ((value) {
+                      onTapped(context, value);
+                    }),
+                  ),
+                ),
               )
             : null,
-        drawer: NavigationDrawer(),
-        body: widget.child,
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color.fromARGB(255, 255, 255, 255).withOpacity(1.0),
-          type: BottomNavigationBarType.fixed,
-          items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: 'home',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
-              label: 'cart',
-            ),
-            if (Provider.of<UserDataInitializer>(context, listen: false)
-                    .getUserType ==
-                'market')
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.add),
-                label: 'add',
-              ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.explore),
-              label: 'explore',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline_sharp),
-              label: 'profile',
-            ),
-          ],
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          currentIndex: _selectedIndex,
-          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-          unselectedItemColor: Colors.grey,
-          onTap: ((value) {
-            onTapped(context, value);
-          }),
-        ));
+      ),
+    );
   }
 }
 
+class CustomTabIndicator extends Decoration {
+  @override
+  BoxPainter createBoxPainter([VoidCallback? onChanged]) {
+    return _CustomTabIndicatorPainter(this, onChanged);
+  }
+}
 
-/*class EntryPoint extends StatefulWidget {
-  final StatefulNavigationShell navigationShell;
-  EntryPoint({
-    required this.navigationShell,
-    Key? key,
-  }) : super(key: key ?? const ValueKey('EntryPoint'));
+class _CustomTabIndicatorPainter extends BoxPainter {
+  final CustomTabIndicator decoration;
+
+  _CustomTabIndicatorPainter(this.decoration, VoidCallback? onChanged)
+      : super(onChanged);
 
   @override
-  State<EntryPoint> createState() => _EntryPointState();
+  void paint(Canvas canvas, Offset offset, ImageConfiguration configuration) {
+    final Rect rect = offset & configuration.size!;
+    final Paint paint = Paint();
+    paint.color = const Color.fromARGB(255, 19, 164, 241); // Indicator color
+    paint.style = PaintingStyle.fill;
+
+    // Adjust the Y-coordinate to place the indicator above the TabBar
+    final double indicatorY = rect.top - 2.0;
+
+    canvas.drawRect(
+        Rect.fromLTWH(rect.left, indicatorY, rect.width, 4.0), paint);
+  }
 }
-
-class _EntryPointState extends State<EntryPoint> {
-
-  
-}*/
-
-
-
-
-
-
-/*int _selectedIndex = 0;
-  final PageController pageController = PageController(initialPage: 0);
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>(); */
-
-
-/*Stack(children: [
-            PageView(
-              controller: pageController,
-              children: [
-                HomeView(
-                  opendrawer: opendrawer,
-                  goToExplore: goToExplore,
-                ), // pass the function here
-                CartScreen(),
-                Provider.of<UserDataInitializer>(context, listen: false)
-                            .getUserType ==
-                        'market'
-                    ? AddProductPage()
-                    : ExploreView(),
-                Provider.of<UserDataInitializer>(context, listen: false)
-                            .getUserType ==
-                        'market'
-                    ? ExploreView()
-                    : ProfileScreen(
-                        fromNav: true,
-                        uid: Provider.of<UserDataInitializer>(context,
-                                        listen: false)
-                                    .getUSER !=
-                                null
-                            ? Provider.of<UserDataInitializer>(context,
-                                    listen: false)
-                                .getUSER!
-                                .uid
-                            : null,
-                      ),
-                if (Provider.of<UserDataInitializer>(context, listen: false)
-                        .getUserType ==
-                    'market')
-                  ProfileScreen(
-                    fromNav: true,
-                    uid: Provider.of<UserDataInitializer>(context, listen: false)
-                                .getUSER !=
-                            null
-                        ? Provider.of<UserDataInitializer>(context, listen: false)
-                            .getUSER!
-                            .uid
-                        : null,
-                  )
-              ],
-              //i don't want to return anything if the user_type != 'market'
-              onPageChanged: (index) {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              },
-            ),
-          ]), */
-
-
-
-/*BottomNavigationBar(
-          backgroundColor: Color.fromARGB(255, 255, 255, 255).withOpacity(1.0),
-          type: BottomNavigationBarType.fixed,
-          items: <BottomNavigationBarItem>[
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: '',
-              
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_cart),
-              label: '',
-            ),
-            if (Provider.of<UserDataInitializer>(context, listen: false)
-                    .getUserType ==
-                'market')
-              const BottomNavigationBarItem(
-                icon: Icon(Icons.add),
-                label: '',
-              ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.explore),
-              label: '',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline_sharp),
-              label: '',
-            ),
-          ],
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          currentIndex: _selectedIndex,
-          selectedItemColor: Color.fromARGB(255, 0, 0, 0),
-          unselectedItemColor: Colors.grey,
-          onTap: onTapped,
-        ),*/
-
-
-
-/*void goToExplore() {
-    Provider.of<UserDataInitializer>(context, listen: false).getUserType !=
-            'market'
-        ? pageController.jumpToPage(2)
-        : pageController.jumpToPage(3);
-  }
-
-  void goToProfile() {
-    Provider.of<UserDataInitializer>(context, listen: false).getUserType !=
-            'market'
-        ? pageController.jumpToPage(3)
-        : pageController.jumpToPage(4);
-  }
-
-  void opendrawer() {
-    _scaffoldKey.currentState!.openDrawer();
-  }
-
-  void goToHome() {
-    if (pageController.page?.round() == 0) {
-      setState(() {});
-    } else {
-      pageController.jumpToPage(0);
-    }
-  } */

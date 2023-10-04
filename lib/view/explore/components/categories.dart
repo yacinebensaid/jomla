@@ -1,8 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
-
-import 'package:jomla/view/subcat_details/subcat_details_view.dart';
-
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
 import '../../../size_config.dart';
 import '../../var_lib.dart' as vars;
 
@@ -37,27 +36,30 @@ class Categories extends StatelessWidget {
                     children: [
                       if (index * 2 < mainCategories.length)
                         SpecialOfferCard(
-                          image: cateroriesInfo[index * 2]!,
-                          category: mainCategories[index * 2],
-                          numOfBrands: 18,
-                          press: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: ((context) => SubcatView(
-                                        maincatvalue: mainCategories[index * 2],
-                                      )))),
-                        ),
+                            image: cateroriesInfo[index * 2]!,
+                            category: mainCategories[index * 2],
+                            numOfBrands: 18,
+                            press: () {
+                              GoRouter.of(context).pushNamed(
+                                RoutsConst.subcatRout,
+                                pathParameters: {
+                                  'sub_cat': mainCategories[index * 2]
+                                },
+                              );
+                            }),
                       if (index * 2 + 1 < mainCategories.length)
                         SpecialOfferCard(
-                          image: cateroriesInfo[index * 2 + 1]!,
-                          category: mainCategories[index * 2 + 1],
-                          numOfBrands: 18,
-                          press: () =>
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: ((context) => SubcatView(
-                                        maincatvalue:
-                                            mainCategories[index * 2 + 1],
-                                      )))),
-                        ),
+                            image: cateroriesInfo[index * 2 + 1]!,
+                            category: mainCategories[index * 2 + 1],
+                            numOfBrands: 18,
+                            press: () {
+                              GoRouter.of(context).pushNamed(
+                                RoutsConst.subcatRout,
+                                pathParameters: {
+                                  'sub_cat': mainCategories[index * 2 + 1]
+                                },
+                              );
+                            }),
                     ],
                   ),
                 );

@@ -1,18 +1,20 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/utilities/reusable.dart';
+import 'package:jomla/utilities/shimmers.dart';
 import 'package:jomla/utilities/success_dialog.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DropshipSettings extends StatefulWidget {
-  String dropshipID;
-  DropshipSettings({
+  final String dropshipID;
+  const DropshipSettings({
     Key? key,
     required this.dropshipID,
   }) : super(key: key);
@@ -134,11 +136,11 @@ class _DropshipSettingssState extends State<DropshipSettings> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Error'),
-            content: Text('Could not update your infos.'),
+            title: const Text('Error'),
+            content: const Text('Could not update your infos.'),
             actions: <Widget>[
               TextButton(
-                child: Text('OK'),
+                child: const Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -166,23 +168,13 @@ class _DropshipSettingssState extends State<DropshipSettings> {
           _logoUrl = userData.logo;
 
           return Scaffold(
-            appBar: AppBar(
-              foregroundColor: Colors.black,
-              shadowColor: Colors.transparent.withOpacity(0),
-              backgroundColor: Colors.transparent.withOpacity(0),
-              title: Text(
-                'General Settings',
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text('save', style: TextStyle(fontSize: 18.w)),
-                  onPressed: updateMarketInfos,
-                ),
-              ],
+            appBar: CustomAppBarSubPages(
+              onBackButtonPressed: () => Navigator.of(context).pop(),
+              title: 'FBA settings',
             ),
             body: SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.only(top: 10.h),
+                padding: const EdgeInsets.only(top: 10),
                 child: Column(
                   children: [
                     GestureDetector(
@@ -192,11 +184,12 @@ class _DropshipSettingssState extends State<DropshipSettings> {
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: Text('Error'),
-                                content: Text('Could not update your infos.'),
+                                title: const Text('Error'),
+                                content:
+                                    const Text('Could not update your infos.'),
                                 actions: <Widget>[
                                   TextButton(
-                                    child: Text('delete picture'),
+                                    child: const Text('delete picture'),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                       setState(() {
@@ -206,7 +199,7 @@ class _DropshipSettingssState extends State<DropshipSettings> {
                                     },
                                   ),
                                   TextButton(
-                                    child: Text('change picture'),
+                                    child: const Text('change picture'),
                                     onPressed: () async {
                                       Navigator.of(context).pop();
                                       ImagePicker imagePicker = ImagePicker();
@@ -241,7 +234,7 @@ class _DropshipSettingssState extends State<DropshipSettings> {
                                   radius: 50,
                                   backgroundColor: Colors.grey,
                                   child: _selectedImage == null
-                                      ? Icon(
+                                      ? const Icon(
                                           Icons.storefront,
                                           color: Colors.white,
                                         )
@@ -264,48 +257,68 @@ class _DropshipSettingssState extends State<DropshipSettings> {
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(60),
                                     child: Center(
-                                      child: Image.network(
-                                        _image!,
-                                        fit: BoxFit.cover,
-                                        width: 100,
-                                        height: 100,
-                                      ),
-                                    ),
+                                        child: CachedNetworkImage(
+                                      key: UniqueKey(),
+                                      height: 100,
+                                      width: 100,
+                                      imageUrl: _image!,
+                                      maxWidthDiskCache: 250,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) {
+                                        return const BuildShimmerEffect();
+                                      },
+                                      errorWidget: (context, url, error) {
+                                        return Image.network(
+                                          _image!,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            }
+                                            return const BuildShimmerEffect();
+                                          },
+                                          errorBuilder: (_, __, ___) =>
+                                              const BuildShimmerEffect(),
+                                        );
+                                      },
+                                    )),
                                   ),
                                 ),
-                          SizedBox(
-                            height: 5.h,
+                          const SizedBox(
+                            height: 5,
                           ),
-                          Text('Change Photo'),
+                          const Text('Change Photo'),
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 5.h,
+                    const SizedBox(
+                      height: 5,
                     ),
                     Padding(
-                      padding: EdgeInsets.all(16.w),
+                      padding: const EdgeInsets.all(16),
                       child: TextField(
                         controller: _nameController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             labelText: 'Name',
                             icon: Icon(Icons.storefront_outlined)),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(16.w),
+                      padding: const EdgeInsets.all(16),
                       child: TextField(
                         controller: _descriptionController,
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
                         maxLength: 150,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             labelText: 'Description',
                             icon: Icon(Icons.description_outlined)),
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.all(16.w),
+                      padding: const EdgeInsets.all(16),
                       child: TextField(
                         controller: _phoneNumberController,
                         inputFormatters: [
@@ -313,7 +326,7 @@ class _DropshipSettingssState extends State<DropshipSettings> {
                           LengthLimitingTextInputFormatter(10),
                         ],
                         keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                             labelText: 'Phone Number',
                             icon: Icon(Icons.phone_outlined)),
                       ),
@@ -331,9 +344,9 @@ class _DropshipSettingssState extends State<DropshipSettings> {
                           ),
                           borderRadius: BorderRadius.circular(8.0),
                         ),
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: const [
+                          children: [
                             Text('Chnage your packaging logo here'),
                             SizedBox(width: 16.0),
                             Icon(Icons.upload),
@@ -347,7 +360,7 @@ class _DropshipSettingssState extends State<DropshipSettings> {
             ),
           );
         } else {
-          return CircularProgressIndicator();
+          return const CircularProgressIndicator();
         }
       },
     );

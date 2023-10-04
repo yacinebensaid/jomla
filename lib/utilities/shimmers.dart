@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 
 class BuildShimmerEffect extends StatelessWidget {
@@ -27,23 +26,23 @@ Widget ShimmerColorOnlyCartWidget() {
         width: 0.3,
       ),
     ),
-    padding: EdgeInsets.symmetric(horizontal: 10.w),
+    padding: const EdgeInsets.symmetric(horizontal: 10),
     child: Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
       highlightColor: Colors.grey[100]!,
       child: Column(
         children: [
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                   width: 40,
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Container(
                   width: 200,
                   height: 20,
@@ -52,8 +51,8 @@ Widget ShimmerColorOnlyCartWidget() {
               ],
             ),
           ),
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           Container(
             decoration: BoxDecoration(
@@ -64,7 +63,7 @@ Widget ShimmerColorOnlyCartWidget() {
                 width: 0.3,
               ),
             ),
-            padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
             child: Row(
               children: [
                 Container(
@@ -72,7 +71,7 @@ Widget ShimmerColorOnlyCartWidget() {
                   height: 88,
                   color: Colors.white,
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 Container(
                   width: 100,
                   height: 20,
@@ -81,16 +80,16 @@ Widget ShimmerColorOnlyCartWidget() {
               ],
             ),
           ),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
           Container(
             width: 200,
             height: 20,
             color: Colors.white,
           ),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:jomla/constants/constants.dart';
 import 'package:jomla/utilities/shimmers.dart';
@@ -37,8 +38,7 @@ class _ProductImagesState extends State<ProductImages> {
                     setState(() {
                       selectedImage = index;
                     });
-                    double position =
-                        (getProportionateScreenWidth(48) + 15) * index;
+                    double position = ((48.0) + 15) * index;
                     // Scroll the ListView to the selected image position
                     _scrollController.animateTo(
                       position,
@@ -47,16 +47,28 @@ class _ProductImagesState extends State<ProductImages> {
                     );
                   },
                   itemBuilder: (context, index) {
-                    return Image.network(
-                      widget.product.photos[selectedImage],
-                      loadingBuilder: (BuildContext context, Widget child,
-                          ImageChunkEvent? loadingProgress) {
-                        if (loadingProgress == null) {
-                          return child;
-                        }
-                        return BuildShimmerEffect();
+                    return CachedNetworkImage(
+                      key: UniqueKey(),
+                      imageUrl: widget.product.photos[selectedImage],
+                      maxWidthDiskCache: 250,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) {
+                        return const BuildShimmerEffect();
                       },
-                      errorBuilder: (_, __, ___) => BuildShimmerEffect(),
+                      errorWidget: (context, url, error) {
+                        return Image.network(
+                          widget.product.photos[selectedImage],
+                          loadingBuilder: (BuildContext context, Widget child,
+                              ImageChunkEvent? loadingProgress) {
+                            if (loadingProgress == null) {
+                              return child;
+                            }
+                            return const BuildShimmerEffect();
+                          },
+                          errorBuilder: (_, __, ___) =>
+                              const BuildShimmerEffect(),
+                        );
+                      },
                     );
                   }),
             ),
@@ -66,8 +78,8 @@ class _ProductImagesState extends State<ProductImages> {
         Padding(
           padding: const EdgeInsets.only(bottom: 15),
           child: SizedBox(
-            width: getProportionateScreenWidth(238),
-            height: getProportionateScreenWidth(48),
+            width: (238),
+            height: (48),
             child: ListView.builder(
               controller: _scrollController,
               scrollDirection: Axis.horizontal,
@@ -94,7 +106,7 @@ class _ProductImagesState extends State<ProductImages> {
           selectedImage = index;
         });
         // Calculate the position of the selected image in the ListView
-        double position = (getProportionateScreenWidth(48) + 15) * index;
+        double position = ((48.0) + 15) * index;
         // Scroll the ListView to the selected image position
         _scrollController.animateTo(
           position,
@@ -106,8 +118,8 @@ class _ProductImagesState extends State<ProductImages> {
           duration: defaultDuration,
           margin: const EdgeInsets.only(right: 15),
           padding: const EdgeInsets.all(8),
-          height: getProportionateScreenWidth(48),
-          width: getProportionateScreenWidth(48),
+          height: (48),
+          width: (48),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(10),
@@ -115,16 +127,27 @@ class _ProductImagesState extends State<ProductImages> {
               color: kPrimaryColor.withOpacity(selectedImage == index ? 1 : 0),
             ),
           ),
-          child: Image.network(
-            widget.product.photos[index],
-            loadingBuilder: (BuildContext context, Widget child,
-                ImageChunkEvent? loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              }
-              return BuildShimmerEffect();
+          child: CachedNetworkImage(
+            key: UniqueKey(),
+            imageUrl: widget.product.photos[index],
+            maxWidthDiskCache: 250,
+            fit: BoxFit.cover,
+            placeholder: (context, url) {
+              return const BuildShimmerEffect();
             },
-            errorBuilder: (_, __, ___) => BuildShimmerEffect(),
+            errorWidget: (context, url, error) {
+              return Image.network(
+                widget.product.photos[index],
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent? loadingProgress) {
+                  if (loadingProgress == null) {
+                    return child;
+                  }
+                  return const BuildShimmerEffect();
+                },
+                errorBuilder: (_, __, ___) => const BuildShimmerEffect(),
+              );
+            },
           )),
     );
   }

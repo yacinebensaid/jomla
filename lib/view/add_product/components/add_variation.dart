@@ -461,6 +461,7 @@ class _VariationState extends State<Variation> {
                                                   value.isEmpty) {
                                                 return 'Please enter a valid color name';
                                               }
+                                              return null;
                                             }),
                                             decoration: InputDecoration(
                                               hintText: 'Enter color name',
@@ -500,6 +501,7 @@ class _VariationState extends State<Variation> {
                                           if (value == null || value.isEmpty) {
                                             return 'Please enter a value';
                                           }
+                                          return null;
                                         }),
                                         decoration: InputDecoration(
                                           hintText: 'available quantity',
@@ -682,6 +684,7 @@ class _VariationState extends State<Variation> {
                                                     value.isEmpty) {
                                                   return 'Please enter a shoe size.';
                                                 }
+                                                return null;
                                               },
                                               decoration: InputDecoration(
                                                 hintText: 'Size ${i + 1}',
@@ -721,6 +724,7 @@ class _VariationState extends State<Variation> {
                                                     value.isEmpty) {
                                                   return 'Please enter the available quantity.';
                                                 }
+                                                return null;
                                               },
                                               decoration: InputDecoration(
                                                 hintText: 'Quantity ${i + 1}',
@@ -813,6 +817,7 @@ class _VariationState extends State<Variation> {
                                                           value.isEmpty) {
                                                         return 'Please enter the available quantity.';
                                                       }
+                                                      return null;
                                                     },
                                                     decoration: InputDecoration(
                                                       hintText:

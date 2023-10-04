@@ -5,52 +5,45 @@ import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
 
 class UserDataInitializer with ChangeNotifier {
-  String? name;
-  String user_type = 'normal';
-  String? phoneNumber;
-  String? description;
-  String? image;
-  String? dropshipperID;
-  List following = [];
-  bool isAdmin = false;
-  UserData? userdata;
-  List? owned_products;
-  String? userUid;
-  late Stream<UserData?> userDataStream;
+  UserData? userData;
+  Stream<UserData?>? userDataStream;
+  void resetUser() async {
+    userData = await DataService.getUserDataStream('').first;
+  }
 
-  UserDataInitializer({required AuthUser? user}) {
+  void inituser() {
+    AuthUser? user = AuthService.firebase().currentUser;
     if (user != null) {
       String? userUID = user.uid;
-      userDataStream = DataService.getUserDataStream(userUID);
-      userDataStream.listen((userData) {
-        if (userData != null) {
-          userUid = userData.id;
-          userdata = userData;
-          following = userData.following;
-          isAdmin = userData.isAdmin;
-          image = userData.picture;
-          description = userData.description;
-          name = userData.name;
-          dropshipperID = userData.dropshipperID;
-          owned_products = userData.owned_products;
-          phoneNumber = userData.phoneNumber;
-          user_type = userData.user_type;
-        }
-      });
+      Stream<UserData?>? stream = DataService.getUserDataStream(userUID);
+      userDataStream = stream;
+      stream.listen(
+        (event) {
+          userData = event!;
+        },
+      );
+    } else {
+      resetUser();
     }
   }
 
-  UserData? get getUserData => userdata;
-  String? get getName => name;
-  String? get getUid => userUid;
-  String get getUserType => user_type;
-  String? get getPhoneNumber => phoneNumber;
-  String? get getDescription => description;
-  String? get getImage => image;
-  String? get getDropshipperID => dropshipperID;
-  List get getFollowing => following;
-  bool get getIsAdmin => isAdmin;
-  List? get getOwnedProducts => owned_products;
+  UserDataInitializer() {
+    AuthUser? user = AuthService.firebase().currentUser;
+    if (user != null) {
+      String? userUID = user.uid;
+      Stream<UserData?>? stream = DataService.getUserDataStream(userUID);
+      userDataStream = stream;
+      stream.listen(
+        (event) {
+          userData = event!;
+        },
+      );
+    } else {
+      resetUser();
+    }
+  }
+
+  UserData? get getUserData => userData;
 }
 
 class CheckedCartProducts with ChangeNotifier {
@@ -73,30 +66,31 @@ class CheckedCartProducts with ChangeNotifier {
 
 class HomeFunc with ChangeNotifier {
   late PageController pageController = PageController(initialPage: 0);
-  late GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  void initialize(
-      {required PageController page_Controller,
-      required GlobalKey<ScaffoldState> scaffoldKey}) {
+
+  late void Function(BuildContext context, int index) _onTapNavigation;
+  void initialize({
+    required PageController page_Controller,
+    required void Function(BuildContext context, int index) onTap,
+    required ScrollController scrollController,
+  }) {
     pageController = page_Controller;
-    _scaffoldKey = scaffoldKey;
+    _onTapNavigation = onTap;
   }
 
-  void opendrawer() {
-    _scaffoldKey.currentState!.openDrawer();
+  void onTapNavigation(BuildContext context, int index) {
+    _onTapNavigation(context, index);
   }
 
   void goToExplore() {
-    UserDataInitializer inst =
-        UserDataInitializer(user: AuthService.firebase().currentUser);
-    inst.getUserType != 'market'
+    UserDataInitializer().userData != null &&
+            UserDataInitializer().userData != 'market'
         ? pageController.jumpToPage(2)
         : pageController.jumpToPage(3);
   }
 
   void goToProfile() {
-    UserDataInitializer inst =
-        UserDataInitializer(user: AuthService.firebase().currentUser);
-    inst.getUserType != 'market'
+    UserDataInitializer().userData != null &&
+            UserDataInitializer().userData != 'market'
         ? pageController.jumpToPage(3)
         : pageController.jumpToPage(4);
   }

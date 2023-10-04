@@ -16,21 +16,21 @@ class LogInLink extends StatelessWidget {
             fontWeight: FontWeight.w300,
             letterSpacing: 0.5,
             color: Colors.black,
-            fontSize: 12.0,
+            fontSize: 15.0,
           ),
         ),
         GestureDetector(
           onTap: () {
-            GoRouter.of(context).pushNamed(
+            GoRouter.of(context).pushReplacementNamed(
                 RoutsConst.loginRout); // Navigates to '/register' route
           },
           child: const Text(
             "Login",
             style: TextStyle(
-              fontWeight: FontWeight.w300,
+              fontWeight: FontWeight.w500,
               letterSpacing: 0.5,
               color: Colors.black,
-              fontSize: 12.0,
+              fontSize: 15.0,
               decoration: TextDecoration.underline,
             ),
           ),

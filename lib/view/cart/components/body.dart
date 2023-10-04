@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/providers.dart';
+import 'package:jomla/view/cart/components/check_out_card.dart';
 import 'package:provider/provider.dart';
 import 'cart_card.dart';
 
 class Body extends StatefulWidget {
-  final void Function(Map<String, CartProduct> checkedProducts)
-      oncheckedProducts;
   const Body({
     Key? key,
-    required this.oncheckedProducts,
   }) : super(key: key);
 
   @override
@@ -34,6 +32,7 @@ class _BodyState extends State<Body> {
   @override
   void initState() {
     super.initState();
+
     _reloadCartProducts();
     allCheckedProducts =
         Provider.of<CheckedCartProducts>(context, listen: false).getChackeMap;
@@ -59,57 +58,97 @@ class _BodyState extends State<Body> {
             stream: _cartProductsFuture,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Scaffold(
-                    body: const Center(
+                return Center(
                   child: CircularProgressIndicator(),
-                ));
+                );
               } else if (snapshot.hasData) {
                 if (snapshot.data != null) {
                   if (snapshot.data!.isNotEmpty) {
-                    return LayoutBuilder(builder: (context, constraints) {
-                      List<CartProduct> products = snapshot.data!;
-                      return ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: products.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10),
-                              child: Stack(
-                                children: [
-                                  Hero(
-                                    tag:
-                                        'product_${products[index].reference}', // Provide a unique tag for each product
-                                    child: CartCard(
-                                      reloadPage: _reloadCartProducts,
-                                      product: products[index],
+                    return Column(
+                      children: [
+                        Expanded(
+                          child: LayoutBuilder(builder: (context, constraints) {
+                            List<CartProduct> products = snapshot.data!;
+                            List selectedItems = [];
+                            allCheckedProducts.forEach((key, value) {
+                              selectedItems.add(key);
+                            });
+                            print(selectedItems);
+                            allCheckedProducts = {};
+                            return ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: products.length,
+                                itemBuilder: (context, index) {
+                                  if (selectedItems
+                                      .contains(products[index].reference)) {
+                                    allCheckedProducts[products[index]
+                                        .reference] = products[index];
+                                  }
+                                  return Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Stack(
+                                      children: [
+                                        Hero(
+                                          tag:
+                                              'product_${products[index].reference}', // Provide a unique tag for each product
+                                          child: CartCard(
+                                            product: products[index],
+                                          ),
+                                        ),
+                                        Positioned(
+                                          left: 10,
+                                          top: 6,
+                                          child: Checkbox(
+                                            value: isCheckedProduct(
+                                                products[index].reference),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                if (value!) {
+                                                  allCheckedProducts[
+                                                          products[index]
+                                                              .reference] =
+                                                      products[index];
+                                                } else {
+                                                  allCheckedProducts.remove(
+                                                      products[index]
+                                                          .reference);
+                                                }
+                                              });
+                                              Provider.of<CheckedCartProducts>(
+                                                      context,
+                                                      listen: false)
+                                                  .updateCheckedProducts(
+                                                      newCheckedMap:
+                                                          allCheckedProducts);
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                  ),
-                                  Positioned(
-                                    left: 10,
-                                    top: 6,
-                                    child: Checkbox(
-                                      value: isCheckedProduct(
-                                          products[index].reference),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value!) {
-                                            allCheckedProducts[products[index]
-                                                .reference] = products[index];
-                                          } else {
-                                            allCheckedProducts.remove(
-                                                products[index].reference);
-                                          }
-                                        });
-                                        widget.oncheckedProducts(
-                                            allCheckedProducts);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          });
-                    });
+                                  );
+                                });
+                          }),
+                        ),
+                        if (allCheckedProducts.isNotEmpty)
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.3),
+                                  blurRadius: 10,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, -1),
+                                ),
+                              ],
+                            ),
+                            child: CheckoutCard(
+                              checkedProducts: allCheckedProducts.length,
+                            ),
+                          )
+                      ],
+                    );
                   } else {
                     return donthaveproduct();
                   }

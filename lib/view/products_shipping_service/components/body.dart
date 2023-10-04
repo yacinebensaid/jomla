@@ -56,20 +56,6 @@ class _BodyState extends State<Body> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: DropdownButton<String>(
-              value: selectedCity,
-              onChanged: _onCitySelected,
-              items: List.generate(cities.length, (index) {
-                return DropdownMenuItem<String>(
-                  value: cities[index]['name'],
-                  child: Text('${index + 1}. ${cities[index]['name']}'),
-                );
-              }),
-              hint: const Text('Select a city'),
-            ),
-          ),
           ElevatedButton(
             onPressed: () {
               showDialog(

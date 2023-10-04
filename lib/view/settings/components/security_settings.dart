@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:jomla/utilities/reusable.dart';
 import 'package:jomla/utilities/success_dialog.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -75,11 +76,9 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        foregroundColor: Colors.black,
-        shadowColor: Colors.transparent.withOpacity(0),
-        backgroundColor: Colors.transparent.withOpacity(0),
-        title: Text('Change Password'),
+      appBar: CustomAppBarSubPages(
+        onBackButtonPressed: () => Navigator.of(context).pop(),
+        title: 'Security settings',
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

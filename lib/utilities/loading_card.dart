@@ -28,7 +28,7 @@ class ProductCardShimmer extends StatelessWidget {
         ),
         child: Stack(children: [
           Padding(
-            padding: EdgeInsets.all(7.0.w),
+            padding: EdgeInsets.all(7.0),
             child: SizedBox(
               width: getProportionateScreenWidth(width),
               child: Stack(
@@ -43,14 +43,12 @@ class ProductCardShimmer extends StatelessWidget {
                             color: kSecondaryColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(15),
                           ),
-                          // Here you can add a placeholder image or leave it blank
-                          // child: Image.network('your_placeholder_image_url'),
                         ),
                       ),
                       SizedBox(height: 10.h),
                       Container(
                         height: 16.h,
-                        width: 80.w,
+                        width: 80,
                         color: Colors.white,
                       ),
                       SizedBox(height: 5.h),
@@ -59,12 +57,12 @@ class ProductCardShimmer extends StatelessWidget {
                         children: [
                           Container(
                             height: 18.h,
-                            width: 40.w,
+                            width: 40,
                             color: Colors.white,
                           ),
                           Container(
                             height: 28.h,
-                            width: 28.w,
+                            width: 28,
                             decoration: BoxDecoration(
                               color: kSecondaryColor.withOpacity(0.1),
                               shape: BoxShape.circle,

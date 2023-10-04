@@ -11,19 +11,17 @@ class Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Container(
-          color: Color(0xFFF5F6F9),
-          child: Column(
-            children: [
-              SizedBox(height: 5.h),
-              SearchForExplore(),
-              MarketsRow(),
-              SizedBox(height: 5.h),
-              Categories(),
-            ],
-          ),
+    return SingleChildScrollView(
+      child: Container(
+        color: Color.fromARGB(255, 255, 255, 255),
+        child: Column(
+          children: [
+            SizedBox(height: 5.h),
+            SearchForExplore(),
+            MarketsRow(),
+            SizedBox(height: 5.h),
+            Categories(),
+          ],
         ),
       ),
     );

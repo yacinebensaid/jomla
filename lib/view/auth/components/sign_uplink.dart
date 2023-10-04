@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:jomla/constants/const_routs.dart';
-import 'package:jomla/constants/routes.dart';
 
 class SignUpLink extends StatelessWidget {
   const SignUpLink();
@@ -10,7 +9,7 @@ class SignUpLink extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-        top: 160.0,
+        top: 100.0,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -21,21 +20,21 @@ class SignUpLink extends StatelessWidget {
               fontWeight: FontWeight.w300,
               letterSpacing: 0.5,
               color: Colors.black,
-              fontSize: 12.0,
+              fontSize: 15.0,
             ),
           ),
           GestureDetector(
             onTap: () {
-              GoRouter.of(context).pushNamed(
+              GoRouter.of(context).pushReplacementNamed(
                   RoutsConst.registerRout); // Navigates to '/register' route
             },
             child: const Text(
               "Sign Up",
               style: TextStyle(
-                fontWeight: FontWeight.w300,
+                fontWeight: FontWeight.w500,
                 letterSpacing: 0.5,
                 color: Colors.black,
-                fontSize: 12.0,
+                fontSize: 15.0,
                 decoration: TextDecoration.underline,
               ),
             ),

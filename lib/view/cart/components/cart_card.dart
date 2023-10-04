@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/product_service.dart';
@@ -9,15 +8,13 @@ import 'package:jomla/utilities/shimmers.dart';
 import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
 import 'package:provider/provider.dart';
-import '../../../constants/constants.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CartCard extends StatefulWidget {
-  final void Function() reloadPage;
-  CartCard({
+  final bool? finalCheckout;
+  const CartCard({
     Key? key,
     required this.product,
-    required this.reloadPage,
+    this.finalCheckout,
   }) : super(key: key);
 
   final CartProduct product;
@@ -28,10 +25,7 @@ class CartCard extends StatefulWidget {
 
 class _CartCardState extends State<CartCard> {
   CacheManager cachManager = CacheManager(Config('CachedImages',
-      stalePeriod: Duration(days: 7), maxNrOfCacheObjects: 100));
-  Future<void> _reloadCartProducts() async {
-    widget.reloadPage();
-  }
+      stalePeriod: const Duration(days: 7), maxNrOfCacheObjects: 100));
 
   @override
   Widget build(BuildContext context) {
@@ -63,10 +57,10 @@ class _CartCardState extends State<CartCard> {
                     return ColorAndSizeCartWidget(
                         productSnapshot: productSnapshot);
                   } else {
-                    return SizedBox.shrink();
+                    return const SizedBox.shrink();
                   }
                 } else {
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 }
               } else {
                 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,57 +75,59 @@ class _CartCardState extends State<CartCard> {
                       width: 0.3,
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     children: [
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Row(
                           children: [
-                            SizedBox(
-                              width: 40,
-                            ),
+                            if (widget.finalCheckout == null)
+                              const SizedBox(
+                                width: 40,
+                              ),
                             Text(
                               productSnapshot.product_name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                            Spacer(),
-                            IconButton(
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Delete order'),
-                                        content: Text(
-                                            'Do you confirm deleting this order?'),
-                                        actions: [
-                                          TextButton(
-                                            child: Text('Cancel'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                          TextButton(
-                                            child: Text('Confirm'),
-                                            onPressed: () {
-                                              UserPCFService.delete_from_cart(
-                                                  widget.product.reference);
-                                              Navigator.of(context).pop();
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    });
-                              },
-                              icon: Icon(
-                                Icons.clear,
-                                size: 18,
-                              ),
-                            )
+                            if (widget.finalCheckout == null) const Spacer(),
+                            if (widget.finalCheckout == null)
+                              IconButton(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Delete order'),
+                                          content: const Text(
+                                              'Do you confirm deleting this order?'),
+                                          actions: [
+                                            TextButton(
+                                              child: const Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text('Confirm'),
+                                              onPressed: () {
+                                                UserPCFService.delete_from_cart(
+                                                    widget.product.reference);
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                },
+                                icon: const Icon(
+                                  Icons.clear,
+                                  size: 18,
+                                ),
+                              )
                           ],
                         ),
                       ),
@@ -140,149 +136,160 @@ class _CartCardState extends State<CartCard> {
                           Image_widget(image: productSnapshot.main_photo),
                           const SizedBox(width: 20),
                           Text(
-                            AppLocalizations.of(context)!.quantity,
+                            'Quantity:',
                             style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: kPrimaryColor,
-                                fontSize: 18),
+                                fontSize: 18,
+                                color: Color.fromARGB(255, 247, 132, 0),
+                                fontWeight: FontWeight.w900),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Text(
                             '${quantity}',
-                            style: TextStyle(fontSize: 17),
+                            style: const TextStyle(fontSize: 17),
                           ),
-                          Spacer(),
-                          IconButton(
-                              onPressed: () {
-                                final internetConnectionStatus =
-                                    Provider.of<InternetConnectionStatus>(
-                                        context,
-                                        listen: false);
-                                if (internetConnectionStatus ==
-                                    InternetConnectionStatus.connected) {
-                                  int _quantity = quantity;
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return StatefulBuilder(
-                                          builder: (context, setState) {
-                                        return AlertDialog(
-                                          title: Text('Edit'),
-                                          content: Row(
-                                            children: [
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.remove,
+                          if (widget.finalCheckout == null) const Spacer(),
+                          if (widget.finalCheckout == null)
+                            IconButton(
+                                onPressed: () {
+                                  final internetConnectionStatus =
+                                      Provider.of<InternetConnectionStatus>(
+                                          context,
+                                          listen: false);
+                                  if (internetConnectionStatus ==
+                                      InternetConnectionStatus.connected) {
+                                    int _quantity = quantity;
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return StatefulBuilder(
+                                            builder: (context, setState) {
+                                          return AlertDialog(
+                                            title: const Text('Edit'),
+                                            content: Row(
+                                              children: [
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    Icons.remove,
+                                                  ),
+                                                  onPressed: () {
+                                                    if (_quantity != 1) {
+                                                      setState(() {
+                                                        _quantity =
+                                                            _quantity - 1;
+                                                      });
+                                                    }
+                                                  },
                                                 ),
+                                                Text(
+                                                  '${_quantity}',
+                                                  style: const TextStyle(
+                                                      fontSize: 17),
+                                                ),
+                                                IconButton(
+                                                  icon: const Icon(
+                                                    Icons.add,
+                                                  ),
+                                                  onPressed: () {
+                                                    if (_quantity < maxqua) {
+                                                      setState(() {
+                                                        _quantity =
+                                                            _quantity + 1;
+                                                      });
+                                                    }
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                child: const Text('Cancel'),
                                                 onPressed: () {
-                                                  if (_quantity != 1) {
-                                                    setState(() {
-                                                      _quantity = _quantity - 1;
-                                                    });
-                                                  }
+                                                  Navigator.of(context).pop();
                                                 },
                                               ),
-                                              Text(
-                                                '${_quantity}',
-                                                style: TextStyle(fontSize: 17),
-                                              ),
-                                              IconButton(
-                                                icon: Icon(
-                                                  Icons.add,
-                                                ),
+                                              TextButton(
+                                                child: const Text('Save'),
                                                 onPressed: () {
-                                                  if (_quantity < maxqua) {
-                                                    setState(() {
-                                                      _quantity = _quantity + 1;
-                                                    });
+                                                  final internetConnectionStatus =
+                                                      Provider.of<
+                                                              InternetConnectionStatus>(
+                                                          context,
+                                                          listen: false);
+                                                  if (internetConnectionStatus ==
+                                                      InternetConnectionStatus
+                                                          .connected) {
+                                                    UserPCFService
+                                                        .modifyProductInCart(
+                                                            productSnapshot
+                                                                .reference,
+                                                            null,
+                                                            _quantity,
+                                                            null);
+                                                    // Perform the edit action here
+                                                    Navigator.of(context).pop();
+                                                  } else {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(
+                                                            const SnackBar(
+                                                      content: Text(
+                                                          'you are not connected'),
+                                                      behavior: SnackBarBehavior
+                                                          .floating,
+                                                    ));
                                                   }
                                                 },
                                               ),
                                             ],
-                                          ),
-                                          actions: [
-                                            TextButton(
-                                              child: Text('Cancel'),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: Text('Save'),
-                                              onPressed: () {
-                                                final internetConnectionStatus =
-                                                    Provider.of<
-                                                            InternetConnectionStatus>(
-                                                        context,
-                                                        listen: false);
-                                                if (internetConnectionStatus ==
-                                                    InternetConnectionStatus
-                                                        .connected) {
-                                                  UserPCFService
-                                                      .modifyProductInCart(
-                                                          productSnapshot
-                                                              .reference,
-                                                          null,
-                                                          _quantity,
-                                                          null);
-
-                                                  // Perform the edit action here
-                                                  Navigator.of(context).pop();
-                                                } else {
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(SnackBar(
-                                                    content: Text(
-                                                        'you are not connected'),
-                                                    behavior: SnackBarBehavior
-                                                        .floating,
-                                                  ));
-                                                }
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      });
-                                    },
-                                  );
-                                } else {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text('you are not connected'),
-                                    behavior: SnackBarBehavior.floating,
-                                  ));
-                                }
-                              },
-                              icon: Icon(
-                                Icons.edit,
-                                size: 17,
-                              )),
+                                          );
+                                        });
+                                      },
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(const SnackBar(
+                                      content: Text('you are not connected'),
+                                      behavior: SnackBarBehavior.floating,
+                                    ));
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.edit,
+                                  size: 17,
+                                )),
                         ],
                       ),
                       if (quantity > maxqua)
                         maxqua != 0
                             ? Text(
-                                'Maximum quantity: ${maxqua}',
-                                style: TextStyle(color: Colors.red),
+                                'Maximum quantity: ${maxqua} !',
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w900),
                               )
-                            : Text(
-                                'Out of Stock',
-                                style: TextStyle(color: Colors.red),
+                            : const Text(
+                                'Out of Stock !',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w900),
                               ),
-                      SizedBox(
-                        height: 10.h,
+                      const SizedBox(
+                        height: 10,
                       ),
                       Price(),
-                      SizedBox(
-                        height: 10.h,
+                      const SizedBox(
+                        height: 10,
                       ),
                     ],
                   ),
                 );
               }
             } else {
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             }
           })),
     );
@@ -296,29 +303,40 @@ class _CartCardState extends State<CartCard> {
             text:
                 '${widget.product.total_price / widget.product.total_quantity} da',
             style: const TextStyle(
-                color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
+                color: Colors.black, fontSize: 18, fontWeight: FontWeight.w500),
             children: [
-              TextSpan(
+              const TextSpan(
                   text: "/piece",
-                  style: TextStyle(fontSize: 18, color: kPrimaryColor)),
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 247, 132, 0),
+                      fontWeight: FontWeight.w900)),
             ],
           ),
         ),
-        Spacer(),
+        const Spacer(),
         Text.rich(
           TextSpan(
             text: 'Price:',
             style: const TextStyle(
-                fontWeight: FontWeight.w600,
-                color: kPrimaryColor,
+                color: Color.fromARGB(255, 247, 132, 0),
+                fontWeight: FontWeight.w900,
                 fontSize: 18),
             children: [
               TextSpan(
                   text: " ${widget.product.total_price}",
-                  style: TextStyle(fontSize: 18, color: Colors.black)),
-              TextSpan(
+                  style: const TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                  )),
+              const TextSpan(
                   text: " Da",
-                  style: TextStyle(fontSize: 18, color: Colors.black)),
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                  )),
             ],
           ),
         ),
@@ -338,7 +356,7 @@ class _CartCardState extends State<CartCard> {
                 ))));
       },
       child: Container(
-          padding: EdgeInsets.all(6),
+          padding: const EdgeInsets.all(6),
           decoration: BoxDecoration(
             color: const Color(0xFFF5F6F9),
             borderRadius: BorderRadius.circular(15),
@@ -350,10 +368,9 @@ class _CartCardState extends State<CartCard> {
             width: 60,
             fit: BoxFit.cover,
             placeholder: (context, url) {
-              return BuildShimmerEffect();
+              return const BuildShimmerEffect();
             },
             errorWidget: (context, url, error) {
-              print(error);
               return Image.network(
                 image,
                 loadingBuilder: (BuildContext context, Widget child,
@@ -361,9 +378,9 @@ class _CartCardState extends State<CartCard> {
                   if (loadingProgress == null) {
                     return child;
                   }
-                  return BuildShimmerEffect();
+                  return const BuildShimmerEffect();
                 },
-                errorBuilder: (_, __, ___) => BuildShimmerEffect(),
+                errorBuilder: (_, __, ___) => const BuildShimmerEffect(),
               );
             },
           )),
@@ -380,63 +397,65 @@ class _CartCardState extends State<CartCard> {
           width: 0.3,
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                SizedBox(
-                  width: 40,
-                ),
+                if (widget.finalCheckout == null)
+                  const SizedBox(
+                    width: 40,
+                  ),
                 Text(
                   productSnapshot.product_name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Delete order'),
-                            content:
-                                Text('Do you confirm deleting this order?'),
-                            actions: [
-                              TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: Text('Confirm'),
-                                onPressed: () {
-                                  UserPCFService.delete_from_cart(
-                                      widget.product.reference);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                  icon: Icon(
-                    Icons.clear,
-                    size: 18,
-                  ),
-                )
+                if (widget.finalCheckout == null) const Spacer(),
+                if (widget.finalCheckout == null)
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Delete order'),
+                              content: const Text(
+                                  'Do you confirm deleting this order?'),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Confirm'),
+                                  onPressed: () {
+                                    UserPCFService.delete_from_cart(
+                                        widget.product.reference);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                    icon: const Icon(
+                      Icons.clear,
+                      size: 18,
+                    ),
+                  )
               ],
             ),
           ),
           ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.product.variations!.length,
               itemBuilder: ((context, index) {
                 int quantity = widget.product.variations![index]['quantity'];
@@ -459,8 +478,8 @@ class _CartCardState extends State<CartCard> {
                           width: 0.3,
                         ),
                       ),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 5),
                       child: Row(
                         children: [
                           Image_widget(
@@ -468,166 +487,166 @@ class _CartCardState extends State<CartCard> {
                                   ['image']),
                           const SizedBox(width: 20),
                           Text(
-                            AppLocalizations.of(context)!.quantity,
+                            'Quantity:',
                             style: const TextStyle(
                                 fontWeight: FontWeight.w600,
-                                color: kPrimaryColor,
+                                color: Color.fromARGB(255, 247, 132, 0),
                                 fontSize: 18),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Text(
                             '${quantity}',
-                            style: TextStyle(fontSize: 17),
+                            style: const TextStyle(fontSize: 17),
                           ),
-                          Spacer(),
-                          IconButton(
-                            onPressed: () {
-                              final internetConnectionStatus =
-                                  Provider.of<InternetConnectionStatus>(context,
-                                      listen: false);
-                              if (internetConnectionStatus ==
-                                  InternetConnectionStatus.connected) {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    int _quantity = quantity;
+                          if (widget.finalCheckout == null) const Spacer(),
+                          if (widget.finalCheckout == null)
+                            IconButton(
+                              onPressed: () {
+                                final internetConnectionStatus =
+                                    Provider.of<InternetConnectionStatus>(
+                                        context,
+                                        listen: false);
+                                if (internetConnectionStatus ==
+                                    InternetConnectionStatus.connected) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      int _quantity = quantity;
 
-                                    return StatefulBuilder(
-                                        builder: (context, setState) {
-                                      return AlertDialog(
-                                        title: Text('Edit'),
-                                        content: Row(
-                                          children: [
-                                            IconButton(
-                                              icon: Icon(Icons.remove),
-                                              onPressed: () {
-                                                if (_quantity != 1) {
-                                                  setState(() {
-                                                    _quantity = _quantity - 1;
-                                                  });
-                                                }
-                                              },
-                                            ),
-                                            Text(
-                                              '${_quantity}',
-                                              style: TextStyle(fontSize: 17),
-                                            ),
-                                            IconButton(
-                                              icon: Icon(Icons.add),
-                                              onPressed: () {
-                                                if (_quantity < maxqua) {
-                                                  setState(() {
-                                                    _quantity = _quantity + 1;
-                                                  });
-                                                }
-                                              },
-                                            ),
-                                            Spacer(),
-                                            ElevatedButton(
+                                      return StatefulBuilder(
+                                          builder: (context, setState) {
+                                        return AlertDialog(
+                                          title: const Text('Edit'),
+                                          content: Row(
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.remove),
                                                 onPressed: () {
-                                                  UserPCFService
-                                                      .delete_variation(
-                                                          type: 'color',
-                                                          index: index,
-                                                          reference: widget
-                                                              .product
-                                                              .reference,
-                                                          size: null);
-                                                  _reloadCartProducts();
-                                                  Navigator.of(context).pop();
+                                                  if (_quantity != 1) {
+                                                    setState(() {
+                                                      _quantity = _quantity - 1;
+                                                    });
+                                                  }
                                                 },
-                                                child: Text('Delete'))
-                                          ],
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            child: Text('Cancel'),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
+                                              ),
+                                              Text(
+                                                '${_quantity}',
+                                                style: const TextStyle(
+                                                    fontSize: 17),
+                                              ),
+                                              IconButton(
+                                                icon: const Icon(Icons.add),
+                                                onPressed: () {
+                                                  if (_quantity < maxqua) {
+                                                    setState(() {
+                                                      _quantity = _quantity + 1;
+                                                    });
+                                                  }
+                                                },
+                                              ),
+                                              const Spacer(),
+                                              ElevatedButton(
+                                                  onPressed: () {
+                                                    UserPCFService
+                                                        .delete_variation(
+                                                            type: 'color',
+                                                            index: index,
+                                                            reference: widget
+                                                                .product
+                                                                .reference,
+                                                            size: null);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Delete'))
+                                            ],
                                           ),
-                                          TextButton(
-                                            child: Text('Save'),
-                                            onPressed: () {
-                                              final internetConnectionStatus =
-                                                  Provider.of<
-                                                          InternetConnectionStatus>(
-                                                      context,
-                                                      listen: false);
-                                              if (internetConnectionStatus ==
-                                                  InternetConnectionStatus
-                                                      .connected) {
-                                                UserPCFService
-                                                    .modifyProductInCart(
-                                                        productSnapshot
-                                                            .reference,
-                                                        null,
-                                                        _quantity,
-                                                        index);
-                                                // Perform the edit action here
+                                          actions: [
+                                            TextButton(
+                                              child: const Text('Cancel'),
+                                              onPressed: () {
                                                 Navigator.of(context).pop();
-                                              } else {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      'you are not connected'),
-                                                  behavior:
-                                                      SnackBarBehavior.floating,
-                                                ));
-                                              }
-                                            },
-                                          ),
-                                        ],
-                                      );
-                                    });
-                                  },
-                                );
-                              } else {
-                                ScaffoldMessenger.of(context)
-                                    .showSnackBar(SnackBar(
-                                  content: Text('you are not connected'),
-                                  behavior: SnackBarBehavior.floating,
-                                ));
-                              }
-                            },
-                            icon: Icon(
-                              Icons.edit,
-                              size: 17,
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text('Save'),
+                                              onPressed: () {
+                                                final internetConnectionStatus =
+                                                    Provider.of<
+                                                            InternetConnectionStatus>(
+                                                        context,
+                                                        listen: false);
+                                                if (internetConnectionStatus ==
+                                                    InternetConnectionStatus
+                                                        .connected) {
+                                                  UserPCFService
+                                                      .modifyProductInCart(
+                                                          productSnapshot
+                                                              .reference,
+                                                          null,
+                                                          _quantity,
+                                                          index);
+                                                  // Perform the edit action here
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                          const SnackBar(
+                                                    content: Text(
+                                                        'you are not connected'),
+                                                    behavior: SnackBarBehavior
+                                                        .floating,
+                                                  ));
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      });
+                                    },
+                                  );
+                                } else {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text('you are not connected'),
+                                    behavior: SnackBarBehavior.floating,
+                                  ));
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.edit,
+                                size: 17,
+                              ),
                             ),
-                          ),
                         ],
                       ),
                     ),
                     if (quantity > maxqua)
                       maxqua != 0
-                          ? Row(
-                              children: [
-                                Text(
-                                  'Unavailable quantity',
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                                Spacer(),
-                                Text(
-                                  'Maximum quantity: ${maxqua}',
-                                  style: TextStyle(color: Colors.red),
-                                )
-                              ],
+                          ? Text(
+                              'Maximum quantity: ${maxqua} !',
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w900),
                             )
-                          : Text(
-                              'Out of Stock',
-                              style: TextStyle(color: Colors.red),
+                          : const Text(
+                              'Out of Stock !',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w900),
                             ),
                   ],
                 );
               })),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
           Price(),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),
@@ -647,7 +666,7 @@ class _CartCardState extends State<CartCard> {
       return Column(
         children: [
           Container(
-            padding: EdgeInsets.only(left: 8.w),
+            padding: const EdgeInsets.only(left: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Colors.grey[100],
@@ -658,129 +677,133 @@ class _CartCardState extends State<CartCard> {
                 children: [
                   Text(
                     size,
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
-                  Spacer(),
+                  if (widget.finalCheckout == null) const Spacer(),
                   Row(
                     children: [
                       Text(
                         '${quantity}',
-                        style: TextStyle(fontSize: 17),
+                        style: const TextStyle(fontSize: 17),
                       ),
-                      IconButton(
-                          onPressed: () {
-                            final internetConnectionStatus =
-                                Provider.of<InternetConnectionStatus>(context,
-                                    listen: false);
-                            if (internetConnectionStatus ==
-                                InternetConnectionStatus.connected) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return StatefulBuilder(
-                                      builder: (context, setState) {
-                                    return AlertDialog(
-                                      title: Text('Edit'),
-                                      content: Row(
-                                        children: [
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.remove,
-                                            ),
-                                            onPressed: () {
-                                              if (_quantity != 1) {
-                                                setState(() {
-                                                  _quantity = _quantity - 1;
-                                                });
-                                              }
-                                            },
-                                          ),
-                                          Text(
-                                            '${_quantity}',
-                                            style: TextStyle(fontSize: 17),
-                                          ),
-                                          IconButton(
-                                            icon: Icon(
-                                              Icons.add,
-                                            ),
-                                            onPressed: () {
-                                              if (_quantity < maxqua) {
-                                                setState(() {
-                                                  _quantity = _quantity + 1;
-                                                });
-                                              }
-                                            },
-                                          ),
-                                          Spacer(),
-                                          ElevatedButton(
+                      if (widget.finalCheckout == null)
+                        IconButton(
+                            onPressed: () {
+                              final internetConnectionStatus =
+                                  Provider.of<InternetConnectionStatus>(context,
+                                      listen: false);
+                              if (internetConnectionStatus ==
+                                  InternetConnectionStatus.connected) {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return StatefulBuilder(
+                                        builder: (context, setState) {
+                                      return AlertDialog(
+                                        title: const Text('Edit'),
+                                        content: Row(
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.remove,
+                                              ),
                                               onPressed: () {
-                                                UserPCFService.delete_variation(
-                                                    type: 'color',
-                                                    index: 0,
-                                                    reference: widget
-                                                        .product.reference,
-                                                    size: size);
-                                                _reloadCartProducts();
-                                                Navigator.of(context).pop();
+                                                if (_quantity != 1) {
+                                                  setState(() {
+                                                    _quantity = _quantity - 1;
+                                                  });
+                                                }
                                               },
-                                              child: Text('Delete'))
-                                        ],
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          child: Text('Cancel'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
+                                            ),
+                                            Text(
+                                              '${_quantity}',
+                                              style:
+                                                  const TextStyle(fontSize: 17),
+                                            ),
+                                            IconButton(
+                                              icon: const Icon(
+                                                Icons.add,
+                                              ),
+                                              onPressed: () {
+                                                if (_quantity < maxqua) {
+                                                  setState(() {
+                                                    _quantity = _quantity + 1;
+                                                  });
+                                                }
+                                              },
+                                            ),
+                                            const Spacer(),
+                                            ElevatedButton(
+                                                onPressed: () {
+                                                  UserPCFService
+                                                      .delete_variation(
+                                                          type: 'color',
+                                                          index: 0,
+                                                          reference: widget
+                                                              .product
+                                                              .reference,
+                                                          size: size);
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: const Text('Delete'))
+                                          ],
                                         ),
-                                        TextButton(
-                                          child: Text('Edit'),
-                                          onPressed: () {
-                                            final internetConnectionStatus =
-                                                Provider.of<
-                                                        InternetConnectionStatus>(
-                                                    context,
-                                                    listen: false);
-                                            if (internetConnectionStatus ==
-                                                InternetConnectionStatus
-                                                    .connected) {
-                                              UserPCFService
-                                                  .modifyProductInCart(
-                                                      productSnapshot.reference,
-                                                      size,
-                                                      _quantity,
-                                                      null);
-
-                                              // Perform the edit action here
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('Cancel'),
+                                            onPressed: () {
                                               Navigator.of(context).pop();
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    'you are not connected'),
-                                                behavior:
-                                                    SnackBarBehavior.floating,
-                                              ));
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  });
-                                },
-                              );
-                            } else {
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(SnackBar(
-                                content: Text('you are not connected'),
-                                behavior: SnackBarBehavior.floating,
-                              ));
-                            }
-                          },
-                          icon: Icon(
-                            Icons.edit,
-                            size: 17,
-                          ))
+                                            },
+                                          ),
+                                          TextButton(
+                                            child: const Text('Edit'),
+                                            onPressed: () {
+                                              final internetConnectionStatus =
+                                                  Provider.of<
+                                                          InternetConnectionStatus>(
+                                                      context,
+                                                      listen: false);
+                                              if (internetConnectionStatus ==
+                                                  InternetConnectionStatus
+                                                      .connected) {
+                                                UserPCFService
+                                                    .modifyProductInCart(
+                                                        productSnapshot
+                                                            .reference,
+                                                        size,
+                                                        _quantity,
+                                                        null);
+                                                // Perform the edit action here
+                                                Navigator.of(context).pop();
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        const SnackBar(
+                                                  content: Text(
+                                                      'you are not connected'),
+                                                  behavior:
+                                                      SnackBarBehavior.floating,
+                                                ));
+                                              }
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                                  },
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(const SnackBar(
+                                  content: Text('you are not connected'),
+                                  behavior: SnackBarBehavior.floating,
+                                ));
+                              }
+                            },
+                            icon: const Icon(
+                              Icons.edit,
+                              size: 17,
+                            ))
                     ],
                   ),
                 ],
@@ -790,15 +813,18 @@ class _CartCardState extends State<CartCard> {
           if (quantity > maxqua)
             maxqua != 0
                 ? Text(
-                    'Maximum quantity: ${maxqua}',
-                    style: TextStyle(color: Colors.red),
+                    'Maximum quantity: ${maxqua} !',
+                    style: const TextStyle(color: Colors.red),
                   )
-                : Text(
-                    'Out of Stock',
-                    style: TextStyle(color: Colors.red),
+                : const Text(
+                    'Out of Stock !',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.red,
+                        fontWeight: FontWeight.w900),
                   ),
-          SizedBox(
-            height: 5.h,
+          const SizedBox(
+            height: 5,
           )
         ],
       );
@@ -813,57 +839,59 @@ class _CartCardState extends State<CartCard> {
           width: 0.3,
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                SizedBox(
-                  width: 40,
-                ),
+                if (widget.finalCheckout == null)
+                  const SizedBox(
+                    width: 40,
+                  ),
                 Text(
                   productSnapshot.product_name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Delete order'),
-                            content:
-                                Text('Do you confirm deleting this order?'),
-                            actions: [
-                              TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: Text('Confirm'),
-                                onPressed: () {
-                                  UserPCFService.delete_from_cart(
-                                      widget.product.reference);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                  icon: Icon(
-                    Icons.clear,
-                    size: 18,
-                  ),
-                )
+                if (widget.finalCheckout == null) const Spacer(),
+                if (widget.finalCheckout == null)
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Delete order'),
+                              content: const Text(
+                                  'Do you confirm deleting this order?'),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Confirm'),
+                                  onPressed: () {
+                                    UserPCFService.delete_from_cart(
+                                        widget.product.reference);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                    icon: const Icon(
+                      Icons.clear,
+                      size: 18,
+                    ),
+                  )
               ],
             ),
           ),
@@ -878,8 +906,8 @@ class _CartCardState extends State<CartCard> {
             ],
           ),
           Price(),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),
@@ -896,63 +924,65 @@ class _CartCardState extends State<CartCard> {
           width: 0.3,
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
           Align(
             alignment: Alignment.centerLeft,
             child: Row(
               children: [
-                SizedBox(
-                  width: 40,
-                ),
+                if (widget.finalCheckout == null)
+                  const SizedBox(
+                    width: 40,
+                  ),
                 Text(
                   productSnapshot.product_name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
-                Spacer(),
-                IconButton(
-                  onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Delete order'),
-                            content:
-                                Text('Do you confirm deleting this order?'),
-                            actions: [
-                              TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: Text('Confirm'),
-                                onPressed: () {
-                                  UserPCFService.delete_from_cart(
-                                      widget.product.reference);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        });
-                  },
-                  icon: Icon(
-                    Icons.clear,
-                    size: 18,
-                  ),
-                )
+                if (widget.finalCheckout == null) const Spacer(),
+                if (widget.finalCheckout == null)
+                  IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Delete order'),
+                              content: const Text(
+                                  'Do you confirm deleting this order?'),
+                              actions: [
+                                TextButton(
+                                  child: const Text('Cancel'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text('Confirm'),
+                                  onPressed: () {
+                                    UserPCFService.delete_from_cart(
+                                        widget.product.reference);
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                    icon: const Icon(
+                      Icons.clear,
+                      size: 18,
+                    ),
+                  )
               ],
             ),
           ),
           ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.product.variations!.length,
               itemBuilder: ((context, index) {
                 Map<String, dynamic> sizesQuantity =
@@ -972,7 +1002,7 @@ class _CartCardState extends State<CartCard> {
                   return Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: 8.w),
+                        padding: const EdgeInsets.only(left: 8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: Colors.grey[100],
@@ -983,141 +1013,144 @@ class _CartCardState extends State<CartCard> {
                             children: [
                               Text(
                                 size,
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Text(
                                 '${quantity}',
-                                style: TextStyle(fontSize: 17),
+                                style: const TextStyle(fontSize: 17),
                               ),
-                              IconButton(
-                                  onPressed: () {
-                                    final internetConnectionStatus =
-                                        Provider.of<InternetConnectionStatus>(
-                                            context,
-                                            listen: false);
-                                    if (internetConnectionStatus ==
-                                        InternetConnectionStatus.connected) {
-                                      int _quantity = quantity;
+                              if (widget.finalCheckout == null)
+                                IconButton(
+                                    onPressed: () {
+                                      final internetConnectionStatus =
+                                          Provider.of<InternetConnectionStatus>(
+                                              context,
+                                              listen: false);
+                                      if (internetConnectionStatus ==
+                                          InternetConnectionStatus.connected) {
+                                        int _quantity = quantity;
 
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return StatefulBuilder(
-                                              builder: (context, setState) {
-                                            return AlertDialog(
-                                              title: Text('Edit'),
-                                              content: Row(
-                                                children: [
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      Icons.remove,
-                                                    ),
-                                                    onPressed: () {
-                                                      if (_quantity != 1) {
-                                                        setState(() {
-                                                          _quantity =
-                                                              _quantity - 1;
-                                                        });
-                                                      }
-                                                    },
-                                                  ),
-                                                  Text(
-                                                    '${_quantity}',
-                                                    style:
-                                                        TextStyle(fontSize: 17),
-                                                  ),
-                                                  IconButton(
-                                                    icon: Icon(
-                                                      Icons.add,
-                                                    ),
-                                                    onPressed: () {
-                                                      if (_quantity < maxqua) {
-                                                        setState(() {
-                                                          _quantity =
-                                                              _quantity + 1;
-                                                        });
-                                                      }
-                                                    },
-                                                  ),
-                                                  Spacer(),
-                                                  ElevatedButton(
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return StatefulBuilder(
+                                                builder: (context, setState) {
+                                              return AlertDialog(
+                                                title: const Text('Edit'),
+                                                content: Row(
+                                                  children: [
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        Icons.remove,
+                                                      ),
                                                       onPressed: () {
-                                                        UserPCFService
-                                                            .delete_variation(
-                                                                type: 'color',
-                                                                index: index,
-                                                                reference: widget
-                                                                    .product
-                                                                    .reference,
-                                                                size: size);
-                                                        _reloadCartProducts();
-                                                        Navigator.of(context)
-                                                            .pop();
+                                                        if (_quantity != 1) {
+                                                          setState(() {
+                                                            _quantity =
+                                                                _quantity - 1;
+                                                          });
+                                                        }
                                                       },
-                                                      child: Text('Delete'))
-                                                ],
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  child: Text('Cancel'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
+                                                    ),
+                                                    Text(
+                                                      '${_quantity}',
+                                                      style: const TextStyle(
+                                                          fontSize: 17),
+                                                    ),
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                        Icons.add,
+                                                      ),
+                                                      onPressed: () {
+                                                        if (_quantity <
+                                                            maxqua) {
+                                                          setState(() {
+                                                            _quantity =
+                                                                _quantity + 1;
+                                                          });
+                                                        }
+                                                      },
+                                                    ),
+                                                    const Spacer(),
+                                                    ElevatedButton(
+                                                        onPressed: () {
+                                                          UserPCFService
+                                                              .delete_variation(
+                                                                  type: 'color',
+                                                                  index: index,
+                                                                  reference: widget
+                                                                      .product
+                                                                      .reference,
+                                                                  size: size);
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: const Text(
+                                                            'Delete'))
+                                                  ],
                                                 ),
-                                                TextButton(
-                                                  child: Text('Edit'),
-                                                  onPressed: () {
-                                                    final internetConnectionStatus =
-                                                        Provider.of<
-                                                                InternetConnectionStatus>(
-                                                            context,
-                                                            listen: false);
-                                                    if (internetConnectionStatus ==
-                                                        InternetConnectionStatus
-                                                            .connected) {
-                                                      UserPCFService
-                                                          .modifyProductInCart(
-                                                              productSnapshot
-                                                                  .reference,
-                                                              size,
-                                                              _quantity,
-                                                              index);
-
-                                                      // Perform the edit action here
+                                                actions: [
+                                                  TextButton(
+                                                    child: const Text('Cancel'),
+                                                    onPressed: () {
                                                       Navigator.of(context)
                                                           .pop();
-                                                    } else {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                              SnackBar(
-                                                        content: Text(
-                                                            'you are not connected'),
-                                                        behavior:
-                                                            SnackBarBehavior
-                                                                .floating,
-                                                      ));
-                                                    }
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          });
-                                        },
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                        content: Text('you are not connected'),
-                                        behavior: SnackBarBehavior.floating,
-                                      ));
-                                    }
-                                  },
-                                  icon: Icon(
-                                    Icons.edit,
-                                    size: 17,
-                                  )),
+                                                    },
+                                                  ),
+                                                  TextButton(
+                                                    child: const Text('Edit'),
+                                                    onPressed: () {
+                                                      final internetConnectionStatus =
+                                                          Provider.of<
+                                                                  InternetConnectionStatus>(
+                                                              context,
+                                                              listen: false);
+                                                      if (internetConnectionStatus ==
+                                                          InternetConnectionStatus
+                                                              .connected) {
+                                                        UserPCFService
+                                                            .modifyProductInCart(
+                                                                productSnapshot
+                                                                    .reference,
+                                                                size,
+                                                                _quantity,
+                                                                index);
+                                                        // Perform the edit action here
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      } else {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                const SnackBar(
+                                                          content: Text(
+                                                              'you are not connected'),
+                                                          behavior:
+                                                              SnackBarBehavior
+                                                                  .floating,
+                                                        ));
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
+                                              );
+                                            });
+                                          },
+                                        );
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content:
+                                              Text('you are not connected'),
+                                          behavior: SnackBarBehavior.floating,
+                                        ));
+                                      }
+                                    },
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      size: 17,
+                                    )),
                             ],
                           ),
                         ),
@@ -1125,15 +1158,21 @@ class _CartCardState extends State<CartCard> {
                       if (quantity > maxqua)
                         maxqua != 0
                             ? Text(
-                                'Maximum quantity: ${maxqua}',
-                                style: TextStyle(color: Colors.red),
+                                'Maximum quantity: ${maxqua} !',
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w900),
                               )
-                            : Text(
-                                'Out of Stock',
-                                style: TextStyle(color: Colors.red),
+                            : const Text(
+                                'Out of Stock !',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.w900),
                               ),
-                      SizedBox(
-                        height: 5.h,
+                      const SizedBox(
+                        height: 5,
                       )
                     ],
                   );
@@ -1147,7 +1186,8 @@ class _CartCardState extends State<CartCard> {
                       width: 0.3,
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -1162,12 +1202,12 @@ class _CartCardState extends State<CartCard> {
                   ),
                 );
               })),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
           Price(),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),

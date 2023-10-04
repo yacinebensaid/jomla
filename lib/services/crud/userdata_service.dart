@@ -2,7 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../auth/auth_service.dart';
 
 class UserData {
-  final String name, phoneNumber, user_type, id;
+  final String? name, phoneNumber, id;
+  String user_type = 'normal';
   final String? marketCategory;
   final String? description;
   final String? city;
@@ -11,8 +12,8 @@ class UserData {
   final String? dropshipperID;
   final List? followers;
   final List? sales;
-  final List following;
-  final bool isAdmin;
+  List following = [];
+  bool isAdmin = false;
   final List? owned_products;
   UserData({
     required this.dropshipperID,
@@ -91,7 +92,7 @@ class DataService {
         .snapshots()
         .map((snapshot) {
       if (!snapshot.exists) {
-        return null; // User data not found in Firestore
+        return null;
       }
       Map<String, dynamic>? userData = snapshot.data();
       return UserData(
@@ -244,10 +245,13 @@ class DataService {
     });
   }
 
-  void createDropShipper(String? picture, String name, String? description,
-      String? logoFile) async {
+  void createOnlineMarket(String? picture, String name, String? description,
+      String? logoFile, bool active) async {
     UserData? userdata = await DataService.getUserDataStream(userUID!).first;
-    String _phoneNumber = userdata!.phoneNumber;
+    String _phoneNumber = '';
+    if (userdata!.phoneNumber != null) {
+      _phoneNumber = userdata.phoneNumber!;
+    }
     FirebaseFirestore.instance.collection('UserData').doc(userUID).update({
       'dropshipperID': 'DROPSHIPID$userUID',
       'user_type': 'dropshipper',
@@ -263,6 +267,7 @@ class DataService {
       'description': description,
       'phone_number': _phoneNumber,
       'logoFile': logoFile,
+      'active': active,
       'followers': [],
       'sales': [],
       'owned_products': [],

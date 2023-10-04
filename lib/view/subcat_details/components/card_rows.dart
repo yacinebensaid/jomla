@@ -25,13 +25,10 @@ class _CardRowsState extends State<CardRows> {
     return products;
   }
 
-  bool _isLoading = true;
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() {});
     });
   }
 

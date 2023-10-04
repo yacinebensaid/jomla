@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:jomla/services/crud/pcf_service.dart';
 
 import 'package:jomla/services/crud/userdata_service.dart';
 import 'package:jomla/services/providers.dart';
@@ -10,35 +10,39 @@ import 'package:jomla/view/product_datails/details_view.dart';
 import 'package:jomla/view/products_card/product.dart';
 import 'package:jomla/view/profile/components/normal_user.dart/mini_purchased_cards.dart';
 import 'package:jomla/view/profile/profile_view.dart';
-import 'package:jomla/view/purchased/components/purchased.dart';
 import 'package:jomla/view/purchased/purchased_view.dart';
 import 'package:provider/provider.dart';
 
-class UnderInfos extends StatelessWidget {
-  UnderInfos({
+class UnderInfos extends StatefulWidget {
+  const UnderInfos({
     Key? key,
   }) : super(key: key);
 
+  @override
+  State<UnderInfos> createState() => _UnderInfosState();
+}
+
+class _UnderInfosState extends State<UnderInfos> {
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Column(
           children: [
-            SizedBox(height: 15.h),
+            const SizedBox(height: 15),
             Container(
-              width: 370.w,
-              height: 150.h,
+              width: 370,
+              height: 150,
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 255, 255, 255),
+                color: const Color.fromARGB(255, 255, 255, 255),
                 borderRadius: BorderRadius.circular(13),
-                border: Border.all(width: 0.5.w, color: Colors.grey),
+                border: Border.all(width: 0.5, color: Colors.grey),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.grey.withOpacity(0.25),
                     spreadRadius: 1,
                     blurRadius: 4,
-                    offset: Offset(1, 3),
+                    offset: const Offset(1, 3),
                   ),
                 ],
               ),
@@ -54,7 +58,7 @@ class UnderInfos extends StatelessWidget {
                             'Products',
                             style: TextStyle(
                               color: Colors.grey[700],
-                              fontSize: 19.w,
+                              fontSize: 19,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -67,18 +71,18 @@ class UnderInfos extends StatelessWidget {
                               'See all',
                               style: TextStyle(
                                 color: Colors.grey[500],
-                                fontSize: 16.w,
+                                fontSize: 16,
                               ),
                             ),
                           )
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 5.h,
+                    const SizedBox(
+                      height: 5,
                     ),
-                    FutureBuilder<List<PurchasedProduct>>(
-                      future: populateDemoCarts(),
+                    FutureBuilder<List<CartProduct>>(
+                      future: UserPCFService.getPurchased(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -86,35 +90,52 @@ class UnderInfos extends StatelessWidget {
                             child: CircularProgressIndicator(),
                           );
                         } else if (snapshot.hasData) {
-                          List<PurchasedProduct> products = snapshot.data!;
+                          List<CartProduct> products = snapshot.data!;
                           return Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10.w,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
                             ),
                             child: SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
                                 children:
                                     List.generate(products.length, (index) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(right: 8.w),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        Product _product =
-                                            await getProductsByReference(
-                                                products[index].reference);
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: ((context) => DetailsScreen(
-                                                product: _product,
-                                                ref: null,
-                                              )),
-                                        ));
-                                      },
-                                      child: MiniPurchasedCard(
-                                        purchasedProd: products[index],
-                                      ),
-                                    ),
+                                  return FutureBuilder(
+                                    future: getProductsByReference(
+                                        products[index].reference),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 8),
+                                          child: ShimmerLoadingCard(),
+                                        );
+                                      } else if (snapshot.hasData) {
+                                        Product product = snapshot.data;
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 8),
+                                          child: GestureDetector(
+                                            onTap: () async {
+                                              Navigator.of(context)
+                                                  .push(MaterialPageRoute(
+                                                builder: ((context) =>
+                                                    DetailsScreen(
+                                                      product: product,
+                                                      ref: null,
+                                                    )),
+                                              ));
+                                            },
+                                            child: MiniPurchasedCard(
+                                              product: product,
+                                            ),
+                                          ),
+                                        );
+                                      } else {
+                                        return SizedBox.shrink();
+                                      }
+                                    },
                                   );
                                 }),
                               ),
@@ -135,20 +156,21 @@ class UnderInfos extends StatelessWidget {
                     )
                   ]),
             ),
-            SizedBox(height: 10.h), // Adds some spacing between the containers
+            const SizedBox(
+                height: 10), // Adds some spacing between the containers
             Container(
-                width: 370.w,
-                height: 150.h,
+                width: 370,
+                height: 150,
                 decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 255, 255, 255),
+                  color: const Color.fromARGB(255, 255, 255, 255),
                   borderRadius: BorderRadius.circular(13),
-                  border: Border.all(width: 0.5.w, color: Colors.grey),
+                  border: Border.all(width: 0.5, color: Colors.grey),
                   boxShadow: [
                     BoxShadow(
                       color: Colors.grey.withOpacity(0.25),
                       spreadRadius: 1,
                       blurRadius: 4,
-                      offset: Offset(1, 3),
+                      offset: const Offset(1, 3),
                     ),
                   ],
                 ),
@@ -164,7 +186,7 @@ class UnderInfos extends StatelessWidget {
                               'Followings',
                               style: TextStyle(
                                 color: Colors.grey[700],
-                                fontSize: 19.w,
+                                fontSize: 19,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -174,36 +196,39 @@ class UnderInfos extends StatelessWidget {
                                 'See all',
                                 style: TextStyle(
                                   color: Colors.grey[500],
-                                  fontSize: 16.w,
+                                  fontSize: 16,
                                 ),
                               ),
                             )
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 5.h,
+                      const SizedBox(
+                        height: 5,
                       ),
                       Provider.of<UserDataInitializer>(context, listen: false)
-                              .getFollowing
+                              .getUserData!
+                              .following
                               .isNotEmpty
                           ? Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.w),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 10),
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
                                   children: List.generate(
                                     Provider.of<UserDataInitializer>(context,
                                             listen: false)
-                                        .getFollowing
+                                        .getUserData!
+                                        .following
                                         .length,
                                     (index) {
                                       return FutureBuilder(
                                         future: DataService.getUserDataForOrder(
                                             Provider.of<UserDataInitializer>(
-                                                    context,
-                                                    listen: false)
-                                                .getFollowing[index]),
+                                                    context)
+                                                .getUserData!
+                                                .following[index]),
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
@@ -235,7 +260,7 @@ class UnderInfos extends StatelessWidget {
                                                       child: snapshot.data!
                                                                   .picture ==
                                                               null
-                                                          ? Icon(
+                                                          ? const Icon(
                                                               Icons.storefront,
                                                               color:
                                                                   Colors.white,
@@ -258,13 +283,13 @@ class UnderInfos extends StatelessWidget {
                                                               ),
                                                             ),
                                                     ),
-                                                    SizedBox(
-                                                      height: 5.h,
+                                                    const SizedBox(
+                                                      height: 5,
                                                     ),
                                                     Text(
-                                                      snapshot.data!.name,
-                                                      style: TextStyle(
-                                                        fontSize: 14.w,
+                                                      snapshot.data!.name!,
+                                                      style: const TextStyle(
+                                                        fontSize: 14,
                                                       ),
                                                     )
                                                   ],
@@ -272,7 +297,7 @@ class UnderInfos extends StatelessWidget {
                                               ),
                                             );
                                           } else {
-                                            return Text(
+                                            return const Text(
                                                 'Error retrieving user data');
                                           }
                                         },
@@ -282,18 +307,18 @@ class UnderInfos extends StatelessWidget {
                                 ),
                               ),
                             )
-                          : Center(
+                          : const Center(
                               child: Text(
                                 'You do not follow anyone',
                                 style: TextStyle(
-                                  fontSize: 24.w,
+                                  fontSize: 24,
                                   color: Colors.grey,
                                 ),
                               ),
                             ),
                     ])),
-            SizedBox(height: 10.h),
-            Services()
+            const SizedBox(height: 10),
+            const Services()
           ],
         )
       ],

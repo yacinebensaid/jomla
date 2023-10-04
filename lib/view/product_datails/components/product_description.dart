@@ -1,8 +1,17 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
+import 'package:jomla/services/crud/product_service.dart';
+import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/services/providers.dart';
+import 'package:jomla/utilities/reusable.dart';
+import 'package:jomla/utilities/shimmers.dart';
+import 'package:jomla/view/product_edit/product_edit.dart';
+import 'package:provider/provider.dart';
 import '../../../constants/constants.dart';
 import '../../../size_config.dart';
 import '../../products_card/product.dart';
@@ -10,7 +19,7 @@ import 'comments.dart';
 import 'owner.dart';
 
 class ProductDescription extends StatefulWidget {
-  ProductDescription({
+  const ProductDescription({
     Key? key,
     required this.product,
   }) : super(key: key);
@@ -25,7 +34,6 @@ class _ProductDescriptionState extends State<ProductDescription> {
   late int _quantity;
   late bool _isfav;
   late int likes;
-  bool _added = false;
 
   @override
   void initState() {
@@ -63,21 +71,21 @@ class _ProductDescriptionState extends State<ProductDescription> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
+                const Padding(
+                  padding: EdgeInsets.only(
                     left: 20,
                   ),
                   child: Text(
                     'Variations',
                     style: TextStyle(
-                      fontSize: 20.w,
+                      fontSize: 20,
                       fontWeight: FontWeight.w500,
-                      color: const Color.fromARGB(255, 151, 151, 151),
+                      color: Color.fromARGB(255, 151, 151, 151),
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: 10.h,
+                const SizedBox(
+                  height: 10,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -94,38 +102,121 @@ class _ProductDescriptionState extends State<ProductDescription> {
                           int color = int.parse(widget.product
                               .variations![index]['color_details']['color']);
                           return Container(
-                            margin: const EdgeInsets.only(right: 15),
-                            padding: const EdgeInsets.all(8),
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Color(color).withOpacity(1),
+                              margin: const EdgeInsets.only(right: 15),
+                              padding: const EdgeInsets.all(8),
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Color(color).withOpacity(1),
+                                ),
                               ),
-                            ),
-                            child: Image.network(
-                              image,
-                            ),
-                          );
+                              child: CachedNetworkImage(
+                                key: UniqueKey(),
+                                imageUrl: image,
+                                maxWidthDiskCache: 250,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) {
+                                  return const BuildShimmerEffect();
+                                },
+                                errorWidget: (context, url, error) {
+                                  return Image.network(
+                                    image,
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return child;
+                                      }
+                                      return const BuildShimmerEffect();
+                                    },
+                                    errorBuilder: (_, __, ___) =>
+                                        const BuildShimmerEffect(),
+                                  );
+                                },
+                              ));
                         })),
                   ),
                 ),
               ],
             );
           } else {
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }
         } else {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
+  }
+
+  Widget dropDownMenu(BuildContext context) {
+    return PopupMenuButton<String>(
+      onSelected: (value) async {
+        if (value == 'delete') {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text("Delete Item"),
+                content:
+                    const Text("Are you sure you want to delete this item?"),
+                actions: [
+                  TextButton(
+                    child: const Text("Cancel"),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  TextButton(
+                    child: const Text("Delete"),
+                    onPressed: () {
+                      DataService _dataServInstance = DataService();
+                      _dataServInstance
+                          .deleteOwnedProduct(widget.product.reference);
+                      ProductService.deleteProduct(widget.product.reference);
+                      // Perform the delete operation here
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            },
+          );
+        } else if (value == 'edit') {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: ((context) => EditProduct(
+                    ref: widget.product.reference,
+                  ))));
+        }
+      },
+      itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+        const PopupMenuItem<String>(
+          value: 'signal',
+          child: Text('Signal Product'),
+        ),
+        ...Provider.of<UserDataInitializer>(context).getUserData != null
+            ? Provider.of<UserDataInitializer>(context).getUserData!.isAdmin
+                ? [
+                    const PopupMenuItem<String>(
+                      value: 'edit',
+                      child: Text('Edit'),
+                    ),
+                    const PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Text('Delete'),
+                    ),
+                  ]
+                : []
+            : []
+      ].toList(),
+    );
   }
 
   @override
@@ -134,26 +225,27 @@ class _ProductDescriptionState extends State<ProductDescription> {
       color: Colors.white,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Padding(
-          padding: EdgeInsets.only(
-            left: 20.w,
-            right: 20.w,
-            top: 10.h,
+          padding: const EdgeInsets.only(
+            left: 20,
+            right: 20,
+            top: 10,
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 widget.product.product_name,
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
               ),
               Column(
                 children: [
                   InkWell(
                     borderRadius: BorderRadius.circular(50),
                     child: Container(
-                      padding: EdgeInsets.all(8.w),
-                      height: 30.h,
-                      width: 30.w,
+                      padding: const EdgeInsets.all(8),
+                      height: 30,
+                      width: 30,
                       decoration: BoxDecoration(
                         color: _isfav
                             ? kPrimaryColor.withOpacity(0.15)
@@ -168,44 +260,97 @@ class _ProductDescriptionState extends State<ProductDescription> {
                       ),
                     ),
                     onTap: () {
-                      pressfav();
+                      if (kIsWeb) {
+                        if (AuthService.firebase().currentUser != null) {
+                          pressfav();
+                        } else {
+                          showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: const LoginDialog(
+                                      guest: true,
+                                    ));
+                              });
+                        }
+                      } else {
+                        final internetConnectionStatus =
+                            Provider.of<InternetConnectionStatus>(context,
+                                listen: false);
+                        if (internetConnectionStatus ==
+                            InternetConnectionStatus.connected) {
+                          if (AuthService.firebase().currentUser != null) {
+                            pressfav();
+                          } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      child: const LoginDialog(
+                                        guest: true,
+                                      ));
+                                });
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            content: Text('you are not connected'),
+                            behavior: SnackBarBehavior.floating,
+                          ));
+                        }
+                      }
                     },
                   ),
                   Text(
                     '$likes',
-                    style: TextStyle(fontSize: 15.w),
+                    style: const TextStyle(fontSize: 15),
                   )
                 ],
               )
             ],
           ),
         ),
-        SizedBox(
-          height: 10.h,
+        const SizedBox(
+          height: 10,
         ),
         _buildPricingFields(pricingDetails: widget.product.price),
-        SizedBox(
-          height: 10.h,
+        const SizedBox(
+          height: 10,
         ),
         _buildVariations(),
-        SizedBox(
-          height: 20.h,
+        const SizedBox(
+          height: 20,
         ),
         Padding(
-          padding: const EdgeInsets.only(
-            left: 20,
+          padding: EdgeInsets.symmetric(
+            horizontal: 20,
           ),
-          child: Text(
-            'Description',
-            style: TextStyle(
-              fontSize: 20.w,
-              fontWeight: FontWeight.w500,
-              color: const Color.fromARGB(255, 151, 151, 151),
-            ),
+          child: Row(
+            children: [
+              Text(
+                'Description',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w500,
+                  color: Color.fromARGB(255, 151, 151, 151),
+                ),
+              ),
+              Spacer(),
+              dropDownMenu(context),
+            ],
           ),
         ),
-        SizedBox(
-          height: 10.h,
+        const SizedBox(
+          height: 10,
         ),
         Padding(
           padding: const EdgeInsets.only(
@@ -220,22 +365,22 @@ class _ProductDescriptionState extends State<ProductDescription> {
                 height: 1.4),
           ),
         ),
-        SizedBox(
-          height: 20.h,
+        const SizedBox(
+          height: 20,
         ),
         Center(
           child: Owner(
             uid: widget.product.owner,
           ),
         ),
-        SizedBox(
-          height: 40.h,
+        const SizedBox(
+          height: 40,
         ),
         Comments(
           reference: widget.product.reference,
         ),
-        SizedBox(
-          height: 20.h,
+        const SizedBox(
+          height: 20,
         )
       ]),
     );
@@ -248,20 +393,20 @@ Widget _buildPricingFields({
   String oneItemPrice = pricingDetails[0]['price'];
 
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 10.w),
+    padding: const EdgeInsets.symmetric(horizontal: 10),
     child: SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         children: [
           // Existing code for the first container
           Container(
-            height: 60.w,
-            padding: EdgeInsets.all(7.w),
+            height: 60,
+            padding: const EdgeInsets.all(7),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: Color.fromARGB(255, 218, 218, 218),
+                color: const Color.fromARGB(255, 218, 218, 218),
                 width: 1.2,
               ),
               boxShadow: [
@@ -269,19 +414,21 @@ Widget _buildPricingFields({
                   color: Colors.grey.withOpacity(0.15), // Shadow color
                   spreadRadius: 1.5, // Spread radius
                   blurRadius: 5, // Blur radius
-                  offset: Offset(0, 0.5), // Offset in the x and y direction
+                  offset:
+                      const Offset(0, 0.5), // Offset in the x and y direction
                 ),
               ],
             ),
             child: Column(
               children: [
-                Text(
+                const Text(
                   'One Item',
-                  style: TextStyle(fontSize: 16.w, fontWeight: FontWeight.w500),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 Text(
                   '$oneItemPrice da',
-                  style: TextStyle(fontSize: 16.w, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
                 )
               ],
             ),
@@ -289,15 +436,15 @@ Widget _buildPricingFields({
           for (int i = 0; i < pricingDetails.length - 1; i++)
             if (i < 3) // Limit to a maximum of 3 items
               Padding(
-                padding: EdgeInsets.only(left: 10),
+                padding: const EdgeInsets.only(left: 10),
                 child: Container(
-                  height: 60.w,
-                  padding: EdgeInsets.all(7.w),
+                  height: 60,
+                  padding: const EdgeInsets.all(7),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.white,
                     border: Border.all(
-                      color: Color.fromARGB(255, 218, 218, 218),
+                      color: const Color.fromARGB(255, 218, 218, 218),
                       width: 1.2,
                     ),
                     boxShadow: [
@@ -305,8 +452,8 @@ Widget _buildPricingFields({
                         color: Colors.grey.withOpacity(0.15), // Shadow color
                         spreadRadius: 1.5, // Spread radius
                         blurRadius: 5, // Blur radius
-                        offset:
-                            Offset(0, 0.5), // Offset in the x and y direction
+                        offset: const Offset(
+                            0, 0.5), // Offset in the x and y direction
                       ),
                     ],
                   ),
@@ -314,13 +461,13 @@ Widget _buildPricingFields({
                     children: [
                       Text(
                         'from ${pricingDetails[i + 1]['from']} Items',
-                        style: TextStyle(
-                            fontSize: 16.w, fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
                       ),
                       Text(
                         '${pricingDetails[i + 1]['price']} da',
-                        style: TextStyle(
-                            fontSize: 16.w, fontWeight: FontWeight.w500),
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w500),
                       )
                     ],
                   ),

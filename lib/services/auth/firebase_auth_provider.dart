@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:jomla/services/auth/auth_exceptions.dart';
 import 'package:jomla/services/auth/auth_provider.dart';
+import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/auth/auth_user.dart';
 import 'package:firebase_auth/firebase_auth.dart'
     show FirebaseAuth, FirebaseAuthException;
@@ -85,7 +86,7 @@ class FirebaseAuthProvider implements AuthProvider {
 
   @override
   Future<void> logOut() async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = AuthService.firebase().currentUser;
     if (user != null) {
       await FirebaseAuth.instance.signOut();
     } else {

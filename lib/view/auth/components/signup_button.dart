@@ -9,7 +9,7 @@ class SignUpButton extends StatelessWidget {
       height: 60.0,
       alignment: FractionalOffset.center,
       decoration: const BoxDecoration(
-        color: Color.fromRGBO(247, 64, 106, 1.0),
+        color: Color.fromARGB(255, 17, 176, 216),
         borderRadius: BorderRadius.all(Radius.circular(30.0)),
       ),
       child: const Text(

@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:jomla/utilities/shimmers.dart';
 import 'package:jomla/view/purchased/components/purchased.dart';
 import '../../../../constants/constants.dart';
 import '../../../../size_config.dart';
@@ -14,7 +16,6 @@ class PurchasedCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-      double parentWidth = constraints.maxWidth;
       return Row(
         children: [
           SizedBox(
@@ -27,7 +28,29 @@ class PurchasedCard extends StatelessWidget {
                     color: const Color(0xFFF5F6F9),
                     borderRadius: BorderRadius.circular(15),
                   ),
-                  child: Image.network(purchasedProd.product.main_photo)),
+                  child: CachedNetworkImage(
+                    key: UniqueKey(),
+                    imageUrl: purchasedProd.product.main_photo,
+                    maxWidthDiskCache: 250,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) {
+                      return const BuildShimmerEffect();
+                    },
+                    errorWidget: (context, url, error) {
+                      return Image.network(
+                        purchasedProd.product.main_photo,
+                        loadingBuilder: (BuildContext context, Widget child,
+                            ImageChunkEvent? loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return const BuildShimmerEffect();
+                        },
+                        errorBuilder: (_, __, ___) =>
+                            const BuildShimmerEffect(),
+                      );
+                    },
+                  )),
             ),
           ),
           const SizedBox(width: 20),

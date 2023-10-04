@@ -19,6 +19,14 @@ class SearchForExplore extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey[400]!, // Shadow color
+                blurRadius: 4.0, // Spread radius
+                offset:
+                    Offset(0, 1), // Offset in the positive direction of y-axis
+              ),
+            ],
             border: Border.all(
               color: Colors.grey,
               width: 0.4,

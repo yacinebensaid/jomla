@@ -1,5 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:jomla/services/auth/auth_service.dart';
+import 'package:jomla/utilities/reusable.dart';
 
 import 'components/body.dart';
 
@@ -10,16 +12,17 @@ class PendingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          foregroundColor: Colors.black,
-          shadowColor: Colors.transparent.withOpacity(0),
-          backgroundColor: Colors.transparent.withOpacity(0),
-          title: Text('Pending'),
-        ),
-        body: Body(),
+    return Scaffold(
+      appBar: CustomAppBarSubPages(
+        onBackButtonPressed: () => Navigator.of(context).pop(),
+        title: 'Pending',
       ),
+      body: AuthService.firebase().currentUser != null
+          ? const Body()
+          : const Center(
+              child: LoginDialog(
+              guest: false,
+            )),
     );
   }
 }

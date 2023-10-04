@@ -1,21 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jomla/constants/routes.dart';
-
-class Service {
-  final String name;
-  final String description;
-  final String imageUrl;
-  final servicePage;
-  bool isExpanded;
-
-  Service({
-    required this.name,
-    required this.description,
-    required this.imageUrl,
-    required this.servicePage,
-    this.isExpanded = false,
-  });
-}
+import 'package:jomla/utilities/reusable.dart';
 
 class Services extends StatefulWidget {
   const Services({super.key});

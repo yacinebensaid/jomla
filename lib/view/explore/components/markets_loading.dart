@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class LoadingMarkets extends StatelessWidget {
   const LoadingMarkets({super.key});
@@ -14,17 +13,17 @@ class LoadingMarkets extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            height: 100.h,
-            width: 100.w,
+            height: 80,
+            width: 80,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(180),
               color: Colors.grey[300],
             ),
           ),
-          SizedBox(height: 8.h),
+          const SizedBox(height: 8),
           Container(
-            height: 20.h,
-            width: 120.w,
+            height: 20,
+            width: 80,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(4),
               color: Colors.grey[300],
@@ -41,35 +40,35 @@ class LoadingMarketsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return const SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(children: [
         SizedBox(
-          width: 18.w,
+          width: 18,
         ),
-        const LoadingMarkets(),
+        LoadingMarkets(),
         SizedBox(
-          width: 18.w,
+          width: 18,
         ),
-        const LoadingMarkets(),
+        LoadingMarkets(),
         SizedBox(
-          width: 18.w,
+          width: 18,
         ),
-        const LoadingMarkets(),
+        LoadingMarkets(),
         SizedBox(
-          width: 18.w,
+          width: 18,
         ),
-        const LoadingMarkets(),
+        LoadingMarkets(),
         SizedBox(
-          width: 18.w,
+          width: 18,
         ),
-        const LoadingMarkets(),
+        LoadingMarkets(),
         SizedBox(
-          width: 18.w,
+          width: 18,
         ),
-        const LoadingMarkets(),
+        LoadingMarkets(),
         SizedBox(
-          width: 18.w,
+          width: 18,
         ),
       ]),
     );

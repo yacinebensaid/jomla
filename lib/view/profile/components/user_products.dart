@@ -5,8 +5,8 @@ import 'package:jomla/utilities/reusable.dart';
 import 'package:jomla/view/products_card/product.dart';
 
 class UserProducts extends StatefulWidget {
-  String uid;
-  UserProducts({Key? key, required this.uid}) : super(key: key);
+  final String uid;
+  const UserProducts({Key? key, required this.uid}) : super(key: key);
 
   @override
   State<UserProducts> createState() => _UserProductsState();

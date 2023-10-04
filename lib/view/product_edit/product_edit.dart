@@ -1,10 +1,11 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jomla/services/crud/product_service.dart';
+import 'package:jomla/utilities/shimmers.dart';
 import 'package:jomla/view/add_product/components/main_category.dart';
 import 'package:jomla/view/add_product/components/sub_categories.dart';
 import 'package:jomla/view/products_card/product.dart';
@@ -13,7 +14,7 @@ import '../../utilities/show_error_dialog.dart';
 import '../var_lib.dart' as vars;
 
 class EditProduct extends StatefulWidget {
-  String ref;
+  final String ref;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   EditProduct({
     Key? key,
@@ -29,14 +30,12 @@ class _AddProductPageState extends State<EditProduct> {
   late TextEditingController _productNameController;
   late TextEditingController _priceController;
   late TextEditingController _mainCategoryController;
-  late TextEditingController _subCategoryController;
   late TextEditingController _availableQuantityController;
   late TextEditingController _minimumQuantityController;
   late TextEditingController _descriptionController;
   late String? _mainPhotoController;
   late List _productPhotosController;
-  late List<String> _colorList;
-  late List<String> _sizeList;
+
   bool _isLoading = false;
   File? _selectedImage;
 
@@ -46,8 +45,6 @@ class _AddProductPageState extends State<EditProduct> {
   final List<String> _availableColors = [];
   final List<String> _availableSizes = [];
 
-  List<bool> _colorsChecked = [];
-  List<bool> _sizesChecked = [];
   final _mainCategoryOption = vars.get_mainCategoryOptionAP();
   final _subCategories = vars.get_subCategoriesOption();
 
@@ -76,8 +73,6 @@ class _AddProductPageState extends State<EditProduct> {
               TextEditingController(text: '${product.available_quantity}');
           _mainCategoryController =
               TextEditingController(text: product.main_category);
-          _subCategoryController =
-              TextEditingController(text: product.sub_category);
           _minimumQuantityController =
               TextEditingController(text: product.main_category);
           _descriptionController =
@@ -171,19 +166,36 @@ class _AddProductPageState extends State<EditProduct> {
           ),
         if (_mainPhotoController != null)
           Container(
-            height: 200,
-            width: 200,
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 1,
-                color: Colors.grey,
+              height: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  width: 1,
+                  color: Colors.grey,
+                ),
               ),
-            ),
-            child: Image.network(
-              _mainPhotoController!,
-              fit: BoxFit.cover,
-            ),
-          ),
+              child: CachedNetworkImage(
+                key: UniqueKey(),
+                imageUrl: _mainPhotoController!,
+                maxWidthDiskCache: 250,
+                fit: BoxFit.cover,
+                placeholder: (context, url) {
+                  return const BuildShimmerEffect();
+                },
+                errorWidget: (context, url, error) {
+                  return Image.network(
+                    _mainPhotoController!,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return const BuildShimmerEffect();
+                    },
+                    errorBuilder: (_, __, ___) => const BuildShimmerEffect(),
+                  );
+                },
+              )),
       ],
     );
   }
@@ -257,18 +269,35 @@ class _AddProductPageState extends State<EditProduct> {
         Stack(
           children: [
             Container(
-              width: 200,
-              height: 200,
-              margin: const EdgeInsets.only(right: 10),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(5),
-              ),
-              child: Image.network(
-                _productPhotosController[i],
-                fit: BoxFit.cover,
-              ),
-            ),
+                width: 200,
+                height: 200,
+                margin: const EdgeInsets.only(right: 10),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: CachedNetworkImage(
+                  key: UniqueKey(),
+                  imageUrl: _productPhotosController[i],
+                  maxWidthDiskCache: 250,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) {
+                    return const BuildShimmerEffect();
+                  },
+                  errorWidget: (context, url, error) {
+                    return Image.network(
+                      _productPhotosController[i],
+                      loadingBuilder: (BuildContext context, Widget child,
+                          ImageChunkEvent? loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
+                        return const BuildShimmerEffect();
+                      },
+                      errorBuilder: (_, __, ___) => const BuildShimmerEffect(),
+                    );
+                  },
+                )),
             Positioned(
               top: 5,
               right: 5,

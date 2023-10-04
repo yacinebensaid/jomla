@@ -1,8 +1,13 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/view/products_card/product.dart';
+import 'package:provider/provider.dart';
 import '../auth/auth_service.dart';
 import 'product_service.dart';
 
@@ -638,7 +643,6 @@ class UserPCFService {
         await documentReference.update({'likers': currentLikers});
       }
 // Add a new UID to the likers list
-
     }
     FirebaseFirestore.instance.collection('UserPCF').doc(userUID).update({
       'favourite': FieldValue.arrayRemove([reference])
@@ -648,14 +652,16 @@ class UserPCFService {
 ///////////////////////////////////////////////////////
 ///////////////////////////PENDING/////////////////////////////////////
 
-  static moveItemsToPending() async {
+  static moveItemsToPending(BuildContext context) async {
     String? userUID = AuthService.firebase().currentUser?.uid;
     String? userEMAIL = AuthService.firebase().currentUser?.email;
     UserData? userdata = await DataService.getUserDataStream(userUID!).first;
 
     final fullname = userdata!.name;
     final userPhonenumber = userdata.phoneNumber;
-
+    context
+        .read<CheckedCartProducts>()
+        .updateCheckedProducts(newCheckedMap: {});
     QuerySnapshot cartQuery = await FirebaseFirestore.instance
         .collection('UserPCF')
         .doc(userUID)

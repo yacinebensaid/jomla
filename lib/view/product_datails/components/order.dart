@@ -1,9 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jomla/constants/constants.dart';
+import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/size_config.dart';
+import 'package:jomla/utilities/reusable.dart';
+import 'package:jomla/utilities/shimmers.dart';
 import 'package:jomla/view/products_card/product.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -35,238 +39,474 @@ class _OrderProductState extends State<OrderProduct> {
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 15),
               child: _buildVariations()),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           _added
               ? AddedToCartButton()
               : Container(
-                  width: 250.w,
+                  width: 250,
                   child: DefaultButton(
                     text: AppLocalizations.of(context)!.addtocart,
                     press: () {
-                      final internetConnectionStatus =
-                          Provider.of<InternetConnectionStatus>(context,
-                              listen: false);
-                      if (internetConnectionStatus ==
-                          InternetConnectionStatus.connected) {
-                        if (widget.product.available_quantity == null) {
-                          if (widget.product.variations != null) {
-                            if (widget.product.variations!.isNotEmpty) {
-                              if (widget.product.variations![0]
-                                          ['color_details'] !=
-                                      null &&
-                                  widget.product.variations![0]
-                                          ['size_details'] ==
-                                      null) {
-                                ////////////////////////////////////////////////
-                                if (_quantity != 0) {
-                                  setState(() {
-                                    _added = true;
-                                  });
-                                  order['image'] =
-                                      widget.product.variations![selectedImage]
-                                          ['color_details']['image'];
-                                  order['color_name'] =
-                                      widget.product.variations![selectedImage]
-                                          ['color_details']['color_name'];
-                                  order['sizes'] = null;
-                                  order['quantity'] = _quantity;
-                                  order['total_price'] = totalPrice;
-                                  order['reference'] = widget.product.reference;
-                                  UserPCFService.addToCart(order: order);
-                                  setState(() {
-                                    chosenQuantity = 0;
-                                    chosenQuantities = {};
-                                    order = {};
-                                    _quantity = 0;
-                                    totalPrice = 0;
-                                  });
-                                  Future.delayed(
-                                          const Duration(milliseconds: 2000))
-                                      .then((value) => setState(() {
-                                            _added = false;
-                                          }));
-                                }
-                              } else if (widget.product.variations![0]
-                                          ['color_details'] ==
-                                      null &&
-                                  widget.product.variations![0]
-                                          ['size_details'] !=
-                                      null) {
-                                ////////////////////////////////////////////////
-                                bool quantitiesValid = false;
-                                widget
-                                    .product
-                                    .variations![0]['size_details']
-                                        ['size_quantity']
-                                    .forEach((size, maxQuantity) {
-                                  if (chosenQuantities.isNotEmpty &&
-                                      chosenQuantities != {} &&
-                                      chosenQuantities[size] != 0) {
-                                    quantitiesValid = true;
+                      if (kIsWeb) {
+                        if (AuthService.firebase().currentUser != null) {
+                          if (widget.product.available_quantity == null) {
+                            if (widget.product.variations != null) {
+                              if (widget.product.variations!.isNotEmpty) {
+                                if (widget.product.variations![0]
+                                            ['color_details'] !=
+                                        null &&
+                                    widget.product.variations![0]
+                                            ['size_details'] ==
+                                        null) {
+                                  ////////////////////////////////////////////////
+                                  if (_quantity != 0) {
+                                    setState(() {
+                                      _added = true;
+                                    });
+                                    order['image'] = widget
+                                            .product.variations![selectedImage]
+                                        ['color_details']['image'];
+                                    order['color_name'] = widget
+                                            .product.variations![selectedImage]
+                                        ['color_details']['color_name'];
+                                    order['sizes'] = null;
+                                    order['quantity'] = _quantity;
+                                    order['total_price'] = totalPrice;
+                                    order['reference'] =
+                                        widget.product.reference;
+                                    UserPCFService.addToCart(order: order);
+                                    setState(() {
+                                      chosenQuantity = 0;
+                                      chosenQuantities = {};
+                                      order = {};
+                                      _quantity = 0;
+                                      totalPrice = 0;
+                                    });
+                                    Future.delayed(
+                                            const Duration(milliseconds: 2000))
+                                        .then((value) => setState(() {
+                                              _added = false;
+                                            }));
                                   }
-                                });
-
-                                if (quantitiesValid) {
-                                  setState(() {
-                                    _added = true;
-                                  });
-                                  order['image'] = null;
-                                  order['color_name'] = null;
-                                  Map<String, int> selectedSizes = {};
+                                } else if (widget.product.variations![0]
+                                            ['color_details'] ==
+                                        null &&
+                                    widget.product.variations![0]
+                                            ['size_details'] !=
+                                        null) {
+                                  ////////////////////////////////////////////////
+                                  bool quantitiesValid = false;
                                   widget
                                       .product
                                       .variations![0]['size_details']
                                           ['size_quantity']
                                       .forEach((size, maxQuantity) {
-                                    if (chosenQuantities[size] != null &&
-                                        chosenQuantities[size]! > 0) {
-                                      selectedSizes[size] =
-                                          chosenQuantities[size]!;
-                                      _quantity =
-                                          _quantity + chosenQuantities[size]!;
+                                    if (chosenQuantities.isNotEmpty &&
+                                        chosenQuantities != {} &&
+                                        chosenQuantities[size] != 0) {
+                                      quantitiesValid = true;
                                     }
                                   });
-                                  order['sizes'] = selectedSizes;
-                                  order['quantity'] = null;
-                                  order['total_price'] = null;
-                                  order['reference'] = widget.product.reference;
-                                  UserPCFService.addToCart(order: order);
 
-                                  setState(() {
-                                    chosenQuantity = 0;
-                                    chosenQuantities = {};
-                                    order = {};
-                                    _quantity = 0;
-                                    totalPrice = 0;
-                                  });
-                                  Future.delayed(
-                                          const Duration(milliseconds: 2000))
-                                      .then((value) => setState(() {
-                                            _added = false;
-                                          }));
-                                }
-                              } else if (widget.product.variations![0]
-                                          ['color_details'] !=
-                                      null &&
-                                  widget.product.variations![0]
-                                          ['size_details'] !=
-                                      null) {
-                                ////////////////////////////////////////////////
-                                bool quantitiesValid = false;
-                                widget
-                                    .product
-                                    .variations![0]['size_details']
-                                        ['size_quantity']
-                                    .forEach((size, maxQuantity) {
-                                  if (chosenQuantities.isNotEmpty &&
-                                      chosenQuantities != {} &&
-                                      chosenQuantities[size] != 0) {
-                                    quantitiesValid = true;
+                                  if (quantitiesValid) {
+                                    setState(() {
+                                      _added = true;
+                                    });
+                                    order['image'] = null;
+                                    order['color_name'] = null;
+                                    Map<String, int> selectedSizes = {};
+                                    widget
+                                        .product
+                                        .variations![0]['size_details']
+                                            ['size_quantity']
+                                        .forEach((size, maxQuantity) {
+                                      if (chosenQuantities[size] != null &&
+                                          chosenQuantities[size]! > 0) {
+                                        selectedSizes[size] =
+                                            chosenQuantities[size]!;
+                                        _quantity =
+                                            _quantity + chosenQuantities[size]!;
+                                      }
+                                    });
+                                    order['sizes'] = selectedSizes;
+                                    order['quantity'] = null;
+                                    order['total_price'] = null;
+                                    order['reference'] =
+                                        widget.product.reference;
+                                    UserPCFService.addToCart(order: order);
+
+                                    setState(() {
+                                      chosenQuantity = 0;
+                                      chosenQuantities = {};
+                                      order = {};
+                                      _quantity = 0;
+                                      totalPrice = 0;
+                                    });
+                                    Future.delayed(
+                                            const Duration(milliseconds: 2000))
+                                        .then((value) => setState(() {
+                                              _added = false;
+                                            }));
                                   }
-                                });
-
-                                if (quantitiesValid) {
-                                  setState(() {
-                                    _added = true;
-                                  });
-
-                                  // Store the order details
-                                  order['image'] =
-                                      widget.product.variations![selectedImage]
-                                          ['color_details']['image'];
-                                  order['color_name'] =
-                                      widget.product.variations![selectedImage]
-                                          ['color_details']['color_name'];
-
-                                  Map<String, int> selectedSizes = {};
+                                } else if (widget.product.variations![0]
+                                            ['color_details'] !=
+                                        null &&
+                                    widget.product.variations![0]
+                                            ['size_details'] !=
+                                        null) {
+                                  ////////////////////////////////////////////////
+                                  bool quantitiesValid = false;
                                   widget
                                       .product
-                                      .variations![selectedImage]
-                                          ['size_details']['size_quantity']
+                                      .variations![0]['size_details']
+                                          ['size_quantity']
                                       .forEach((size, maxQuantity) {
-                                    if (chosenQuantities[size] != null &&
-                                        chosenQuantities[size]! > 0) {
-                                      selectedSizes[size] = chosenQuantities[
-                                          size]!; //////////////<<<<<<<<<<<<<<
-                                      _quantity =
-                                          _quantity + chosenQuantities[size]!;
+                                    if (chosenQuantities.isNotEmpty &&
+                                        chosenQuantities != {} &&
+                                        chosenQuantities[size] != 0) {
+                                      quantitiesValid = true;
                                     }
                                   });
-                                  order['sizes'] = selectedSizes;
-                                  order['quantity'] = _quantity;
-                                  order['total_price'] = null;
-                                  order['reference'] = widget.product.reference;
-                                  UserPCFService.addToCart(order: order);
 
-                                  setState(() {
-                                    chosenQuantity = 0;
-                                    chosenQuantities = {};
-                                    order = {};
-                                    _quantity = 0;
-                                    totalPrice = 0;
-                                  });
-                                  Future.delayed(
-                                          const Duration(milliseconds: 2000))
-                                      .then((value) => setState(() {
-                                            _added = false;
-                                          }));
-                                }
+                                  if (quantitiesValid) {
+                                    setState(() {
+                                      _added = true;
+                                    });
+
+                                    // Store the order details
+                                    order['image'] = widget
+                                            .product.variations![selectedImage]
+                                        ['color_details']['image'];
+                                    order['color_name'] = widget
+                                            .product.variations![selectedImage]
+                                        ['color_details']['color_name'];
+
+                                    Map<String, int> selectedSizes = {};
+                                    widget
+                                        .product
+                                        .variations![selectedImage]
+                                            ['size_details']['size_quantity']
+                                        .forEach((size, maxQuantity) {
+                                      if (chosenQuantities[size] != null &&
+                                          chosenQuantities[size]! > 0) {
+                                        selectedSizes[size] = chosenQuantities[
+                                            size]!; //////////////<<<<<<<<<<<<<<
+                                        _quantity =
+                                            _quantity + chosenQuantities[size]!;
+                                      }
+                                    });
+                                    order['sizes'] = selectedSizes;
+                                    order['quantity'] = _quantity;
+                                    order['total_price'] = null;
+                                    order['reference'] =
+                                        widget.product.reference;
+                                    UserPCFService.addToCart(order: order);
+
+                                    setState(() {
+                                      chosenQuantity = 0;
+                                      chosenQuantities = {};
+                                      order = {};
+                                      _quantity = 0;
+                                      totalPrice = 0;
+                                    });
+                                    Future.delayed(
+                                            const Duration(milliseconds: 2000))
+                                        .then((value) => setState(() {
+                                              _added = false;
+                                            }));
+                                  }
+                                } else {}
                               } else {}
                             } else {}
-                          } else {}
-                        } else {
-                          if (_quantity != 0) {
-                            setState(() {
-                              _added = true;
-                            });
-                            order['image'] = null;
-                            order['color_name'] = null;
-                            order['sizes'] = null;
-                            order['quantity'] = _quantity;
-                            order['total_price'] = totalPrice;
-                            order['reference'] = widget.product.reference;
+                          } else {
+                            if (_quantity != 0) {
+                              setState(() {
+                                _added = true;
+                              });
+                              order['image'] = null;
+                              order['color_name'] = null;
+                              order['sizes'] = null;
+                              order['quantity'] = _quantity;
+                              order['total_price'] = totalPrice;
+                              order['reference'] = widget.product.reference;
 
-                            print(order);
-                            UserPCFService.addToCart(order: order);
-                            setState(() {
-                              chosenQuantity = 0;
-                              chosenQuantities = {};
-                              order = {};
-                              _quantity = 0;
-                              totalPrice = 0;
-                            });
-                            Future.delayed(const Duration(milliseconds: 2000))
-                                .then((value) => setState(() {
-                                      _added = false;
-                                    }));
+                              print(order);
+                              UserPCFService.addToCart(order: order);
+                              setState(() {
+                                chosenQuantity = 0;
+                                chosenQuantities = {};
+                                order = {};
+                                _quantity = 0;
+                                totalPrice = 0;
+                              });
+                              Future.delayed(const Duration(milliseconds: 2000))
+                                  .then((value) => setState(() {
+                                        _added = false;
+                                      }));
+                            }
+
+                            ///////////////////////////////////////////===<<<<<
                           }
-
-                          ///////////////////////////////////////////===<<<<<
+                        } else {
+                          showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: const LoginDialog(
+                                      guest: true,
+                                    ));
+                              });
                         }
                       } else {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              content: Text(
-                                'You are not connected to the internet.',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            );
-                          },
-                        );
-                        Future.delayed(Duration(seconds: 3), () {
-                          Navigator.of(context)
-                              .pop(); // Close the dialog after 3 seconds
-                        });
+                        final internetConnectionStatus =
+                            Provider.of<InternetConnectionStatus>(context,
+                                listen: false);
+                        if (internetConnectionStatus ==
+                            InternetConnectionStatus.connected) {
+                          if (AuthService.firebase().currentUser != null) {
+                            if (widget.product.available_quantity == null) {
+                              if (widget.product.variations != null) {
+                                if (widget.product.variations!.isNotEmpty) {
+                                  if (widget.product.variations![0]
+                                              ['color_details'] !=
+                                          null &&
+                                      widget.product.variations![0]
+                                              ['size_details'] ==
+                                          null) {
+                                    ////////////////////////////////////////////////
+                                    if (_quantity != 0) {
+                                      setState(() {
+                                        _added = true;
+                                      });
+                                      order['image'] = widget.product
+                                              .variations![selectedImage]
+                                          ['color_details']['image'];
+                                      order['color_name'] = widget.product
+                                              .variations![selectedImage]
+                                          ['color_details']['color_name'];
+                                      order['sizes'] = null;
+                                      order['quantity'] = _quantity;
+                                      order['total_price'] = totalPrice;
+                                      order['reference'] =
+                                          widget.product.reference;
+                                      UserPCFService.addToCart(order: order);
+                                      setState(() {
+                                        chosenQuantity = 0;
+                                        chosenQuantities = {};
+                                        order = {};
+                                        _quantity = 0;
+                                        totalPrice = 0;
+                                      });
+                                      Future.delayed(const Duration(
+                                              milliseconds: 2000))
+                                          .then((value) => setState(() {
+                                                _added = false;
+                                              }));
+                                    }
+                                  } else if (widget.product.variations![0]
+                                              ['color_details'] ==
+                                          null &&
+                                      widget.product.variations![0]
+                                              ['size_details'] !=
+                                          null) {
+                                    ////////////////////////////////////////////////
+                                    bool quantitiesValid = false;
+                                    widget
+                                        .product
+                                        .variations![0]['size_details']
+                                            ['size_quantity']
+                                        .forEach((size, maxQuantity) {
+                                      if (chosenQuantities.isNotEmpty &&
+                                          chosenQuantities != {} &&
+                                          chosenQuantities[size] != 0) {
+                                        quantitiesValid = true;
+                                      }
+                                    });
+
+                                    if (quantitiesValid) {
+                                      setState(() {
+                                        _added = true;
+                                      });
+                                      order['image'] = null;
+                                      order['color_name'] = null;
+                                      Map<String, int> selectedSizes = {};
+                                      widget
+                                          .product
+                                          .variations![0]['size_details']
+                                              ['size_quantity']
+                                          .forEach((size, maxQuantity) {
+                                        if (chosenQuantities[size] != null &&
+                                            chosenQuantities[size]! > 0) {
+                                          selectedSizes[size] =
+                                              chosenQuantities[size]!;
+                                          _quantity = _quantity +
+                                              chosenQuantities[size]!;
+                                        }
+                                      });
+                                      order['sizes'] = selectedSizes;
+                                      order['quantity'] = null;
+                                      order['total_price'] = null;
+                                      order['reference'] =
+                                          widget.product.reference;
+                                      UserPCFService.addToCart(order: order);
+
+                                      setState(() {
+                                        chosenQuantity = 0;
+                                        chosenQuantities = {};
+                                        order = {};
+                                        _quantity = 0;
+                                        totalPrice = 0;
+                                      });
+                                      Future.delayed(const Duration(
+                                              milliseconds: 2000))
+                                          .then((value) => setState(() {
+                                                _added = false;
+                                              }));
+                                    }
+                                  } else if (widget.product.variations![0]
+                                              ['color_details'] !=
+                                          null &&
+                                      widget.product.variations![0]
+                                              ['size_details'] !=
+                                          null) {
+                                    ////////////////////////////////////////////////
+                                    bool quantitiesValid = false;
+                                    widget
+                                        .product
+                                        .variations![0]['size_details']
+                                            ['size_quantity']
+                                        .forEach((size, maxQuantity) {
+                                      if (chosenQuantities.isNotEmpty &&
+                                          chosenQuantities != {} &&
+                                          chosenQuantities[size] != 0) {
+                                        quantitiesValid = true;
+                                      }
+                                    });
+
+                                    if (quantitiesValid) {
+                                      setState(() {
+                                        _added = true;
+                                      });
+
+                                      // Store the order details
+                                      order['image'] = widget.product
+                                              .variations![selectedImage]
+                                          ['color_details']['image'];
+                                      order['color_name'] = widget.product
+                                              .variations![selectedImage]
+                                          ['color_details']['color_name'];
+
+                                      Map<String, int> selectedSizes = {};
+                                      widget
+                                          .product
+                                          .variations![selectedImage]
+                                              ['size_details']['size_quantity']
+                                          .forEach((size, maxQuantity) {
+                                        if (chosenQuantities[size] != null &&
+                                            chosenQuantities[size]! > 0) {
+                                          selectedSizes[size] = chosenQuantities[
+                                              size]!; //////////////<<<<<<<<<<<<<<
+                                          _quantity = _quantity +
+                                              chosenQuantities[size]!;
+                                        }
+                                      });
+                                      order['sizes'] = selectedSizes;
+                                      order['quantity'] = _quantity;
+                                      order['total_price'] = null;
+                                      order['reference'] =
+                                          widget.product.reference;
+                                      UserPCFService.addToCart(order: order);
+
+                                      setState(() {
+                                        chosenQuantity = 0;
+                                        chosenQuantities = {};
+                                        order = {};
+                                        _quantity = 0;
+                                        totalPrice = 0;
+                                      });
+                                      Future.delayed(const Duration(
+                                              milliseconds: 2000))
+                                          .then((value) => setState(() {
+                                                _added = false;
+                                              }));
+                                    }
+                                  } else {}
+                                } else {}
+                              } else {}
+                            } else {
+                              if (_quantity != 0) {
+                                setState(() {
+                                  _added = true;
+                                });
+                                order['image'] = null;
+                                order['color_name'] = null;
+                                order['sizes'] = null;
+                                order['quantity'] = _quantity;
+                                order['total_price'] = totalPrice;
+                                order['reference'] = widget.product.reference;
+
+                                print(order);
+                                UserPCFService.addToCart(order: order);
+                                setState(() {
+                                  chosenQuantity = 0;
+                                  chosenQuantities = {};
+                                  order = {};
+                                  _quantity = 0;
+                                  totalPrice = 0;
+                                });
+                                Future.delayed(
+                                        const Duration(milliseconds: 2000))
+                                    .then((value) => setState(() {
+                                          _added = false;
+                                        }));
+                              }
+
+                              ///////////////////////////////////////////===<<<<<
+                            }
+                          } else {
+                            showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                      child: const LoginDialog(
+                                        guest: true,
+                                      ));
+                                });
+                          }
+                        } else {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                content: Text(
+                                  'You are not connected to the internet.',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              );
+                            },
+                          );
+                          Future.delayed(const Duration(seconds: 3), () {
+                            Navigator.of(context)
+                                .pop(); // Close the dialog after 3 seconds
+                          });
+                        }
                       }
                     },
                   ),
                 ),
-          SizedBox(
+          const SizedBox(
             height: 25,
           )
         ],
@@ -280,8 +520,8 @@ class _OrderProductState extends State<OrderProduct> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
-          height: 10.h,
+        const SizedBox(
+          height: 10,
         ),
         withSizeOrNot
             ? Padding(
@@ -306,22 +546,42 @@ class _OrderProductState extends State<OrderProduct> {
                             });
                           },
                           child: Container(
-                            margin: const EdgeInsets.only(right: 15),
-                            padding: const EdgeInsets.all(8),
-                            height: 60,
-                            width: 60,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Color(color).withOpacity(
-                                    selectedImage == index ? 1 : 0),
+                              margin: const EdgeInsets.only(right: 15),
+                              padding: const EdgeInsets.all(8),
+                              height: 60,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Color(color).withOpacity(
+                                      selectedImage == index ? 1 : 0),
+                                ),
                               ),
-                            ),
-                            child: Image.network(
-                              image,
-                            ),
-                          ),
+                              child: CachedNetworkImage(
+                                key: UniqueKey(),
+                                imageUrl: image,
+                                maxWidthDiskCache: 250,
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) {
+                                  return const BuildShimmerEffect();
+                                },
+                                errorWidget: (context, url, error) {
+                                  return Image.network(
+                                    image,
+                                    loadingBuilder: (BuildContext context,
+                                        Widget child,
+                                        ImageChunkEvent? loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return child;
+                                      }
+                                      return const BuildShimmerEffect();
+                                    },
+                                    errorBuilder: (_, __, ___) =>
+                                        const BuildShimmerEffect(),
+                                  );
+                                },
+                              )),
                         );
                       })),
                 ),
@@ -354,22 +614,43 @@ class _OrderProductState extends State<OrderProduct> {
                                   });
                                 },
                                 child: Container(
-                                  margin: const EdgeInsets.only(right: 15),
-                                  padding: const EdgeInsets.all(8),
-                                  height: 60,
-                                  width: 60,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                      color: Color(color).withOpacity(
-                                          selectedImage == index ? 1 : 0),
+                                    margin: const EdgeInsets.only(right: 15),
+                                    padding: const EdgeInsets.all(8),
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: Color(color).withOpacity(
+                                            selectedImage == index ? 1 : 0),
+                                      ),
                                     ),
-                                  ),
-                                  child: Image.network(
-                                    image,
-                                  ),
-                                ),
+                                    child: CachedNetworkImage(
+                                      key: UniqueKey(),
+                                      imageUrl: image,
+                                      maxWidthDiskCache: 250,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) {
+                                        return const BuildShimmerEffect();
+                                      },
+                                      errorWidget: (context, url, error) {
+                                        return Image.network(
+                                          image,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            }
+                                            return const BuildShimmerEffect();
+                                          },
+                                          errorBuilder: (_, __, ___) =>
+                                              const BuildShimmerEffect(),
+                                        );
+                                      },
+                                    )),
                               );
                             })),
                       ),
@@ -446,7 +727,7 @@ class _OrderProductState extends State<OrderProduct> {
                 child: Text(
                   "$_quantity",
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -461,11 +742,11 @@ class _OrderProductState extends State<OrderProduct> {
             ),
           ],
         ),
-        SizedBox(height: 5),
+        const SizedBox(height: 5),
         if (!colors)
           Text(
             "Total: \$$totalPrice",
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
               color: kPrimaryColor,
@@ -528,16 +809,16 @@ class _OrderProductState extends State<OrderProduct> {
       children: [
         Text(
           size,
-          style: TextStyle(fontSize: 20),
+          style: const TextStyle(fontSize: 20),
         ),
-        Spacer(),
+        const Spacer(),
         IconButton(
-          icon: Icon(Icons.remove),
+          icon: const Icon(Icons.remove),
           onPressed: decrementQuantity,
         ),
         Text(chosenQuantity.toString()),
         IconButton(
-          icon: Icon(Icons.add),
+          icon: const Icon(Icons.add),
           onPressed: incrementQuantity,
         ),
       ],
@@ -565,13 +846,13 @@ class _OrderProductState extends State<OrderProduct> {
               ],
             );
           } else {
-            return SizedBox.shrink();
+            return const SizedBox.shrink();
           }
         } else {
-          return SizedBox.shrink();
+          return const SizedBox.shrink();
         }
       } else {
-        return SizedBox.shrink();
+        return const SizedBox.shrink();
       }
     } else {
       return quantitySelector(
@@ -587,8 +868,8 @@ class _OrderProductState extends State<OrderProduct> {
 
 Widget AddedToCartButton() {
   return SizedBox(
-    width: 250.w,
-    height: 56.h,
+    width: 250,
+    height: 56,
     child: TextButton(
       style: TextButton.styleFrom(
         shape: RoundedRectangleBorder(

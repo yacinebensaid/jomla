@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
+import 'package:jomla/view/settings/settings_view.dart';
 
 class NormalUserInfos extends StatefulWidget {
-  bool fromNav;
-  UserData userdata;
-  NormalUserInfos({
+  final bool fromNav;
+  final UserData userdata;
+  const NormalUserInfos({
     super.key,
     required this.userdata,
     required this.fromNav,
@@ -21,13 +21,13 @@ class _UserInfosState extends State<NormalUserInfos> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(left: 15.w, right: 15.w, bottom: 10.h),
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SafeArea(
             child: SizedBox(
-              height: !widget.fromNav ? kToolbarHeight : 30.h,
+              height: !widget.fromNav ? kToolbarHeight : 30,
               child: !widget.fromNav
                   ? Row(
                       children: [
@@ -43,7 +43,7 @@ class _UserInfosState extends State<NormalUserInfos> {
                             },
                             child: SvgPicture.asset(
                               "assets/icons/Back ICon.svg",
-                              height: 15.h,
+                              height: 15,
                             ),
                           ),
                         ),
@@ -58,16 +58,16 @@ class _UserInfosState extends State<NormalUserInfos> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 30.w,
+              const CircleAvatar(
+                radius: 30,
                 backgroundColor: Colors.grey,
                 child: Icon(
                   CupertinoIcons.person,
                   color: Colors.white,
                 ),
               ),
-              SizedBox(
-                width: 20.w,
+              const SizedBox(
+                width: 20,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -77,13 +77,13 @@ class _UserInfosState extends State<NormalUserInfos> {
                     style: TextStyle(
                       color: Colors.grey[500], // sets text color to gray
                       fontWeight: FontWeight.bold, // sets font weight to normal
-                      fontSize: 20.w,
+                      fontSize: 20,
                     ),
                   ),
                   Text(
                     '${widget.userdata.name}',
-                    style: TextStyle(
-                      fontSize: 20.w,
+                    style: const TextStyle(
+                      fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -91,23 +91,26 @@ class _UserInfosState extends State<NormalUserInfos> {
               )
             ],
           ),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: ElevatedButton(
-              onPressed: () async {},
+              onPressed: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => SettingsView(),
+                ));
+              },
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
                   borderRadius:
                       BorderRadius.circular(10), // Set rounded corner radius
                 ),
-                padding: EdgeInsets.symmetric(
-                    horizontal: 120.w,
-                    vertical:
-                        8.h), // Increase padding to make the button larger
-                textStyle: TextStyle(fontSize: 18.w), // Increase font size
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 100,
+                    vertical: 8), // Increase padding to make the button larger
+                textStyle: const TextStyle(fontSize: 18), // Increase font size
               ),
               child: const Text(
                 'Settings',

@@ -6,10 +6,10 @@ import 'normal_user_infos.dart';
 import 'under_infos.dart';
 
 class NormalBody extends StatefulWidget {
-  bool fromNav;
+  final bool fromNav;
   final UserData userdata;
 
-  NormalBody({
+  const NormalBody({
     Key? key,
     required this.fromNav,
     required this.userdata,

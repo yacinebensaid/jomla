@@ -1,11 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:jomla/utilities/reusable.dart';
-import 'package:jomla/view/dropshipping/dropship_view.dart';
-import 'package:jomla/view/products_shipping_service/shipping_service_view.dart';
-
-import '../../../size_config.dart';
+import 'package:go_router/go_router.dart';
+import 'package:jomla/constants/const_routs.dart';
 
 class Services extends StatelessWidget {
   const Services({
@@ -14,48 +11,93 @@ class Services extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SectionTitle(
-            title: 'Services',
-            press: () {},
+    return Container(
+      color: Colors.white,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 10,
           ),
-        ),
-        SizedBox(height: 20.h),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              SpecialOfferCard(
-                image: "assets/images/services/stock.jpg",
-                category: "Dropship\nService",
-                press: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: ((context) => Dropship())));
-                },
-              ),
-              SpecialOfferCard(
-                image: "assets/images/services/shipping_serv.jpeg",
-                category: "Product\nShipping",
-                press: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: ((context) => ShippingServicePage())));
-
-                  /* Navigator.of(context).pushNamed(shippingServiceRout);*/
-                },
-              ),
-              SpecialOfferCard(
-                image: "assets/images/services/affiliate-marketing.jpg",
-                category: "Affiliate\nMarketing",
-                press: () {},
-              ),
-              SizedBox(width: getProportionateScreenWidth(20)),
-            ],
+          Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'Start working now!',
+                style: TextStyle(fontSize: 18, color: Colors.black),
+              )),
+          const SizedBox(height: 10),
+          !kIsWeb
+              ? SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      SpecialOfferCard(
+                        image: "assets/images/services/stock.jpg",
+                        category: "Online\nMarket",
+                        press: () {
+                          GoRouter.of(context)
+                              .pushNamed(RoutsConst.onlineMarket);
+                        },
+                      ),
+                      SpecialOfferCard(
+                        image: "assets/images/services/shipping_serv.jpeg",
+                        category: "Dropshipping\nService",
+                        press: () {
+                          GoRouter.of(context)
+                              .pushNamed(RoutsConst.dropshipRout);
+                        },
+                      ),
+                      SpecialOfferCard(
+                        image: "assets/images/services/affiliate-marketing.jpg",
+                        category: "Affiliate\nMarketing",
+                        press: () {
+                          GoRouter.of(context).pushNamed(RoutsConst.affiRout);
+                        },
+                      ),
+                      SizedBox(width: 20),
+                    ],
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SpecialOfferCard(
+                        image: "assets/images/services/stock.jpg",
+                        category: "Online\nMarket",
+                        press: () {
+                          GoRouter.of(context)
+                              .pushNamed(RoutsConst.onlineMarket);
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SpecialOfferCard(
+                        image: "assets/images/services/shipping_serv.jpeg",
+                        category: "Dropshipping\nService",
+                        press: () {
+                          GoRouter.of(context)
+                              .pushNamed(RoutsConst.dropshipRout);
+                        },
+                      ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      SpecialOfferCard(
+                        image: "assets/images/services/affiliate-marketing.jpg",
+                        category: "Affiliate\nMarketing",
+                        press: () {
+                          GoRouter.of(context).pushNamed(RoutsConst.affiRout);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+          SizedBox(
+            height: 10,
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -74,12 +116,12 @@ class SpecialOfferCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: getProportionateScreenWidth(20)),
+      padding: EdgeInsets.only(left: kIsWeb ? 10 : 20, right: kIsWeb ? 10 : 0),
       child: GestureDetector(
         onTap: press,
         child: SizedBox(
-          width: getProportionateScreenWidth(242),
-          height: getProportionateScreenHeight(120),
+          width: 242,
+          height: 120,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: Stack(
@@ -108,8 +150,8 @@ class SpecialOfferCard extends StatelessWidget {
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: getProportionateScreenWidth(15.0),
-                    vertical: getProportionateScreenWidth(10),
+                    horizontal: 15,
+                    vertical: 10,
                   ),
                   child: Text.rich(
                     TextSpan(
@@ -118,7 +160,7 @@ class SpecialOfferCard extends StatelessWidget {
                         TextSpan(
                           text: "$category\n",
                           style: TextStyle(
-                            fontSize: getProportionateScreenWidth(18),
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

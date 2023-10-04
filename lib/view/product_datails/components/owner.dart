@@ -1,18 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 
 import 'package:jomla/services/crud/userdata_service.dart';
 import 'package:jomla/services/providers.dart';
+import 'package:jomla/utilities/reusable.dart';
 import 'package:jomla/view/profile/profile_view.dart';
 import 'package:provider/provider.dart';
 
 class Owner extends StatefulWidget {
-  String uid;
-  Owner({
+  final String uid;
+  const Owner({
     Key? key,
     required this.uid,
   }) : super(key: key);
@@ -23,28 +24,31 @@ class Owner extends StatefulWidget {
 
 class _OwnerState extends State<Owner> {
   late bool _isFollowing;
+  late UserData userdata;
   String? currentUid = AuthService.firebase().currentUser?.uid;
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _isFollowing = Provider.of<UserDataInitializer>(context, listen: false)
-        .getFollowing
-        .contains(widget.uid);
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _isFollowing = Provider.of<UserDataInitializer>(context).getUserData != null
+        ? Provider.of<UserDataInitializer>(context, listen: false)
+            .getUserData!
+            .following
+            .contains(widget.uid)
+        : false;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 65.h,
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        height: 65,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         width: MediaQuery.of(context).size.width * 0.93,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
             color: Colors.grey[100],
             border: Border.all(
-              color: Color.fromARGB(255, 218, 218, 218),
+              color: const Color.fromARGB(255, 218, 218, 218),
               width: 1.2,
             ),
             boxShadow: [
@@ -52,7 +56,7 @@ class _OwnerState extends State<Owner> {
                 color: Colors.grey.withOpacity(0.15), // Shadow color
                 spreadRadius: 1.5, // Spread radius
                 blurRadius: 5, // Blur radius
-                offset: Offset(0, 0.5), // Offset in the x and y direction
+                offset: const Offset(0, 0.5), // Offset in the x and y direction
               ),
             ]),
         child: StreamBuilder(
@@ -69,7 +73,7 @@ class _OwnerState extends State<Owner> {
                           ))));
                 },
                 child: Container(
-                  height: 70.h,
+                  height: 70,
                   width: MediaQuery.of(context).size.width * 0.93,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -84,19 +88,20 @@ class _OwnerState extends State<Owner> {
                               color: Colors.white,
                             ),
                           ),
-                          SizedBox(width: 16.w),
+                          const SizedBox(width: 16),
                           Text(
-                            fullname,
+                            fullname!,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 19.w,
+                            style: const TextStyle(
+                              fontSize: 19,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
                       currentUid != widget.uid
-                          ? _isFollowing
+                          ? _isFollowing &&
+                                  AuthService.firebase().currentUser != null
                               ? ElevatedButton(
                                   onPressed: () {
                                     final internetConnectionStatus =
@@ -108,10 +113,7 @@ class _OwnerState extends State<Owner> {
                                       setState(() {
                                         _isFollowing = false;
                                       });
-                                      if (Provider.of<UserDataInitializer>(
-                                              context,
-                                              listen: false)
-                                          .getFollowing
+                                      if (userdata.following
                                           .contains(widget.uid)) {
                                         DataService followbuttoninst =
                                             DataService();
@@ -120,7 +122,7 @@ class _OwnerState extends State<Owner> {
                                       }
                                     } else {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
+                                          .showSnackBar(const SnackBar(
                                         content: Text('you are not connected'),
                                         behavior: SnackBarBehavior.floating,
                                       ));
@@ -134,16 +136,112 @@ class _OwnerState extends State<Owner> {
                                       borderRadius: BorderRadius.circular(
                                           10.0), // Set rounded corner radius
                                     ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 25.w,
-                                        vertical: 7.h), // Set padding
-                                    textStyle: TextStyle(
-                                        fontSize: 18.w), // Set font size
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 25,
+                                        vertical: 7), // Set padding
+                                    textStyle: const TextStyle(
+                                        fontSize: 18), // Set font size
                                   ),
                                   child: const Text('Following'),
                                 )
                               : ElevatedButton(
                                   onPressed: () {
+                                    if (kIsWeb) {
+                                      if (AuthService.firebase().currentUser !=
+                                          null) {
+                                        if (Provider.of<UserDataInitializer>(
+                                                        context,
+                                                        listen: false)
+                                                    .getUserData !=
+                                                null
+                                            ? Provider.of<UserDataInitializer>(
+                                                    context,
+                                                    listen: false)
+                                                .getUserData!
+                                                .following
+                                                .contains(widget.uid)
+                                            : false) {
+                                        } else {
+                                          DataService followbuttoninst =
+                                              DataService();
+                                          followbuttoninst
+                                              .followFunction(widget.uid);
+                                        }
+                                      } else {
+                                        showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (BuildContext context) {
+                                              return Dialog(
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10.0),
+                                                  ),
+                                                  child: const LoginDialog(
+                                                    guest: true,
+                                                  ));
+                                            });
+                                      }
+                                    } else {
+                                      final internetConnectionStatus =
+                                          Provider.of<InternetConnectionStatus>(
+                                              context,
+                                              listen: false);
+                                      if (internetConnectionStatus ==
+                                          InternetConnectionStatus.connected) {
+                                        setState(() {
+                                          _isFollowing = true;
+                                        });
+                                        if (AuthService.firebase()
+                                                .currentUser !=
+                                            null) {
+                                          if (Provider.of<UserDataInitializer>(
+                                                          context,
+                                                          listen: false)
+                                                      .getUserData !=
+                                                  null
+                                              ? Provider.of<
+                                                          UserDataInitializer>(
+                                                      context,
+                                                      listen: false)
+                                                  .getUserData!
+                                                  .following
+                                                  .contains(widget.uid)
+                                              : false) {
+                                          } else {
+                                            DataService followbuttoninst =
+                                                DataService();
+                                            followbuttoninst
+                                                .followFunction(widget.uid);
+                                          }
+                                        } else {
+                                          showDialog(
+                                              context: context,
+                                              barrierDismissible: false,
+                                              builder: (BuildContext context) {
+                                                return Dialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10.0),
+                                                    ),
+                                                    child: const LoginDialog(
+                                                      guest: true,
+                                                    ));
+                                              });
+                                        }
+                                      } else {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content:
+                                              Text('you are not connected'),
+                                          behavior: SnackBarBehavior.floating,
+                                        ));
+                                      }
+                                    }
+                                    /////////////////////////////
                                     final internetConnectionStatus =
                                         Provider.of<InternetConnectionStatus>(
                                             context,
@@ -153,10 +251,7 @@ class _OwnerState extends State<Owner> {
                                       setState(() {
                                         _isFollowing = true;
                                       });
-                                      if (Provider.of<UserDataInitializer>(
-                                              context,
-                                              listen: false)
-                                          .getFollowing
+                                      if (userdata.following
                                           .contains(widget.uid)) {
                                       } else {
                                         DataService followbuttoninst =
@@ -166,7 +261,7 @@ class _OwnerState extends State<Owner> {
                                       }
                                     } else {
                                       ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
+                                          .showSnackBar(const SnackBar(
                                         content: Text('you are not connected'),
                                         behavior: SnackBarBehavior.floating,
                                       ));
@@ -177,10 +272,10 @@ class _OwnerState extends State<Owner> {
                                       borderRadius: BorderRadius.circular(
                                           10), // Set rounded corner radius
                                     ),
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal: 35.w,
-                                        vertical: 7
-                                            .h), // Increase padding to make the button larger
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 35,
+                                        vertical:
+                                            7), // Increase padding to make the button larger
                                     textStyle: const TextStyle(
                                         fontSize: 18), // Increase font size
                                   ),
@@ -188,7 +283,7 @@ class _OwnerState extends State<Owner> {
                                     'Follow',
                                   ),
                                 )
-                          : SizedBox.shrink()
+                          : const SizedBox.shrink()
                     ],
                   ),
                 ),

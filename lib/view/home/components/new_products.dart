@@ -26,6 +26,8 @@ class _NewProductsState extends State<NewProducts> {
 
   @override
   Widget build(BuildContext context) {
-    return ProductRows(getProducts: _getProducts, title: 'New');
+    return Container(
+        color: Colors.white,
+        child: ProductRows(getProducts: _getProducts, title: 'New'));
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jomla/utilities/show_error_dialog.dart';
 
 //i want oneItemPriceController to be 30% higher than priceController0, so i want to set an onchange function that shows a validation warning once the user starts typing the price an he doesn't satisfy the condition
@@ -30,7 +29,8 @@ class _PriceEntryFormState extends State<PriceEntryForm> {
   final TextEditingController toController2 = TextEditingController();
   final TextEditingController priceController2 = TextEditingController();
   late List controllers;
-  GlobalKey<FormState> _formKey = GlobalKey<FormState>(); // Added GlobalKey
+  final GlobalKey<FormState> _formKey =
+      GlobalKey<FormState>(); // Added GlobalKey
   List<PricingForm> pricingLists = [];
 
   @override
@@ -188,6 +188,7 @@ class _PriceEntryFormState extends State<PriceEntryForm> {
       Navigator.pop(context);
       return pricingDetails;
     }
+    return null;
   }
 
   //i want always the fromController1 = toController0 + 1 and the fromController2 = toController1 + 1
@@ -196,24 +197,24 @@ class _PriceEntryFormState extends State<PriceEntryForm> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Price Entry Form'),
+        title: const Text('Price Entry Form'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
-              Text(
+              const Text(
                   'Enter the price in case of selling one item only, this must be at least 30% higher than the wholesale price'),
               Row(
                 children: [
-                  Text('Price of 1 item:'),
-                  SizedBox(
+                  const Text('Price of 1 item:'),
+                  const SizedBox(
                     width: 30,
                   ),
                   Container(
-                    width: 160.w,
+                    width: 160,
                     child: TextFormField(
                       controller: oneItemPriceController,
                       inputFormatters: [
@@ -223,19 +224,19 @@ class _PriceEntryFormState extends State<PriceEntryForm> {
                       ],
                       decoration: InputDecoration(
                         hintText: 'Price (da)',
-                        contentPadding: EdgeInsets.symmetric(
+                        contentPadding: const EdgeInsets.symmetric(
                             vertical: 3.0, horizontal: 4.0),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide: const BorderSide(color: Colors.grey),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide: const BorderSide(color: Colors.grey),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(color: Colors.grey),
+                          borderSide: const BorderSide(color: Colors.grey),
                         ),
                       ),
                       validator: (value) {
@@ -260,7 +261,7 @@ class _PriceEntryFormState extends State<PriceEntryForm> {
                           Expanded(
                             flex: 1,
                             child: IconButton(
-                              icon: Icon(Icons.close),
+                              icon: const Icon(Icons.close),
                               onPressed: () {
                                 setState(() {
                                   pricingLists.removeAt(i);
@@ -272,7 +273,7 @@ class _PriceEntryFormState extends State<PriceEntryForm> {
                     ),
                   if (pricingLists.length < 3)
                     IconButton(
-                      icon: Icon(Icons.add),
+                      icon: const Icon(Icons.add),
                       onPressed: () {
                         setState(() {
                           pricingLists.add(PricingForm(
@@ -298,7 +299,7 @@ class _PriceEntryFormState extends State<PriceEntryForm> {
                     print(pricingDetails);
                   }
                 },
-                child: Text('Get Pricing Details'),
+                child: const Text('Get Pricing Details'),
               ),
             ],
           ),
@@ -326,9 +327,9 @@ class PricingForm extends StatelessWidget {
     return Container(
       width: double.infinity,
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 5.w),
+        padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
           decoration: BoxDecoration(
             border: Border.all(
               color: Colors.grey,
@@ -338,9 +339,9 @@ class PricingForm extends StatelessWidget {
           ),
           child: IntrinsicWidth(
             child: Row(children: [
-              Text('From'),
-              SizedBox(
-                width: 10.w,
+              const Text('From'),
+              const SizedBox(
+                width: 10,
               ),
               Expanded(
                 flex: 1,
@@ -353,19 +354,19 @@ class PricingForm extends StatelessWidget {
                   ],
                   decoration: InputDecoration(
                     hintText: 'Min',
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 3.0, horizontal: 4.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 3.0, horizontal: 4.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                   validator: (value) {
@@ -376,12 +377,12 @@ class PricingForm extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(
-                width: 10.w,
+              const SizedBox(
+                width: 10,
               ),
-              Text('To'),
-              SizedBox(
-                width: 10.w,
+              const Text('To'),
+              const SizedBox(
+                width: 10,
               ),
               Expanded(
                 flex: 1,
@@ -394,19 +395,19 @@ class PricingForm extends StatelessWidget {
                   ],
                   decoration: InputDecoration(
                     hintText: 'Max',
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 3.0, horizontal: 4.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 3.0, horizontal: 4.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                   validator: (value) {
@@ -421,12 +422,12 @@ class PricingForm extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(
-                width: 10.w,
+              const SizedBox(
+                width: 10,
               ),
-              Text(':'),
-              SizedBox(
-                width: 10.w,
+              const Text(':'),
+              const SizedBox(
+                width: 10,
               ),
               Expanded(
                 flex: 2,
@@ -439,19 +440,19 @@ class PricingForm extends StatelessWidget {
                   ],
                   decoration: InputDecoration(
                     hintText: 'Price (da)',
-                    contentPadding:
-                        EdgeInsets.symmetric(vertical: 3.0, horizontal: 4.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                        vertical: 3.0, horizontal: 4.0),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(color: Colors.grey),
+                      borderSide: const BorderSide(color: Colors.grey),
                     ),
                   ),
                   validator: (value) {

@@ -1,5 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/product_service.dart';
 import 'package:jomla/utilities/shimmers.dart';
@@ -9,7 +9,7 @@ import '../../../constants/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PurchasedCard extends StatefulWidget {
-  PurchasedCard({
+  const PurchasedCard({
     Key? key,
     required this.product,
   }) : super(key: key);
@@ -28,7 +28,7 @@ class _PendingCardState extends State<PurchasedCard> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: loading
-          ? Center(
+          ? const Center(
               child: CircularProgressIndicator(),
             )
           : FutureBuilder(
@@ -64,10 +64,10 @@ class _PendingCardState extends State<PurchasedCard> {
                         return ColorAndSizeCartWidget(
                             productSnapshot: productSnapshot);
                       } else {
-                        return SizedBox.shrink();
+                        return const SizedBox.shrink();
                       }
                     } else {
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     }
                   } else {
                     /////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -81,24 +81,24 @@ class _PendingCardState extends State<PurchasedCard> {
                           width: 0.3,
                         ),
                       ),
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: 8.h,
+                          const SizedBox(
+                            height: 8,
                           ),
                           Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
                               productSnapshot.product_name,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 8.h,
+                          const SizedBox(
+                            height: 8,
                           ),
                           Row(
                             children: [
@@ -111,29 +111,29 @@ class _PendingCardState extends State<PurchasedCard> {
                                     color: kPrimaryColor,
                                     fontSize: 18),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 10,
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Text(
                                 '${quantity}',
-                                style: TextStyle(fontSize: 17),
+                                style: const TextStyle(fontSize: 17),
                               ),
                             ],
                           ),
-                          SizedBox(
-                            height: 10.h,
+                          const SizedBox(
+                            height: 10,
                           ),
                           Price(),
-                          SizedBox(
-                            height: 10.h,
+                          const SizedBox(
+                            height: 10,
                           ),
                         ],
                       ),
                     );
                   }
                 } else {
-                  return SizedBox.shrink();
+                  return const SizedBox.shrink();
                 }
               })),
     );
@@ -149,13 +149,13 @@ class _PendingCardState extends State<PurchasedCard> {
             style: const TextStyle(
                 color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
             children: [
-              TextSpan(
+              const TextSpan(
                   text: "/piece",
                   style: TextStyle(fontSize: 18, color: kPrimaryColor)),
             ],
           ),
         ),
-        Spacer(),
+        const Spacer(),
         Text.rich(
           TextSpan(
             text: 'Price:',
@@ -166,8 +166,8 @@ class _PendingCardState extends State<PurchasedCard> {
             children: [
               TextSpan(
                   text: " ${widget.product.total_price}",
-                  style: TextStyle(fontSize: 18, color: Colors.black)),
-              TextSpan(
+                  style: const TextStyle(fontSize: 18, color: Colors.black)),
+              const TextSpan(
                   text: " Da",
                   style: TextStyle(fontSize: 18, color: Colors.black)),
             ],
@@ -194,21 +194,32 @@ class _PendingCardState extends State<PurchasedCard> {
         child: AspectRatio(
           aspectRatio: 0.80,
           child: Container(
-              padding: EdgeInsets.all(6),
+              padding: const EdgeInsets.all(6),
               decoration: BoxDecoration(
                 color: const Color(0xFFF5F6F9),
                 borderRadius: BorderRadius.circular(15),
               ),
-              child: Image.network(
-                image,
-                loadingBuilder: (BuildContext context, Widget child,
-                    ImageChunkEvent? loadingProgress) {
-                  if (loadingProgress == null) {
-                    return child;
-                  }
-                  return BuildShimmerEffect();
+              child: CachedNetworkImage(
+                key: UniqueKey(),
+                imageUrl: image,
+                maxWidthDiskCache: 250,
+                fit: BoxFit.cover,
+                placeholder: (context, url) {
+                  return const BuildShimmerEffect();
                 },
-                errorBuilder: (_, __, ___) => BuildShimmerEffect(),
+                errorWidget: (context, url, error) {
+                  return Image.network(
+                    image,
+                    loadingBuilder: (BuildContext context, Widget child,
+                        ImageChunkEvent? loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return const BuildShimmerEffect();
+                    },
+                    errorBuilder: (_, __, ___) => const BuildShimmerEffect(),
+                  );
+                },
               )),
         ),
       ),
@@ -225,28 +236,28 @@ class _PendingCardState extends State<PurchasedCard> {
           width: 0.3,
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
               productSnapshot.product_name,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w400,
               ),
             ),
           ),
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.product.variations!.length,
               itemBuilder: ((context, index) {
                 int quantity = widget.product.variations![index]['quantity'];
@@ -259,7 +270,8 @@ class _PendingCardState extends State<PurchasedCard> {
                       width: 0.3,
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   child: Row(
                     children: [
                       Image_widget(
@@ -272,21 +284,21 @@ class _PendingCardState extends State<PurchasedCard> {
                             color: kPrimaryColor,
                             fontSize: 18),
                       ),
-                      Spacer(),
+                      const Spacer(),
                       Text(
                         '${quantity}',
-                        style: TextStyle(fontSize: 17),
+                        style: const TextStyle(fontSize: 17),
                       ),
                     ],
                   ),
                 );
               })),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
           Price(),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),
@@ -302,7 +314,7 @@ class _PendingCardState extends State<PurchasedCard> {
       return Column(
         children: [
           Container(
-            padding: EdgeInsets.only(left: 8.w),
+            padding: const EdgeInsets.only(left: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               color: Colors.grey[100],
@@ -313,19 +325,19 @@ class _PendingCardState extends State<PurchasedCard> {
                 children: [
                   Text(
                     size,
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
-                  Spacer(),
+                  const Spacer(),
                   Text(
                     '${quantity}',
-                    style: TextStyle(fontSize: 17),
+                    style: const TextStyle(fontSize: 17),
                   ),
                 ],
               ),
             ),
           ),
-          SizedBox(
-            height: 5.h,
+          const SizedBox(
+            height: 5,
           )
         ],
       );
@@ -340,24 +352,24 @@ class _PendingCardState extends State<PurchasedCard> {
           width: 0.3,
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
               productSnapshot.product_name,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w400,
               ),
             ),
           ),
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -370,8 +382,8 @@ class _PendingCardState extends State<PurchasedCard> {
             ],
           ),
           Price(),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),
@@ -388,28 +400,28 @@ class _PendingCardState extends State<PurchasedCard> {
           width: 0.3,
         ),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 10.w),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         children: [
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
               productSnapshot.product_name,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w400,
               ),
             ),
           ),
-          SizedBox(
-            height: 8.h,
+          const SizedBox(
+            height: 8,
           ),
           ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.product.variations!.length,
               itemBuilder: ((context, index) {
                 Map<String, dynamic> sizesQuantity =
@@ -421,7 +433,7 @@ class _PendingCardState extends State<PurchasedCard> {
                   return Column(
                     children: [
                       Container(
-                        padding: EdgeInsets.only(left: 8.w),
+                        padding: const EdgeInsets.only(left: 8),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(12),
                           color: Colors.grey[100],
@@ -432,19 +444,19 @@ class _PendingCardState extends State<PurchasedCard> {
                             children: [
                               Text(
                                 size,
-                                style: TextStyle(fontSize: 18),
+                                style: const TextStyle(fontSize: 18),
                               ),
-                              Spacer(),
+                              const Spacer(),
                               Text(
                                 '${quantity}',
-                                style: TextStyle(fontSize: 17),
+                                style: const TextStyle(fontSize: 17),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: 5.h,
+                      const SizedBox(
+                        height: 5,
                       )
                     ],
                   );
@@ -458,7 +470,8 @@ class _PendingCardState extends State<PurchasedCard> {
                       width: 0.3,
                     ),
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 5.h),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -473,12 +486,12 @@ class _PendingCardState extends State<PurchasedCard> {
                   ),
                 );
               })),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
           Price(),
-          SizedBox(
-            height: 10.h,
+          const SizedBox(
+            height: 10,
           ),
         ],
       ),

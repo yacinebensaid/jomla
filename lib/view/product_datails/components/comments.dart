@@ -1,11 +1,12 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
 import 'package:jomla/services/crud/product_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';
 import 'package:jomla/services/providers.dart';
+import 'package:jomla/utilities/shimmers.dart';
 import 'package:jomla/utilities/success_dialog.dart';
 import 'package:provider/provider.dart';
 
@@ -21,7 +22,7 @@ class _CommentsState extends State<Comments> {
   bool showAddComment = false;
   UserData? currentUser;
 
-  TextEditingController _textEditingController = TextEditingController();
+  final TextEditingController _textEditingController = TextEditingController();
   bool _isButtonActive = false;
 
   @override
@@ -63,7 +64,7 @@ class _CommentsState extends State<Comments> {
 
   void _addComment() {
     ProductService.addComment(
-        widget.reference, currentUser!.id, _textEditingController.text);
+        widget.reference, currentUser!.id!, _textEditingController.text);
     setState(() {
       _textEditingController.text = '';
       showAddComment = false;
@@ -74,31 +75,31 @@ class _CommentsState extends State<Comments> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Align(
+        const Align(
           alignment: Alignment.centerLeft,
           child: Padding(
-            padding: const EdgeInsets.only(
+            padding: EdgeInsets.only(
               left: 20,
             ),
             child: Text(
-              'Reviews:',
+              'Reviews',
               style: TextStyle(
-                fontSize: 20.w,
+                fontSize: 20,
                 fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 151, 151, 151),
+                color: Color.fromARGB(255, 151, 151, 151),
               ),
             ),
           ),
         ),
-        SizedBox(
-          height: 15.h,
+        const SizedBox(
+          height: 15,
         ),
         !showAddComment
             ? GestureDetector(
                 onTap: _showAddComment,
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
-                  width: 330.w,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  width: 330,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
@@ -106,18 +107,18 @@ class _CommentsState extends State<Comments> {
                       width: 1,
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       'Write a review',
-                      style: TextStyle(color: Colors.black, fontSize: 20.w),
+                      style: TextStyle(color: Colors.black, fontSize: 20),
                     ),
                   ),
                 ),
               )
             : Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w),
+                padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
@@ -127,35 +128,58 @@ class _CommentsState extends State<Comments> {
                   ),
                   child: Column(children: [
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Row(
                         children: [
                           CircleAvatar(
-                            radius: 20.w,
-                            backgroundColor: Colors.grey,
-                            child: currentUser!.picture == null
-                                ? Icon(
-                                    CupertinoIcons.person,
-                                    color: Colors.white,
-                                  )
-                                : Image.network(currentUser!.picture!),
-                          ),
-                          SizedBox(
-                            width: 8.w,
+                              radius: 20,
+                              backgroundColor: Colors.grey,
+                              child: currentUser!.picture == null
+                                  ? const Icon(
+                                      CupertinoIcons.person,
+                                      color: Colors.white,
+                                    )
+                                  : CachedNetworkImage(
+                                      key: UniqueKey(),
+                                      imageUrl: currentUser!.picture!,
+                                      maxWidthDiskCache: 250,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) {
+                                        return const BuildShimmerEffect();
+                                      },
+                                      errorWidget: (context, url, error) {
+                                        return Image.network(
+                                          currentUser!.picture!,
+                                          loadingBuilder: (BuildContext context,
+                                              Widget child,
+                                              ImageChunkEvent?
+                                                  loadingProgress) {
+                                            if (loadingProgress == null) {
+                                              return child;
+                                            }
+                                            return const BuildShimmerEffect();
+                                          },
+                                          errorBuilder: (_, __, ___) =>
+                                              const BuildShimmerEffect(),
+                                        );
+                                      },
+                                    )),
+                          const SizedBox(
+                            width: 8,
                           ),
                           Text(
-                            currentUser!.name,
-                            style: TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 17.w),
+                            currentUser!.name!,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 17),
                           )
                         ],
                       ),
                     ),
-                    SizedBox(
-                      height: 10.h,
+                    const SizedBox(
+                      height: 10,
                     ),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.w),
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Row(
                         children: [
                           Expanded(
@@ -163,21 +187,24 @@ class _CommentsState extends State<Comments> {
                               controller: _textEditingController,
                               maxLines: null,
                               maxLength: 150,
-                              style: TextStyle(fontSize: 15.w),
+                              style: const TextStyle(fontSize: 15),
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 12.0, horizontal: 10.0),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.grey),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey),
                                 ),
                               ),
                             ),
@@ -205,14 +232,14 @@ class _CommentsState extends State<Comments> {
           stream: ProductService.getCommentsStream(widget.reference),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasData) {
               if (snapshot.data != null) {
                 List<Map<String, dynamic>> comments = snapshot.data!;
                 return ListView.builder(
                   shrinkWrap: true,
                   itemCount: comments.length,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemBuilder: (context, index) {
                     Map<String, dynamic> comment = comments[index];
                     String uid = comment['uid']!;
@@ -223,20 +250,23 @@ class _CommentsState extends State<Comments> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else if (snapshot.hasData) {
                           if (snapshot.data != null) {
                             UserData user = snapshot.data!;
                             return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 15.w),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 15),
                               child: Padding(
-                                padding: EdgeInsets.only(top: 10.h),
+                                padding: const EdgeInsets.only(top: 10),
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w, vertical: 15.h),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 15),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
-                                    color: Color.fromARGB(255, 248, 248, 248),
+                                    color: const Color.fromARGB(
+                                        255, 248, 248, 248),
                                   ),
                                   child: Column(
                                     children: [
@@ -247,42 +277,74 @@ class _CommentsState extends State<Comments> {
                                           Row(
                                             children: [
                                               CircleAvatar(
-                                                radius: 20.w,
-                                                backgroundColor: Colors.grey,
-                                                child: user.picture == null
-                                                    ? Icon(
-                                                        CupertinoIcons.person,
-                                                        color: Colors.white,
-                                                      )
-                                                    : Image.network(
-                                                        user.picture!),
-                                              ),
-                                              SizedBox(
-                                                width: 8.w,
+                                                  radius: 20,
+                                                  backgroundColor: Colors.grey,
+                                                  child: user.picture == null
+                                                      ? const Icon(
+                                                          CupertinoIcons.person,
+                                                          color: Colors.white,
+                                                        )
+                                                      : CachedNetworkImage(
+                                                          key: UniqueKey(),
+                                                          imageUrl:
+                                                              user.picture!,
+                                                          maxWidthDiskCache:
+                                                              250,
+                                                          fit: BoxFit.cover,
+                                                          placeholder:
+                                                              (context, url) {
+                                                            return const BuildShimmerEffect();
+                                                          },
+                                                          errorWidget: (context,
+                                                              url, error) {
+                                                            return Image
+                                                                .network(
+                                                              user.picture!,
+                                                              loadingBuilder:
+                                                                  (BuildContext
+                                                                          context,
+                                                                      Widget
+                                                                          child,
+                                                                      ImageChunkEvent?
+                                                                          loadingProgress) {
+                                                                if (loadingProgress ==
+                                                                    null) {
+                                                                  return child;
+                                                                }
+                                                                return const BuildShimmerEffect();
+                                                              },
+                                                              errorBuilder: (_,
+                                                                      __,
+                                                                      ___) =>
+                                                                  const BuildShimmerEffect(),
+                                                            );
+                                                          },
+                                                        )),
+                                              const SizedBox(
+                                                width: 8,
                                               ),
                                               Text(
-                                                user.name,
-                                                style: TextStyle(
+                                                user.name!,
+                                                style: const TextStyle(
                                                     fontWeight: FontWeight.w600,
-                                                    fontSize: 17.w),
+                                                    fontSize: 17),
                                               )
                                             ],
                                           ),
                                           dropDownMenu(context),
                                         ],
                                       ),
-                                      SizedBox(
-                                        height: 10.h,
+                                      const SizedBox(
+                                        height: 10,
                                       ),
                                       Align(
                                         alignment: Alignment.centerLeft,
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 20.w),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
                                           child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10.w,
-                                                vertical: 10.h),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
                                             decoration: BoxDecoration(
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -290,7 +352,8 @@ class _CommentsState extends State<Comments> {
                                             ),
                                             child: Text(
                                               commentText,
-                                              style: TextStyle(fontSize: 16.w),
+                                              style:
+                                                  const TextStyle(fontSize: 16),
                                             ),
                                           ),
                                         ),
@@ -301,20 +364,20 @@ class _CommentsState extends State<Comments> {
                               ),
                             );
                           } else {
-                            return SizedBox.shrink();
+                            return const SizedBox.shrink();
                           }
                         } else {
-                          return CircularProgressIndicator();
+                          return const CircularProgressIndicator();
                         }
                       },
                     );
                   },
                 );
               } else {
-                return SizedBox.shrink();
+                return const SizedBox.shrink();
               }
             } else {
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             }
           },
         ),
@@ -359,13 +422,15 @@ class _CommentsState extends State<Comments> {
           value: 'signal',
           child: Text('Signal comment'),
         ),
-        ...Provider.of<UserDataInitializer>(context, listen: false).getIsAdmin
-            ? [
-                const PopupMenuItem<String>(
-                  value: 'delete',
-                  child: Text('Delete'),
-                ),
-              ]
+        ...Provider.of<UserDataInitializer>(context).getUserData != null
+            ? Provider.of<UserDataInitializer>(context).getUserData!.isAdmin
+                ? [
+                    const PopupMenuItem<String>(
+                      value: 'delete',
+                      child: Text('Delete'),
+                    ),
+                  ]
+                : []
             : []
       ].toList(),
     );

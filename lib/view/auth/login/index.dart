@@ -1,7 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:jomla/constants/const_routs.dart';
+import 'package:jomla/constants/routes.dart';
+
+import 'package:jomla/main.dart';
+import 'package:jomla/services/providers.dart';
 import 'package:jomla/view/auth/password_recovery/password_recovery.dart';
+import 'package:provider/provider.dart';
 import '../components/input_fields.dart';
 import '../components/sign_uplink.dart';
 import '../components/signin_button.dart';
@@ -13,7 +21,8 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:shimmer/shimmer.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  final bool? notfromNav;
+  const LoginScreen({Key? key, this.notfromNav}) : super(key: key);
   @override
   LoginScreenState createState() => LoginScreenState();
 }
@@ -68,6 +77,56 @@ class LoginScreenState extends State<LoginScreen>
     } on TickerCanceled {}
   }
 
+  signInWithGoogle() async {
+    GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+    AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+    UserCredential usercredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+    if (usercredential.user != null) {
+      if (usercredential.user!.emailVerified != false) {
+        //user email is verified
+        // ignore: use_build_context_synchronously
+        setState(() {
+          _isVerifying = false;
+          animationStatus = 1;
+        });
+        await _playAnimation();
+
+        if (widget.notfromNav == null) {
+          Provider.of<UserDataInitializer>(context, listen: false).inituser();
+          disposekeys();
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => MyApp()));
+        } else {
+          Provider.of<UserDataInitializer>(context, listen: false).inituser();
+          disposekeys();
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => MyApp()));
+        }
+      } else {
+        //user email is not verified
+        // ignore: use_build_context_synchronously
+        setState(() {
+          _isVerifying = false;
+        });
+        GoRouter.of(context).pushNamed(RoutsConst.verifyemailRout);
+      }
+    } else {
+      setState(() {
+        _isVerifying = false;
+      });
+      await showErrorDialog(
+        context,
+        'User not found',
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -84,6 +143,35 @@ class LoginScreenState extends State<LoginScreen>
                     children: <Widget>[
                       Column(
                         children: [
+                          InkWell(
+                              onTap: () {
+                                if (widget.notfromNav == null) {
+                                  Provider.of<UserDataInitializer>(context,
+                                          listen: false)
+                                      .inituser();
+                                  disposekeys();
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => MyApp()));
+                                } else {
+                                  Provider.of<UserDataInitializer>(context,
+                                          listen: false)
+                                      .inituser();
+                                  disposekeys();
+                                  Navigator.of(context).pushReplacement(
+                                      MaterialPageRoute(
+                                          builder: (context) => MyApp()));
+                                }
+                              },
+                              child: GuestButton()),
+                          SizedBox(
+                            height: 5,
+                          ),
+                          InkWell(
+                              onTap: () {
+                                signInWithGoogle();
+                              },
+                              child: GoogleSignInButton()),
+                          Divider(),
                           Container(
                             margin:
                                 const EdgeInsets.symmetric(horizontal: 20.0),
@@ -126,13 +214,13 @@ class LoginScreenState extends State<LoginScreen>
                                       'Forgot your password?',
                                       style: TextStyle(
                                           fontSize: 19, color: Colors.grey),
-                                    ))
+                                    )),
                               ],
                             ),
                           ),
+                          SignUpLink(),
                         ],
                       ),
-                      SignUpLink(),
                     ],
                   ),
                 ),
@@ -161,7 +249,26 @@ class LoginScreenState extends State<LoginScreen>
                                       _isVerifying = false;
                                       animationStatus = 1;
                                     });
-                                    _playAnimation();
+                                    await _playAnimation();
+
+                                    if (widget.notfromNav == null) {
+                                      Provider.of<UserDataInitializer>(context,
+                                              listen: false)
+                                          .inituser();
+                                      disposekeys();
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: ((context) => MyApp())));
+                                    } else {
+                                      Provider.of<UserDataInitializer>(context,
+                                              listen: false)
+                                          .inituser();
+                                      Navigator.pop(context);
+                                      disposekeys();
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: ((context) => MyApp())));
+                                    }
                                   } else {
                                     //user email is not verified
                                     // ignore: use_build_context_synchronously

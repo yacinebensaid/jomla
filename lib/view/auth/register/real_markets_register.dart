@@ -6,7 +6,6 @@ import 'package:jomla/utilities/show_error_dialog.dart';
 import 'package:jomla/view/auth/components/signup_button.dart';
 import 'package:shimmer/shimmer.dart';
 import '../components/input_fields.dart';
-import 'package:jomla/constants/routes.dart';
 import 'package:jomla/services/auth/auth_exceptions.dart';
 import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/crud/userdata_service.dart';

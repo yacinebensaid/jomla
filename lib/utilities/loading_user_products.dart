@@ -19,8 +19,8 @@ class UserProductsLoading extends StatelessWidget {
       ProductCardShimmer(),
       ProductCardShimmer()
     ];
-    final cardWidth = 160.w; // Width of each ProductCard widget
-    final spacingWidth = 20.w;
+    final cardWidth = 160.0; // Width of each ProductCard widget
+    final spacingWidth = 10.0;
     final availableWidth = screenWidth -
         spacingWidth; // Width available for ProductCard widgets after accounting for spacing
     final numOfCards = (availableWidth / cardWidth)

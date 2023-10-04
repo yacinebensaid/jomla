@@ -17,16 +17,10 @@ class PopularProducts extends StatefulWidget {
 }
 
 class _PopularProductsState extends State<PopularProducts> {
-  late Future<List<Product>> _getProducts;
-  @override
-  void initState() {
-    _getProducts = widget.products;
-
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    return ProductRows(getProducts: widget.products, title: 'Popular');
+    return Container(
+        color: Colors.white,
+        child: ProductRows(getProducts: widget.products, title: 'Hot sell'));
   }
 }

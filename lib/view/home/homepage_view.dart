@@ -1,10 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/providers.dart';
-import 'package:jomla/view/products_card/product.dart';
-import 'package:jomla/view/search/search.dart';
+import 'package:jomla/utilities/reusable.dart';
+import 'package:jomla/view/components/appbar.dart';
+import 'package:jomla/view/components/drawer.dart';
 import 'package:provider/provider.dart';
+
 import '../../size_config.dart';
 import 'components/body.dart';
+import 'package:flutter/material.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({
@@ -15,94 +18,36 @@ class HomeView extends StatefulWidget {
   _HomeViewState createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView>
-    with AutomaticKeepAliveClientMixin<HomeView> {
-  @override
-  bool get wantKeepAlive => true;
+class _HomeViewState extends State<HomeView> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  bool _isAppBarTransparent = true;
-
-  void _updateAppBarState(bool isAppBarTransparent) {
-    setState(() {
-      _isAppBarTransparent = isAppBarTransparent;
-    });
+  void opendrawer() {
+    _scaffoldKey.currentState!.openDrawer();
   }
 
-  late Future<List<Product>> _getProductsPopular;
-  late Future<List<Product>> _getProductsOnSale;
-  late Future<List<Product>> _getProductsNew;
+  String usertype = 'normal';
   @override
-  void initState() {
-    _getProductsPopular = getProductsForPopular();
-    _getProductsOnSale = getProductsForOnSale();
-    _getProductsNew = getProductsForNew();
-    super.initState();
-  }
-
-  Future<void> _onRefresh() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    setState(() {
-      _getProductsPopular = getProductsForPopular();
-      _getProductsOnSale = getProductsForOnSale();
-      _getProductsNew = getProductsForNew();
-    });
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    usertype = Provider.of<UserDataInitializer>(context).getUserData != null
+        ? Provider.of<UserDataInitializer>(context).getUserData!.user_type
+        : 'normal';
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     SizeConfig().init(context);
-    return SafeArea(
-      child: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: Stack(
-          children: [
-            Scaffold(
-              body: Body(
-                updateAppBarState: _updateAppBarState,
-                productsPopular: _getProductsPopular,
-                productsOnSale: _getProductsOnSale,
-                productsNew: _getProductsNew,
-              ),
-              backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-            ),
-            Container(
-              height: 55,
-              width: SizeConfig.screenWidth,
-              color: Colors.transparent.withOpacity(0.0),
-              child: AppBar(
-                elevation: 0,
-                backgroundColor: _isAppBarTransparent
-                    ? Colors.transparent.withOpacity(0.0)
-                    : const Color.fromARGB(255, 28, 26, 26),
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.menu,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    Provider.of<HomeFunc>(context, listen: false).opendrawer();
-                  },
-                ),
-                actions: [
-                  IconButton(
-                    padding: const EdgeInsets.only(right: 10),
-                    style: IconButton.styleFrom(foregroundColor: Colors.white),
-                    icon: const Icon(
-                      Icons.search,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      showSearch(
-                          context: context, delegate: CustumSearchDeligate());
-                    },
-                  ),
-                ],
-              ),
-            )
-          ],
-        ),
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: Appbar(
+        onTapDrawer: opendrawer,
       ),
+      drawer: CostumNavigationDrawer(),
+      body: Body(),
+      floatingActionButton:
+          AuthService.firebase().currentUser != null && usertype == 'market'
+              ? floatingAddButton(context)
+              : null,
     );
   }
 }

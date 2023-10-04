@@ -4,13 +4,10 @@ import 'user_infos.dart';
 import 'user_products.dart';
 
 class Body extends StatefulWidget {
-  final bool fromNav;
-
   final UserData userdata;
 
   const Body({
     Key? key,
-    required this.fromNav,
     required this.userdata,
   }) : super(key: key);
 
@@ -25,16 +22,13 @@ class _BodyState extends State<Body> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          UserInfos(
+            userdata: widget.userdata,
+          ),
           Container(
-              color: const Color.fromARGB(255, 240, 240, 240),
-              child: UserInfos(
-                fromNav: widget.fromNav,
-                userdata: widget.userdata,
-              )),
-          Container(
-            color: Color(0xFFF5F6F9),
+            color: Color.fromARGB(255, 255, 255, 255),
             child: UserProducts(
-              uid: widget.userdata.id,
+              uid: widget.userdata.id!,
             ),
           )
         ],

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+// ignore: must_be_immutable
 class InputFieldArea extends StatelessWidget {
   final String hint;
+  final String? validationtext;
   final TextEditingController controler;
   final IconData? icon;
   final TextInputType? keyboardType;
@@ -15,7 +17,8 @@ class InputFieldArea extends StatelessWidget {
       required this.hint,
       required this.inputFormat,
       required this.icon,
-      this.maxlines});
+      this.maxlines,
+      this.validationtext});
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -33,6 +36,12 @@ class InputFieldArea extends StatelessWidget {
         autocorrect: false,
         maxLines: maxlines,
         inputFormatters: inputFormat,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return validationtext;
+          }
+          return null;
+        },
         style: const TextStyle(
           color: Colors.black,
         ),

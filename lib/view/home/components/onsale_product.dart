@@ -23,6 +23,8 @@ class _OnSaleProductsState extends State<OnSaleProducts> {
 
   @override
   Widget build(BuildContext context) {
-    return ProductRows(getProducts: _getProducts, title: 'On Sale');
+    return Container(
+        color: Colors.white,
+        child: ProductRows(getProducts: _getProducts, title: 'On Sale'));
   }
 }

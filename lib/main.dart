@@ -13,15 +13,18 @@ import 'l10n/l10n.dart';
 void main() {
   //flutter must initialize the user creation part before clicking on register
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.black, // Change the status bar color to black
-  ));
+
+  // Create a SystemUiOverlayStyle with the gradient
+  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.white,
+      systemNavigationBarIconBrightness: Brightness.dark));
+
   AuthService.firebase().initialize().then((value) => runApp(MultiProvider(
         providers: [
-          ChangeNotifierProvider(
-            create: (context) =>
-                UserDataInitializer(user: AuthService.firebase().currentUser),
-          ),
+          ChangeNotifierProvider(create: (context) {
+            return UserDataInitializer();
+          }),
           ChangeNotifierProvider(
             create: (context) => CheckedCartProducts(),
           ),

@@ -6,11 +6,24 @@ class RoutsConst {
   static const String usingJomlaRout = 'how_to_use';
   static const String tipsRout = 'tips';
   static const String homeRout = 'home';
-  static const String entryRout = 'entry';
-  static const String productRout = 'product';
+  static const String entryRout = '/';
+  static const String productProductRout = 'product_pro';
+  static const String productRefRout = 'product_ref';
+  static const String productAffiRout = 'product_affi';
   static const String cartRout = 'cart';
   static const String profileRout = 'profile';
   static const String profileWithUidRout = 'profile/uid';
   static const String exploreRout = 'explore';
+  static const String subcatRout = 'subcat';
   static const String addRout = 'add';
+  static const String favRout = 'favourite';
+  static const String pendingRout = 'pending';
+  static const String purchasedRout = 'purchased';
+  static const String helpRout = 'help-chat';
+  static const String onlineMarket = 'online-market';
+  static const String deliverRout = 'delivery';
+  static const String dropshipRout = 'dropship';
+  static const String affiRout = 'affiliate-marketing';
+  static const String settingsRout = 'settings';
+  static const String supportRout = 'support';
 }

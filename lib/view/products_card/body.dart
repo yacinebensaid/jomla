@@ -1,9 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:jomla/constants/const_routs.dart';
+import 'package:jomla/services/auth/auth_service.dart';
 import 'package:jomla/services/crud/pcf_service.dart';
+import 'package:jomla/utilities/reusable.dart';
+import 'package:provider/provider.dart';
 import '../../constants/constants.dart';
 import '../../size_config.dart';
 import 'product.dart';
@@ -60,8 +65,10 @@ class _ProductCardState extends State<ProductCard> {
           padding: const EdgeInsets.all(7.0),
           child: GestureDetector(
             onTap: () {
-              GoRouter.of(context)
-                  .pushNamed(RoutsConst.productRout, extra: widget.product);
+              GoRouter.of(context).pushNamed(
+                RoutsConst.productProductRout,
+                extra: widget.product,
+              );
             },
             child: SizedBox(
               width: getProportionateScreenWidth(widget.width),
@@ -87,7 +94,7 @@ class _ProductCardState extends State<ProductCard> {
                               maxWidthDiskCache: 250,
                               fit: BoxFit.cover,
                               placeholder: (context, url) {
-                                return BuildShimmerEffect();
+                                return const BuildShimmerEffect();
                               },
                               errorWidget: (context, url, error) {
                                 return Image.network(
@@ -98,10 +105,10 @@ class _ProductCardState extends State<ProductCard> {
                                     if (loadingProgress == null) {
                                       return child;
                                     }
-                                    return BuildShimmerEffect();
+                                    return const BuildShimmerEffect();
                                   },
                                   errorBuilder: (_, __, ___) =>
-                                      BuildShimmerEffect(),
+                                      const BuildShimmerEffect(),
                                 );
                               },
                             )),
@@ -115,10 +122,9 @@ class _ProductCardState extends State<ProductCard> {
                       InkWell(
                         borderRadius: BorderRadius.circular(50),
                         child: Container(
-                          padding:
-                              EdgeInsets.all(getProportionateScreenWidth(8)),
-                          height: getProportionateScreenWidth(28),
-                          width: getProportionateScreenWidth(28),
+                          padding: const EdgeInsets.all(8),
+                          height: 28,
+                          width: 28,
                           decoration: BoxDecoration(
                             color: _isfav
                                 ? kPrimaryColor.withOpacity(0.15)
@@ -133,7 +139,55 @@ class _ProductCardState extends State<ProductCard> {
                           ),
                         ),
                         onTap: () {
-                          pressfav();
+                          if (kIsWeb) {
+                            if (AuthService.firebase().currentUser != null) {
+                              pressfav();
+                            } else {
+                              showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        child: const LoginDialog(
+                                          guest: true,
+                                        ));
+                                  });
+                            }
+                          } else {
+                            final internetConnectionStatus =
+                                Provider.of<InternetConnectionStatus>(context,
+                                    listen: false);
+                            if (internetConnectionStatus ==
+                                InternetConnectionStatus.connected) {
+                              if (AuthService.firebase().currentUser != null) {
+                                pressfav();
+                              } else {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10.0),
+                                          ),
+                                          child: const LoginDialog(
+                                            guest: true,
+                                          ));
+                                    });
+                              }
+                            } else {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('you are not connected'),
+                                behavior: SnackBarBehavior.floating,
+                              ));
+                            }
+                          }
                         },
                       )
                     ],
@@ -149,16 +203,16 @@ class _ProductCardState extends State<ProductCard> {
             top: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.red,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 widget.product.offers!,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
-                  fontSize: getProportionateScreenWidth(12),
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -169,16 +223,16 @@ class _ProductCardState extends State<ProductCard> {
             top: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: Colors.green,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 widget.product.offers!,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
-                  fontSize: getProportionateScreenWidth(12),
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -189,16 +243,16 @@ class _ProductCardState extends State<ProductCard> {
             top: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
-                color: Color.fromARGB(255, 5, 98, 173),
+                color: const Color.fromARGB(255, 5, 98, 173),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 widget.product.offers!,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Color.fromARGB(255, 255, 255, 255),
-                  fontSize: getProportionateScreenWidth(12),
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
               ),

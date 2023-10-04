@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:jomla/constants/const_routs.dart';
-import 'package:jomla/services/providers.dart';
-import 'package:provider/provider.dart';
 
 class StaggerAnimation extends StatelessWidget {
   StaggerAnimation(
@@ -81,7 +77,7 @@ class StaggerAnimation extends StatelessWidget {
                         buttomZoomOut.value == 70 ? 60.0 : buttomZoomOut.value,
                     alignment: FractionalOffset.center,
                     decoration: BoxDecoration(
-                      color: const Color.fromRGBO(247, 64, 106, 1.0),
+                      color: Color.fromARGB(255, 17, 176, 216),
                       borderRadius: buttomZoomOut.value < 400
                           ? const BorderRadius.all(Radius.circular(30.0))
                           : const BorderRadius.all(Radius.circular(0.0)),
@@ -111,7 +107,7 @@ class StaggerAnimation extends StatelessWidget {
                       shape: buttomZoomOut.value < 500
                           ? BoxShape.circle
                           : BoxShape.rectangle,
-                      color: const Color.fromRGBO(247, 64, 106, 1.0),
+                      color: Color.fromARGB(255, 17, 176, 216),
                     ),
                   ),
           )),
@@ -120,11 +116,7 @@ class StaggerAnimation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    buttonController.addListener(() async {
-      Provider.of<UserDataInitializer>(context, listen: false);
-      GoRouter.of(context).go('/');
-    });
-
+    buttonController.addListener(() async {});
     return AnimatedBuilder(
       builder: _buildAnimation,
       animation: buttonController,
